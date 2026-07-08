@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ContactForm from "../components/ContactForm";
 import { getSiteSettings } from "../services/serviceAPI";
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp, FaShieldAlt, FaBolt, FaHandshake } from "react-icons/fa";
+import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp } from "react-icons/fa";
 import { COMPANY } from "../constants";
 import { ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
@@ -70,18 +70,14 @@ export default function Contact() {
     },
   ];
 
-  const trustBadges = [
-    { icon: <FaShieldAlt className="text-blue-500" />, label: "100% Secure" },
-    { icon: <FaBolt className="text-yellow-500" />, label: "Fast Response" },
-    { icon: <FaHandshake className="text-emerald-500" />, label: "100+ Clients" },
-  ];
+
 
   return (
     <div className="min-h-screen bg-transparent">
       <ToastContainer position="top-right" autoClose={3000} theme="light" />
 
       {/* ── Hero Banner ── */}
-      <section className="relative pt-28 pb-12 sm:pt-32 sm:pb-16 overflow-hidden">
+      <section className="relative pt-24 pb-8 sm:pt-28 sm:pb-10 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#001f42] via-[#002A54] to-[#003d7a] z-0" />
         <div
           className="absolute inset-0 z-0 opacity-10"
@@ -114,7 +110,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.5 }}
-            className="flex flex-wrap justify-center gap-3 mt-8"
+            className="flex flex-wrap justify-center gap-2 mt-5"
           >
             {[
               { num: "185+", label: "Projects" },
@@ -132,7 +128,7 @@ export default function Contact() {
       </section>
 
       {/* ── Main Content ── */}
-      <section className="relative pb-12 sm:pb-16 -mt-4">
+      <section className="relative pb-8 sm:pb-10 -mt-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
@@ -201,29 +197,16 @@ export default function Contact() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="lg:col-span-7"
             >
-              <div className="bg-white rounded-3xl shadow-lg border border-slate-100 p-5 sm:p-7 md:p-8">
-                <div className="mb-5 pb-5 border-b border-slate-100">
-                  <span className="inline-flex items-center gap-2 text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1.5">
+              <div className="bg-white rounded-3xl shadow-lg border border-slate-100 p-4 sm:p-6">
+                <div className="mb-4 pb-4 border-b border-slate-100">
+                  <span className="inline-flex items-center gap-2 text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">
                     <span className="w-4 h-px bg-blue-400 inline-block" />
                     Send a Message
                   </span>
-                  <h2 className="text-xl font-extrabold text-slate-800">Submit Your Inquiry</h2>
-                  <p className="text-slate-400 text-xs mt-1 leading-relaxed">
-                    We respond within 24 business hours.
-                  </p>
+                  <h2 className="text-lg font-extrabold text-slate-800">Submit Your Inquiry</h2>
+                  <p className="text-slate-400 text-xs mt-0.5">We respond within 24 business hours.</p>
                 </div>
-
                 <ContactForm />
-
-                {/* Trust badges */}
-                <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-3 gap-2">
-                  {trustBadges.map((b) => (
-                    <div key={b.label} className="flex flex-col items-center text-center gap-1.5 p-2.5 rounded-xl bg-slate-50">
-                      <span className="text-base">{b.icon}</span>
-                      <p className="text-[9px] sm:text-[10px] font-semibold text-slate-500 leading-tight">{b.label}</p>
-                    </div>
-                  ))}
-                </div>
               </div>
             </motion.div>
 
