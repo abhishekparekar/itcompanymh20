@@ -153,7 +153,7 @@ export default function About() {
                 />
               </motion.div>
 
-              {/* Floating Card 1: 185+ Projects Delivered (Top-Left) */}
+              {/* Floating Card 1: Projects (Top-Left) */}
               <motion.div 
                 variants={cardFloatVariants(0)}
                 animate="animate"
@@ -163,12 +163,12 @@ export default function About() {
                   <FaFolderOpen className="text-sm" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black text-slate-800 leading-none">185+</h4>
-                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1">Projects Delivered</p>
+                  <h4 className="text-xs font-black text-slate-800 leading-none">{stats[0]?.value || "185+"}</h4>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1 truncate">{stats[0]?.label || "Projects Delivered"}</p>
                 </div>
               </motion.div>
 
-              {/* Floating Card 2: 103+ Happy Clients (Right-Middle) */}
+              {/* Floating Card 2: Clients (Right-Middle) */}
               <motion.div 
                 variants={cardFloatVariants(1.4)}
                 animate="animate"
@@ -178,12 +178,12 @@ export default function About() {
                   <FaUserCheck className="text-sm" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black text-slate-800 leading-none">103+</h4>
-                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1">Happy Clients</p>
+                  <h4 className="text-xs font-black text-slate-800 leading-none">{stats[1]?.value || "103+"}</h4>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1 truncate">{stats[1]?.label || "Happy Clients"}</p>
                 </div>
               </motion.div>
 
-              {/* Floating Card 3: 7+ Global Cities (Bottom-Left) */}
+              {/* Floating Card 3: Cities (Bottom-Left) */}
               <motion.div 
                 variants={cardFloatVariants(0.7)}
                 animate="animate"
@@ -193,8 +193,8 @@ export default function About() {
                   <FaMapMarkerAlt className="text-sm" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black text-slate-800 leading-none">7+</h4>
-                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1">Global Cities</p>
+                  <h4 className="text-xs font-black text-slate-800 leading-none">{stats[2]?.value || "7+"}</h4>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1 truncate">{stats[2]?.label || "Global Cities"}</p>
                 </div>
               </motion.div>
 

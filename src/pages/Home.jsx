@@ -14,6 +14,7 @@ export default function Home() {
   const [logos, setLogos] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [aboutDesc, setAboutDesc] = useState('');
+  const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const industryScrollRef = useRef(null);
@@ -36,8 +37,13 @@ export default function Home() {
         setServices(servicesData); // Show all services in the scrolling carousel
         
         const aboutData = await getSiteSettings('about');
-        if (aboutData && aboutData.description) {
-          setAboutDesc(aboutData.description);
+        if (aboutData) {
+          if (aboutData.description) {
+            setAboutDesc(aboutData.description);
+          }
+          if (aboutData.stats) {
+            setStats(aboutData.stats);
+          }
         }
 
         // Seed and fetch client logos dynamically
@@ -742,14 +748,17 @@ export default function Home() {
 
               {/* Stats row */}
               <div className="grid grid-cols-3 gap-4 pt-2">
-                {[
-                  { num: '185+', label: 'Projects' },
-                  { num: '103+', label: 'Clients' },
-                  { num: '24h', label: 'Response' },
-                ].map((s) => (
+                {(stats && stats.length >= 3 
+                  ? stats.slice(0, 3).map(s => ({ num: s.value, label: s.label }))
+                  : [
+                      { num: '185+', label: 'Projects' },
+                      { num: '103+', label: 'Clients' },
+                      { num: '24h', label: 'Response' }
+                    ]
+                ).map((s) => (
                   <div key={s.label} className="text-center bg-white/5 rounded-2xl py-4 border border-white/10">
                     <p className="text-2xl font-black text-sky-400">{s.num}</p>
-                    <p className="text-[10px] text-blue-200 font-semibold uppercase tracking-wide mt-0.5">{s.label}</p>
+                    <p className="text-[10px] text-blue-200 font-semibold uppercase tracking-wide mt-0.5 truncate">{s.label}</p>
                   </div>
                 ))}
               </div>
