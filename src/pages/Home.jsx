@@ -189,59 +189,73 @@ export default function Home() {
       {/* Hero Header */}
       <Hero />
 
-      {/* Statistics Section */}
-      <section className="bg-dark py-12 relative overflow-hidden border-y border-slate-950">
+      {/* Statistics Section — Infinite Ticker */}
+      <section className="bg-dark py-10 relative overflow-hidden border-y border-slate-800">
         <div className="absolute inset-0 opacity-5 bg-grid-pattern" />
-        <div className="container max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center items-center justify-center"
-          >
-            {(stats && stats.length === 5 && stats.every(s => s.value && s.label)
-              ? stats 
-              : [
-                  { value: '25+', label: 'Years of Expertise' },
-                  { value: '300+', label: 'Corporate Clientele' },
-                  { value: '5,000+', label: 'Onboardings' },
-                  { value: '2,500+', label: 'SMEs' },
-                  { value: '450K+', label: 'Professionals Trained' }
-                ]
-            ).map((item, idx) => {
-              // Extract numeric value for CountUp if possible
-              const match = item.value.match(/^([\d,]+)/);
-              const numberVal = match ? parseInt(match[0].replace(/,/g, ''), 10) : null;
-              const suffix = match ? item.value.slice(match[0].length) : item.value;
-              const icons = [
-                <FaBriefcase className="inline" />,
-                <FaThumbsUp className="inline" />,
-                <FaUsers className="inline" />,
-                <FaBuilding className="inline" />,
-                <FaUserGraduate className="inline" />
-              ];
 
+        {/* Edge fade masks */}
+        <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-[#040916] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-[#040916] to-transparent z-10 pointer-events-none" />
+
+        {/* Ticker track */}
+        <div className="overflow-hidden relative z-0">
+          <div className="flex w-max animate-ticker hover:[animation-play-state:paused] gap-0">
+            {[
+              ...(stats && stats.length === 5 && stats.every(s => s.value && s.label)
+                ? stats
+                : [
+                    { value: '25+', label: 'Years of Expertise' },
+                    { value: '300+', label: 'Corporate Clientele' },
+                    { value: '5,000+', label: 'Onboardings' },
+                    { value: '2,500+', label: 'SMEs' },
+                    { value: '450K+', label: 'Professionals Trained' }
+                  ]),
+              ...(stats && stats.length === 5 && stats.every(s => s.value && s.label)
+                ? stats
+                : [
+                    { value: '25+', label: 'Years of Expertise' },
+                    { value: '300+', label: 'Corporate Clientele' },
+                    { value: '5,000+', label: 'Onboardings' },
+                    { value: '2,500+', label: 'SMEs' },
+                    { value: '450K+', label: 'Professionals Trained' }
+                  ]),
+              ...(stats && stats.length === 5 && stats.every(s => s.value && s.label)
+                ? stats
+                : [
+                    { value: '25+', label: 'Years of Expertise' },
+                    { value: '300+', label: 'Corporate Clientele' },
+                    { value: '5,000+', label: 'Onboardings' },
+                    { value: '2,500+', label: 'SMEs' },
+                    { value: '450K+', label: 'Professionals Trained' }
+                  ])
+            ].map((item, idx) => {
+              const icons = [
+                <FaBriefcase />, <FaThumbsUp />, <FaUsers />, <FaBuilding />, <FaUserGraduate />
+              ];
+              const icon = icons[idx % 5];
               return (
-                <motion.div key={idx} variants={fadeUp} className="flex flex-col items-center space-y-1.5">
-                  <div className="text-3xl text-accent mb-0.5">
-                    {icons[idx] || <FaBriefcase className="inline" />}
+                <div
+                  key={idx}
+                  className="flex items-center"
+                >
+                  {/* Stat card */}
+                  <div className="flex flex-col items-center justify-center px-8 sm:px-12 py-3 min-w-[140px] sm:min-w-[180px] text-center group">
+                    <div className="text-xl sm:text-2xl text-accent mb-1 group-hover:scale-110 transition-transform duration-200">
+                      {icon}
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-black text-white leading-none tracking-tight">
+                      {item.value}
+                    </div>
+                    <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 whitespace-nowrap">
+                      {item.label}
+                    </p>
                   </div>
-                  <div className="text-2xl md:text-3xl font-black text-white leading-none">
-                    {numberVal !== null ? (
-                      <>
-                        <CountUp end={numberVal} enableScrollSpy scrollSpyOnce separator="," />
-                        {suffix}
-                      </>
-                    ) : (
-                      item.value
-                    )}
-                  </div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{item.label}</p>
-                </motion.div>
+                  {/* Divider dot */}
+                  <span className="text-slate-700 text-lg select-none">✦</span>
+                </div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 

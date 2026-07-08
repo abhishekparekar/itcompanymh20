@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   FaLinkedinIn, FaTwitter, FaFacebookF, FaGithub,
-  FaPhone, FaEnvelope, FaMapMarkerAlt, FaWhatsapp
+  FaPhone, FaEnvelope, FaMapMarkerAlt, FaWhatsapp, FaArrowRight
 } from 'react-icons/fa';
 import { getSiteSettings } from '../services/serviceAPI';
 import { COMPANY } from '../constants';
@@ -11,7 +11,9 @@ import ufgsLogo from '../assets/images/ufgslogo.jpeg';
 
 export default function Footer() {
   const [tagline, setTagline] = useState(COMPANY.tagline);
-  const [copyright, setCopyright] = useState(`© ${new Date().getFullYear()} UF Global Solutions Pvt Ltd. All rights reserved.`);
+  const [copyright, setCopyright] = useState(
+    `© ${new Date().getFullYear()} UF Global Solutions Pvt Ltd. All rights reserved.`
+  );
   const [socials, setSocials] = useState({
     facebook: 'https://facebook.com',
     twitter: 'https://twitter.com',
@@ -59,104 +61,90 @@ export default function Footer() {
     { label: 'Contact', path: '/contact' }
   ];
 
-  return (
-    <footer className="bg-[#0b132a] text-slate-400 border-t border-slate-900 z-10 relative">
-      
-      {/* Dynamic CTA Strip */}
-      <div className="border-b border-slate-900 bg-[#080e21]/75 py-12 relative overflow-hidden">
-        
-        {/* Glow lights */}
-        <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-40 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
+  const socialList = [
+    { key: 'linkedin', icon: FaLinkedinIn, label: 'LinkedIn' },
+    { key: 'facebook', icon: FaFacebookF, label: 'Facebook' },
+    { key: 'twitter', icon: FaTwitter, label: 'Twitter' },
+    { key: 'github', icon: FaGithub, label: 'GitHub' }
+  ];
 
-        <div className="container max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
-          <div className="text-left space-y-1.5">
-            <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight">
-              Ready to Accelerate Your Enterprise Operations?
+  return (
+    <footer className="bg-[#0b132a] text-slate-400 border-t border-slate-800 relative z-10">
+
+      {/* ── CTA Banner ── */}
+      <div className="bg-gradient-to-r from-blue-700 to-blue-500">
+        <div className="max-w-7xl mx-auto px-5 py-8 flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
+          <div>
+            <h3 className="text-base sm:text-xl font-black text-white leading-snug">
+              Ready to Accelerate Your Operations?
             </h3>
-            <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
-              Let's discuss managed IT services, software product deployments, or custom automation architecture.
+            <p className="text-xs text-blue-100 mt-1 opacity-80">
+              IT services, software deployments, or custom automation.
             </p>
           </div>
-          <Link 
-            to="/contact" 
-            className="px-6 py-3.5 rounded-full bg-accent hover:bg-accent-dark text-white text-xs font-black uppercase tracking-wider transition-all duration-300 shadow-lg shadow-accent/20 hover:-translate-y-0.5"
+          <Link
+            to="/contact"
+            className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-blue-700 text-xs font-black uppercase tracking-wider transition-all duration-200 hover:bg-blue-50 hover:scale-105 shadow-lg"
           >
-            Start A Conversation
+            Start A Conversation <FaArrowRight className="text-[10px]" />
           </Link>
         </div>
       </div>
 
-      {/* Main Grid */}
-      <div className="container max-w-7xl mx-auto px-6 py-16 z-10 relative">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
-          
-          {/* Logo & Company Description */}
-          <div className="space-y-6 text-left">
-            <div className="flex items-center space-x-2">
-              <div className="h-10 w-auto bg-white p-1.5 rounded-xl overflow-hidden flex items-center justify-center border border-slate-100 shadow-md">
-                <img src={ufgsLogo} alt="UFGS Logo" className="h-7 object-contain" />
+      {/* ── Main Content ── */}
+      <div className="max-w-7xl mx-auto px-5 py-10">
+
+        {/* Brand row — always full width on top */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 pb-8 border-b border-slate-800 mb-8">
+          {/* Logo + tagline */}
+          <div className="flex items-center gap-3">
+            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+              <div className="h-12 w-12 bg-white rounded-2xl p-1.5 flex items-center justify-center shadow-lg flex-shrink-0">
+                <img src={ufgsLogo} alt="UFGS Logo" className="h-full w-auto object-contain" />
               </div>
-            </div>
-            <p className="text-xs text-slate-400 leading-relaxed max-w-xs">
-              {tagline || "Providing premier Managed IT operations, customizable corporate training bootcamps, and top-tier staffing workflows globally."}
-            </p>
-            <div className="flex gap-2.5">
-              {socials.linkedin && (
-                <motion.a 
-                  whileHover={{ y: -3 }}
-                  href={socials.linkedin} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-accent hover:text-accent text-slate-400 transition-colors"
-                >
-                  <FaLinkedinIn className="text-xs" />
-                </motion.a>
-              )}
-              {socials.facebook && (
-                <motion.a 
-                  whileHover={{ y: -3 }}
-                  href={socials.facebook} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-accent hover:text-accent text-slate-400 transition-colors"
-                >
-                  <FaFacebookF className="text-xs" />
-                </motion.a>
-              )}
-              {socials.twitter && (
-                <motion.a 
-                  whileHover={{ y: -3 }}
-                  href={socials.twitter} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-accent hover:text-accent text-slate-400 transition-colors"
-                >
-                  <FaTwitter className="text-xs" />
-                </motion.a>
-              )}
-              {socials.github && (
-                <motion.a 
-                  whileHover={{ y: -3 }}
-                  href={socials.github} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-accent hover:text-accent text-slate-400 transition-colors"
-                >
-                  <FaGithub className="text-xs" />
-                </motion.a>
-              )}
+            </Link>
+            <div className="leading-tight">
+              <p className="text-white font-extrabold text-sm">UF Global Solutions</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest">Pvt. Ltd.</p>
+              <p className="text-[11px] text-slate-400 mt-1 max-w-[200px] sm:max-w-xs leading-relaxed">
+                {tagline || 'Smart digital solutions for modern businesses.'}
+              </p>
             </div>
           </div>
 
+          {/* Social icons */}
+          <div className="flex gap-2">
+            {socialList.map(({ key, icon: Icon, label }) =>
+              socials[key] ? (
+                <motion.a
+                  key={key}
+                  href={socials[key]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  whileHover={{ y: -3 }}
+                  className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-400 hover:border-blue-500 hover:text-blue-400 transition-colors duration-200"
+                >
+                  <Icon className="text-xs" />
+                </motion.a>
+              ) : null
+            )}
+          </div>
+        </div>
+
+        {/* Links grid — 2 cols on mobile, 3 on md, 4 on lg */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+
           {/* Core Capabilities */}
-          <div className="text-left">
-            <h4 className="text-white font-extrabold text-xs uppercase tracking-wider mb-6 border-l-2 border-accent pl-2.5">
-              Core Capabilities
+          <div>
+            <h4 className="text-white font-extrabold text-[11px] uppercase tracking-wider mb-4 border-l-2 border-blue-500 pl-2">
+              Capabilities
             </h4>
-            <ul className="space-y-3.5">
+            <ul className="space-y-2.5">
               {capabilities.map((cap, idx) => (
                 <li key={idx}>
-                  <Link to={cap.path} className="text-xs text-slate-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">
+                  <Link to={cap.path}
+                    className="text-[12px] text-slate-400 hover:text-blue-400 hover:translate-x-1 inline-block transition-all duration-200">
                     {cap.label}
                   </Link>
                 </li>
@@ -164,15 +152,17 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Quick Links */}
-          <div className="text-left">
-            <h4 className="text-white font-extrabold text-xs uppercase tracking-wider mb-6 border-l-2 border-accent pl-2.5">
-              Quick Navigation
+          {/* Quick Navigation */}
+          <div>
+            <h4 className="text-white font-extrabold text-[11px] uppercase tracking-wider mb-4 border-l-2 border-blue-500 pl-2">
+              Navigation
             </h4>
-            <ul className="space-y-3.5">
+            <ul className="space-y-2.5">
               {quickLinks.map((link) => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-xs text-slate-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">
+                  <Link to={link.path}
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    className="text-[12px] text-slate-400 hover:text-blue-400 hover:translate-x-1 inline-block transition-all duration-200">
                     {link.label}
                   </Link>
                 </li>
@@ -180,30 +170,44 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact details */}
-          <div className="text-left space-y-6">
-            <h4 className="text-white font-extrabold text-xs uppercase tracking-wider mb-6 border-l-2 border-accent pl-2.5">
-              Contact Channels
+          {/* Contact — spans full row on mobile (col-span-2), normal on md+ */}
+          <div className="col-span-2 md:col-span-1 lg:col-span-2">
+            <h4 className="text-white font-extrabold text-[11px] uppercase tracking-wider mb-4 border-l-2 border-blue-500 pl-2">
+              Contact Us
             </h4>
-            <ul className="space-y-3.5 text-xs leading-relaxed">
-              <li className="flex items-start gap-2.5">
-                <FaPhone className="text-accent mt-0.5 text-xs flex-shrink-0" />
-                <a href={`tel:${COMPANY.phone}`} className="hover:text-white transition-colors">{COMPANY.phone}</a>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <FaEnvelope className="text-accent mt-0.5 text-xs flex-shrink-0" />
-                <a href={`mailto:${COMPANY.email}`} className="hover:text-white transition-colors">{COMPANY.email}</a>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <FaMapMarkerAlt className="text-accent mt-0.5 text-xs flex-shrink-0" />
-                <span className="text-slate-400 leading-normal">{COMPANY.address}</span>
-              </li>
-            </ul>
+
+            {/* Contact items — 2-column on mobile for compactness */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 text-[12px] mb-4">
+              <a href={`tel:${COMPANY.phone}`}
+                className="flex items-center gap-2.5 text-slate-400 hover:text-blue-400 transition-colors group">
+                <span className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0">
+                  <FaPhone className="text-blue-400 text-[10px]" />
+                </span>
+                <span className="group-hover:text-blue-400 transition-colors">{COMPANY.phone}</span>
+              </a>
+
+              <a href={`mailto:${COMPANY.email}`}
+                className="flex items-center gap-2.5 text-slate-400 hover:text-blue-400 transition-colors group">
+                <span className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0">
+                  <FaEnvelope className="text-blue-400 text-[10px]" />
+                </span>
+                <span className="group-hover:text-blue-400 transition-colors break-all">{COMPANY.email}</span>
+              </a>
+
+              <div className="flex items-start gap-2.5 sm:col-span-2 lg:col-span-1">
+                <span className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <FaMapMarkerAlt className="text-blue-400 text-[10px]" />
+                </span>
+                <span className="leading-relaxed">{COMPANY.address}</span>
+              </div>
+            </div>
+
+            {/* WhatsApp */}
             <a
               href={`https://wa.me/${COMPANY.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl bg-accent/10 border border-accent/20 text-accent text-xs font-black uppercase tracking-wider hover:bg-accent hover:text-white transition-all duration-200 shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-bold uppercase tracking-wide hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 w-full sm:w-auto justify-center sm:justify-start"
             >
               <FaWhatsapp className="text-sm" /> Chat on WhatsApp
             </a>
@@ -212,12 +216,14 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Copyright Footer Strip */}
-      <div className="border-t border-slate-900/60 bg-[#080e21] py-6 z-10 relative">
-        <div className="container max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-semibold">
+      {/* ── Copyright ── */}
+      <div className="border-t border-slate-800 bg-[#080e21] py-4">
+        <div className="max-w-7xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px] text-slate-500 text-center">
           <p>{copyright}</p>
+          <p className="text-slate-600">Made with ❤️ in India</p>
         </div>
       </div>
+
     </footer>
   );
 }
