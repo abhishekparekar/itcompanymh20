@@ -560,7 +560,7 @@ export default function Dashboard() {
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col flex-1 min-h-0 overflow-y-auto">
           
           {/* Sidebar Header */}
           <div className="px-4 py-4 flex items-center justify-between border-b border-white/10">
