@@ -21,7 +21,9 @@ import {
   FaUserGraduate,
   FaDownload,
   FaEye,
-  FaTrash
+  FaTrash,
+  FaBookOpen,
+  FaBoxOpen
 } from 'react-icons/fa';
 
 import AboutSetting from './AboutSetting';
@@ -35,6 +37,8 @@ import {
   getClientLogos, addClientLogo, deleteClientLogo, updateClientLogo,
   getTestimonials, addTestimonial, deleteTestimonial, updateTestimonial,
   getJobs, addJob, deleteJob, updateJob,
+  getProducts, addProduct, updateProduct, deleteProduct,
+  getBlogs, addBlog, updateBlog, deleteBlog,
   bulkDeleteDocuments
 } from '../services/serviceAPI';
 
@@ -81,6 +85,26 @@ export default function Dashboard() {
   const [newJobDescription, setNewJobDescription] = useState('');
   const [addingJob, setAddingJob] = useState(false);
   const [editJobId, setEditJobId] = useState(null);
+
+  // Products states
+  const [productsList, setProductsList] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [newProductName, setNewProductName] = useState('');
+  const [newProductTagline, setNewProductTagline] = useState('');
+  const [newProductFeatures, setNewProductFeatures] = useState('');
+  const [newProductGradient, setNewProductGradient] = useState('from-blue-600 to-cyan-500');
+  const [addingProduct, setAddingProduct] = useState(false);
+  const [editProductId, setEditProductId] = useState(null);
+
+  // Blogs states
+  const [blogsList, setBlogsList] = useState([]);
+  const [loadingBlogs, setLoadingBlogs] = useState(false);
+  const [newBlogTitle, setNewBlogTitle] = useState('');
+  const [newBlogCategory, setNewBlogCategory] = useState('BUSINESS AUTOMATION');
+  const [newBlogImage, setNewBlogImage] = useState('');
+  const [newBlogContent, setNewBlogContent] = useState('');
+  const [addingBlog, setAddingBlog] = useState(false);
+  const [editBlogId, setEditBlogId] = useState(null);
 
   // Job Applications list state
   const [applications, setApplications] = useState([]);
@@ -160,6 +184,34 @@ export default function Dashboard() {
     }
   };
 
+  // Fetch products helper
+  const fetchProductsData = async () => {
+    setLoadingProducts(true);
+    try {
+      const data = await getProducts();
+      setProductsList(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load products list.");
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
+
+  // Fetch blogs helper
+  const fetchBlogsData = async () => {
+    setLoadingBlogs(true);
+    try {
+      const data = await getBlogs();
+      setBlogsList(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load blogs list.");
+    } finally {
+      setLoadingBlogs(false);
+    }
+  };
+
   // Run initial fetch if tab switches
   React.useEffect(() => {
     setMobileMenuOpen(false);
@@ -173,6 +225,10 @@ export default function Dashboard() {
       fetchJobsData();
     } else if (activeTab === 'applications') {
       fetchApplicationsData();
+    } else if (activeTab === 'products') {
+      fetchProductsData();
+    } else if (activeTab === 'blogs') {
+      fetchBlogsData();
     }
   }, [activeTab]);
 
@@ -368,6 +424,108 @@ export default function Dashboard() {
     }
   };
 
+  // ---------------- PRODUCTS HANDLERS ----------------
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+    if (!newProductName || !newProductTagline || !newProductFeatures) {
+      toast.error("Please fill in Name, Tagline and Features.");
+      return;
+    }
+    setAddingProduct(true);
+    try {
+      const featuresArray = typeof newProductFeatures === 'string'
+        ? newProductFeatures.split(',').map(f => f.trim()).filter(Boolean)
+        : newProductFeatures;
+
+      const data = {
+        name: newProductName,
+        tagline: newProductTagline,
+        features: featuresArray,
+        gradient: newProductGradient
+      };
+
+      if (editProductId) {
+        await updateProduct(editProductId, data);
+        toast.success("Product updated successfully.");
+        setEditProductId(null);
+      } else {
+        await addProduct(data);
+        toast.success("Product added successfully.");
+      }
+      setNewProductName('');
+      setNewProductTagline('');
+      setNewProductFeatures('');
+      setNewProductGradient('from-blue-600 to-cyan-500');
+      fetchProductsData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save product.");
+    } finally {
+      setAddingProduct(false);
+    }
+  };
+
+  const handleDeleteProduct = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    try {
+      await deleteProduct(id);
+      toast.success("Product deleted successfully.");
+      fetchProductsData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete product.");
+    }
+  };
+
+  // ---------------- BLOGS HANDLERS ----------------
+  const handleAddBlog = async (e) => {
+    e.preventDefault();
+    if (!newBlogTitle || !newBlogCategory || !newBlogContent) {
+      toast.error("Please fill in Title, Category and Content.");
+      return;
+    }
+    setAddingBlog(true);
+    try {
+      const data = {
+        title: newBlogTitle,
+        category: newBlogCategory,
+        image: newBlogImage || "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=600&auto=format&fit=crop",
+        content: newBlogContent
+      };
+
+      if (editBlogId) {
+        await updateBlog(editBlogId, data);
+        toast.success("Blog post updated successfully.");
+        setEditBlogId(null);
+      } else {
+        await addBlog(data);
+        toast.success("Blog post added successfully.");
+      }
+      setNewBlogTitle('');
+      setNewBlogCategory('BUSINESS AUTOMATION');
+      setNewBlogImage('');
+      setNewBlogContent('');
+      fetchBlogsData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save blog post.");
+    } finally {
+      setAddingBlog(false);
+    }
+  };
+
+  const handleDeleteBlog = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this blog post?")) return;
+    try {
+      await deleteBlog(id);
+      toast.success("Blog post deleted successfully.");
+      fetchBlogsData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete blog post.");
+    }
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-100">
       <ToastContainer position="top-right" autoClose={3000} theme="light" />
@@ -412,6 +570,8 @@ export default function Dashboard() {
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             {[
               { id: 'services', icon: FaBriefcase, label: 'Manage Services', match: ['services','add-service','edit-service'] },
+              { id: 'products', icon: FaBoxOpen, label: 'Manage Products', match: ['products'] },
+              { id: 'blogs', icon: FaBookOpen, label: 'Manage Blogs', match: ['blogs'] },
               { id: 'about', icon: FaInfoCircle, label: 'About Us Settings', match: ['about'] },
               { id: 'contact', icon: FaEnvelopeOpenText, label: 'Contact & Inbox', match: ['contact'] },
               { id: 'footer', icon: FaGlobe, label: 'Footer Config', match: ['footer'] },
@@ -816,6 +976,268 @@ export default function Dashboard() {
                     fetchJobsData();
                   } catch (e) {
                     toast.error("Failed to delete selected jobs.");
+                  }
+                }}
+              />
+            </div>
+          )}
+
+          {activeTab === 'products' && (
+            <div className="space-y-6 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm text-left animate-fadeIn">
+              <h3 className="font-extrabold text-lg text-slate-800 border-b border-slate-100 pb-3">
+                {editProductId ? '✍️ Edit Software Product' : '🚀 Add Software Product'}
+              </h3>
+              
+              <form onSubmit={handleAddProduct} className="space-y-4 bg-slate-50 p-4 md:p-6 rounded-xl border border-slate-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Product Name</label>
+                    <input 
+                      type="text" 
+                      value={newProductName} 
+                      onChange={(e) => setNewProductName(e.target.value)}
+                      placeholder="e.g. HRMS Pro" 
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Tagline</label>
+                    <input 
+                      type="text" 
+                      value={newProductTagline} 
+                      onChange={(e) => setNewProductTagline(e.target.value)}
+                      placeholder="e.g. Complete HR management" 
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required 
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Key Features (comma-separated)</label>
+                    <input 
+                      type="text" 
+                      value={newProductFeatures} 
+                      onChange={(e) => setNewProductFeatures(e.target.value)}
+                      placeholder="e.g. Payroll, Attendance, Analytics" 
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Accent Color / Gradient</label>
+                    <select 
+                      value={newProductGradient} 
+                      onChange={(e) => setNewProductGradient(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 cursor-pointer transition"
+                    >
+                      <option value="from-blue-600 to-cyan-500">Blue to Sky</option>
+                      <option value="from-purple-600 to-pink-500">Purple to Pink</option>
+                      <option value="from-green-600 to-emerald-400">Green to Emerald</option>
+                      <option value="from-amber-500 to-orange-400">Amber to Orange</option>
+                      <option value="from-indigo-600 to-violet-500">Indigo to Violet</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2">
+                  {editProductId && (
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setEditProductId(null);
+                        setNewProductName('');
+                        setNewProductTagline('');
+                        setNewProductFeatures('');
+                        setNewProductGradient('from-blue-600 to-cyan-500');
+                      }}
+                      className="py-2 px-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  <button 
+                    type="submit" 
+                    disabled={addingProduct}
+                    className="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-md shadow-blue-500/20"
+                  >
+                    {addingProduct ? 'Saving...' : editProductId ? 'Update Product' : 'Add Product'}
+                  </button>
+                </div>
+              </form>
+
+              <DataTable 
+                loading={loadingProducts}
+                data={productsList}
+                columns={[
+                  { 
+                    key: 'gradient', 
+                    label: 'Accent', 
+                    render: (p) => (
+                      <div className={`w-8 h-3.5 rounded-md bg-gradient-to-r ${p.gradient || 'from-blue-600 to-cyan-500'}`} />
+                    )
+                  },
+                  { key: 'name', label: 'Name', render: (p) => <span className="font-bold text-slate-800">{p.name}</span> },
+                  { key: 'tagline', label: 'Tagline', render: (p) => <span className="text-slate-500">{p.tagline}</span> },
+                  { 
+                    key: 'features', 
+                    label: 'Features', 
+                    render: (p) => (
+                      <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">
+                        {Array.isArray(p.features) ? p.features.length : 0} Features
+                      </span>
+                    ) 
+                  }
+                ]}
+                onEdit={(p) => {
+                  setEditProductId(p.id);
+                  setNewProductName(p.name);
+                  setNewProductTagline(p.tagline);
+                  setNewProductFeatures(Array.isArray(p.features) ? p.features.join(', ') : '');
+                  setNewProductGradient(p.gradient || 'from-blue-600 to-cyan-500');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onDelete={handleDeleteProduct}
+                onBulkDelete={async (ids) => {
+                  try {
+                    await bulkDeleteDocuments('products', ids);
+                    toast.success(`${ids.length} products deleted.`);
+                    fetchProductsData();
+                  } catch (e) {
+                    toast.error("Failed to delete selected products.");
+                  }
+                }}
+              />
+            </div>
+          )}
+
+          {activeTab === 'blogs' && (
+            <div className="space-y-6 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm text-left animate-fadeIn">
+              <h3 className="font-extrabold text-lg text-slate-800 border-b border-slate-100 pb-3">
+                {editBlogId ? '✍️ Edit Blog Post' : '📝 Add Blog Post'}
+              </h3>
+              
+              <form onSubmit={handleAddBlog} className="space-y-4 bg-slate-50 p-4 md:p-6 rounded-xl border border-slate-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Blog Title</label>
+                    <input 
+                      type="text" 
+                      value={newBlogTitle} 
+                      onChange={(e) => setNewBlogTitle(e.target.value)}
+                      placeholder="e.g. Why Your Business Needs a Website" 
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Category</label>
+                    <select 
+                      value={newBlogCategory} 
+                      onChange={(e) => setNewBlogCategory(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 cursor-pointer transition"
+                    >
+                      <option value="BUSINESS AUTOMATION">BUSINESS AUTOMATION</option>
+                      <option value="WEB DEVELOPMENT">WEB DEVELOPMENT</option>
+                      <option value="SALES & CRM">SALES & CRM</option>
+                      <option value="ENTERPRISE TECH">ENTERPRISE TECH</option>
+                      <option value="MOBILE APPS">MOBILE APPS</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Cover Image URL</label>
+                  <input 
+                    type="text" 
+                    value={newBlogImage} 
+                    onChange={(e) => setNewBlogImage(e.target.value)}
+                    placeholder="https://images.unsplash.com/photo-..." 
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Blog Content</label>
+                  <textarea 
+                    value={newBlogContent} 
+                    onChange={(e) => setNewBlogContent(e.target.value)}
+                    rows="6" 
+                    placeholder="Write the full details and strategies of this article..." 
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition resize-none"
+                    required
+                  ></textarea>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2">
+                  {editBlogId && (
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setEditBlogId(null);
+                        setNewBlogTitle('');
+                        setNewBlogCategory('BUSINESS AUTOMATION');
+                        setNewBlogImage('');
+                        setNewBlogContent('');
+                      }}
+                      className="py-2 px-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  <button 
+                    type="submit" 
+                    disabled={addingBlog}
+                    className="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-md shadow-blue-500/20"
+                  >
+                    {addingBlog ? 'Saving...' : editBlogId ? 'Update Blog Post' : 'Publish Blog Post'}
+                  </button>
+                </div>
+              </form>
+
+              <DataTable 
+                loading={loadingBlogs}
+                data={blogsList}
+                columns={[
+                  { 
+                    key: 'image', 
+                    label: 'Cover', 
+                    render: (b) => (
+                      <div className="w-12 h-8 rounded-lg overflow-hidden border border-slate-200 bg-slate-50">
+                        <img src={b.image} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    )
+                  },
+                  { key: 'title', label: 'Title', render: (b) => <span className="font-bold text-slate-800 block leading-tight">{b.title}</span> },
+                  { 
+                    key: 'category', 
+                    label: 'Category', 
+                    render: (b) => (
+                      <span className="text-[9px] font-bold text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md uppercase">
+                        {b.category}
+                      </span>
+                    ) 
+                  },
+                  { key: 'content', label: 'Content Snippet', render: (b) => <span className="text-slate-500 line-clamp-1">{b.content}</span> }
+                ]}
+                onEdit={(b) => {
+                  setEditBlogId(b.id);
+                  setNewBlogTitle(b.title);
+                  setNewBlogCategory(b.category);
+                  setNewBlogImage(b.image || '');
+                  setNewBlogContent(b.content || '');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onDelete={handleDeleteBlog}
+                onBulkDelete={async (ids) => {
+                  try {
+                    await bulkDeleteDocuments('blogs', ids);
+                    toast.success(`${ids.length} blogs deleted.`);
+                    fetchBlogsData();
+                  } catch (e) {
+                    toast.error("Failed to delete selected blogs.");
                   }
                 }}
               />

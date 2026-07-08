@@ -257,6 +257,10 @@ export async function seedDatabase(force = false) {
       });
     }
 
+    // Seed products and blogs
+    await seedProducts(force);
+    await seedBlogs(force);
+
     console.log("Database seeded successfully!");
     return true;
   } catch (error) {
@@ -574,5 +578,195 @@ export async function bulkDeleteDocuments(collectionName, idsArray) {
   } catch (error) {
     console.error(`Error bulk deleting from ${collectionName}:`, error);
     throw error;
+  }
+}
+
+// ---------------- PRODUCTS CRUD ----------------
+export async function getProducts() {
+  try {
+    const colRef = collection(db, 'products');
+    const q = query(colRef, orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+}
+
+export async function addProduct(prodData) {
+  try {
+    const colRef = collection(db, 'products');
+    const docRef = await addDoc(colRef, {
+      ...prodData,
+      createdAt: new Date().toISOString()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding product:", error);
+    throw error;
+  }
+}
+
+export async function updateProduct(id, prodData) {
+  try {
+    const docRef = doc(db, 'products', id);
+    await updateDoc(docRef, {
+      ...prodData,
+      updatedAt: new Date().toISOString()
+    });
+    return true;
+  } catch (error) {
+    console.error("Error updating product:", error);
+    throw error;
+  }
+}
+
+export async function deleteProduct(id) {
+  try {
+    const docRef = doc(db, 'products', id);
+    await deleteDoc(docRef);
+    return true;
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw error;
+  }
+}
+
+export async function seedProducts(force = false) {
+  try {
+    const colRef = collection(db, 'products');
+    const snapshot = await getDocs(colRef);
+    if (snapshot.empty || force) {
+      if (force && !snapshot.empty) {
+        for (const d of snapshot.docs) {
+          await deleteDoc(doc(db, 'products', d.id));
+        }
+      }
+      const defaultProducts = [
+        {
+          name: 'HRMS Pro',
+          tagline: 'Complete Human Resource Management',
+          features: ['Employee Profiles', 'Payroll & TDS', 'Attendance & Leave', 'Performance Reviews'],
+          gradient: 'from-blue-600 to-cyan-500',
+        },
+        {
+          name: 'EduLearn LMS',
+          tagline: 'Powerful Learning Management System',
+          features: ['Live & Recorded Classes', 'Assessments', 'Certificates', 'Analytics Dashboard'],
+          gradient: 'from-purple-600 to-pink-500',
+        },
+        {
+          name: 'SalesCRM',
+          tagline: 'Smart CRM for Growing Businesses',
+          features: ['Lead Management', 'Pipeline Tracking', 'Email Automation', 'Reports & KPIs'],
+          gradient: 'from-green-600 to-emerald-400',
+        },
+        {
+          name: 'EnterprisERP',
+          tagline: 'Unified Enterprise Resource Planning',
+          features: ['Finance & Accounting', 'Supply Chain', 'Production Planning', 'Multi-Branch'],
+          gradient: 'from-amber-500 to-orange-400',
+        }
+      ];
+      for (const p of defaultProducts) {
+        await addProduct(p);
+      }
+      console.log("Products seeded successfully!");
+    }
+  } catch (err) {
+    console.error("Failed to seed products:", err);
+  }
+}
+
+// ---------------- BLOGS CRUD ----------------
+export async function getBlogs() {
+  try {
+    const colRef = collection(db, 'blogs');
+    const q = query(colRef, orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    throw error;
+  }
+}
+
+export async function addBlog(blogData) {
+  try {
+    const colRef = collection(db, 'blogs');
+    const docRef = await addDoc(colRef, {
+      ...blogData,
+      createdAt: new Date().toISOString()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding blog:", error);
+    throw error;
+  }
+}
+
+export async function updateBlog(id, blogData) {
+  try {
+    const docRef = doc(db, 'blogs', id);
+    await updateDoc(docRef, {
+      ...blogData,
+      updatedAt: new Date().toISOString()
+    });
+    return true;
+  } catch (error) {
+    console.error("Error updating blog:", error);
+    throw error;
+  }
+}
+
+export async function deleteBlog(id) {
+  try {
+    const docRef = doc(db, 'blogs', id);
+    await deleteDoc(docRef);
+    return true;
+  } catch (error) {
+    console.error("Error deleting blog:", error);
+    throw error;
+  }
+}
+
+export async function seedBlogs(force = false) {
+  try {
+    const colRef = collection(db, 'blogs');
+    const snapshot = await getDocs(colRef);
+    if (snapshot.empty || force) {
+      if (force && !snapshot.empty) {
+        for (const d of snapshot.docs) {
+          await deleteDoc(doc(db, 'blogs', d.id));
+        }
+      }
+      const defaultBlogs = [
+        {
+          title: "Business Automation for Small Business: The Ultimate 2026 Guide",
+          category: "BUSINESS AUTOMATION",
+          image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=600&auto=format&fit=crop",
+          content: "Automating your business in 2026 is no longer optional. This guide walks you through the initial steps of identifying bottleneck workflows, setting up basic CRM pipelines, integrating payment links, and configuring automated client messaging loops to save up to 20 hours per week."
+        },
+        {
+          title: "Best Software Company in Sambhajinagar for Business Automation",
+          category: "BUSINESS AUTOMATION",
+          image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=600&auto=format&fit=crop",
+          content: "Enterprise scaling requires top-tier development partners. Discover why UF Global Solutions stands out in Sambhajinagar (Aurangabad) for enterprise-grade microservices deployment, custom software development, and modern cloud database configuration."
+        },
+        {
+          title: "Why Your Business Needs a Website in 2026",
+          category: "WEB DEVELOPMENT",
+          image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop",
+          content: "A premium online presence is the first point of contact for your potential customers. We explore why modern design languages, fast page load speeds, and dynamic contact gateways are critical factors for search engine rankings and lead generation."
+        }
+      ];
+      for (const b of defaultBlogs) {
+        await addBlog(b);
+      }
+      console.log("Blogs seeded successfully!");
+    }
+  } catch (err) {
+    console.error("Failed to seed blogs:", err);
   }
 }

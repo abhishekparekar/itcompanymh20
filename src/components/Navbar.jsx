@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { FaBars, FaTimes, FaChevronDown } from 'react-icons/fa';
+import * as FaIcons from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import ufgsLogo from '../assets/images/ufgslogo.jpeg';
+import { getServices } from '../services/serviceAPI';
 
 export default function Navbar() {
   const { currentUser, logout } = useAuth();
@@ -10,6 +12,19 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showServicesMenu, setShowServicesMenu] = useState(false);
+  const [dbServices, setDbServices] = useState([]);
+
+  useEffect(() => {
+    async function loadNavServices() {
+      try {
+        const data = await getServices();
+        setDbServices(data.slice(0, 6)); // Top 6 services in dropdown
+      } catch (err) {
+        console.error('Failed to load nav services:', err);
+      }
+    }
+    loadNavServices();
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -77,26 +92,29 @@ export default function Navbar() {
 
           {showServicesMenu && (
             <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-slate-100 shadow-2xl rounded-2xl p-2.5 z-50 animate-fadeIn">
-              {[
-                { icon: '??', label: 'Managed IT Solutions', sub: 'Enterprise IT management', to: '/services?id=managed-it' },
-                { icon: '??', label: 'Corporate Training', sub: 'Skill development programs', to: '/services?id=corporate-training' },
-                { icon: '??', label: 'Staffing Solutions', sub: 'Recruitment and placement', to: '/services?id=staffing-solutions' },
-              ].map((item) => (
-                <Link
-                  key={item.label}
-                  to={item.to}
-                  onClick={() => setShowServicesMenu(false)}
-                  className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-blue-50 transition group"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-sm">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight group-hover:text-blue-600">{item.label}</h5>
-                    <p className="text-[9px] text-slate-400 mt-0.5 font-medium">{item.sub}</p>
-                  </div>
-                </Link>
-              ))}
+              {dbServices.length === 0 ? (
+                <span className="text-[10px] text-slate-400 p-2.5 block">Loading services...</span>
+              ) : (
+                dbServices.map((item) => {
+                  const IconComp = FaIcons[item.icon] || FaIcons.FaLaptopCode;
+                  return (
+                    <Link
+                      key={item.id}
+                      to={`/services?id=${item.id}`}
+                      onClick={() => setShowServicesMenu(false)}
+                      className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-blue-50 transition group"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+                        <IconComp />
+                      </div>
+                      <div>
+                        <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight group-hover:text-blue-600">{item.title}</h5>
+                        <p className="text-[9px] text-slate-400 mt-0.5 font-medium line-clamp-1">{item.description}</p>
+                      </div>
+                    </Link>
+                  );
+                })
+              )}
             </div>
           )}
         </div>

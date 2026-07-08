@@ -1,11 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaRocket, FaWrench, FaStar, FaCheck, FaCheckCircle, FaTools } from 'react-icons/fa';
-import { PRODUCTS } from '../constants';
+import { getProducts, submitContactForm, seedProducts } from '../services/serviceAPI';
 import girlImg from '../assets/images/products_hero_girl.png';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function Products() {
+  const [productsList, setProductsList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Inquiry form states
+  const [inquiryName, setInquiryName] = useState('');
+  const [inquiryEmail, setInquiryEmail] = useState('');
+  const [inquiryPhone, setInquiryPhone] = useState('');
+  const [inquiryMessage, setInquiryMessage] = useState('');
+  const [submittingInquiry, setSubmittingInquiry] = useState(false);
+
+  useEffect(() => {
+    async function loadProductsData() {
+      try {
+        await seedProducts();
+        const data = await getProducts();
+        setProductsList(data);
+      } catch (err) {
+        console.error('Failed to load products:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProductsData();
+  }, []);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -35,6 +61,35 @@ export default function Products() {
       }
     }
   });
+
+  const handleInquirySubmit = async (e) => {
+    e.preventDefault();
+    if (!inquiryName || !inquiryEmail || !inquiryMessage) {
+      toast.error("Please fill in Name, Email and Message.");
+      return;
+    }
+    setSubmittingInquiry(true);
+    try {
+      await submitContactForm({
+        name: inquiryName,
+        email: inquiryEmail,
+        phone: inquiryPhone,
+        subject: `Product Demo Inquiry: ${selectedProduct.name}`,
+        message: inquiryMessage
+      });
+      toast.success("Product demo request submitted successfully!");
+      setInquiryName('');
+      setInquiryEmail('');
+      setInquiryPhone('');
+      setInquiryMessage('');
+      setSelectedProduct(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to submit demo request.");
+    } finally {
+      setSubmittingInquiry(false);
+    }
+  };
 
   return (
     <div className="pb-20 bg-transparent space-y-16">
@@ -188,72 +243,191 @@ export default function Products() {
         </motion.div>
 
         {/* Dynamic Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {PRODUCTS.map((prod, idx) => (
-            <motion.div
-              key={prod.name || idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.05 }}
-              whileHover={{ y: -6 }}
-              className="bg-white rounded-3xl border border-slate-200 shadow-lg shadow-slate-100/50 hover:shadow-xl hover:border-primary/20 overflow-hidden text-left flex flex-col justify-between h-full transition-all duration-300"
-            >
-              {/* Product Card Top Accent Header */}
-              <div className={`h-3 bg-gradient-to-r ${prod.gradient || 'from-primary to-primary-light'}`} />
-              
-              <div className="p-6 md:p-8 space-y-6 flex-1 flex flex-col justify-between">
-                
-                {/* Header Icon & Title */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary shadow-sm">
-                      <FaTools className="text-base text-primary" />
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : productsList.length === 0 ? (
+          <p className="text-center text-xs text-slate-400 py-12">No products configured yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {productsList.map((prod, idx) => {
+              // Handle features both as arrays and comma-separated strings
+              const featuresArray = Array.isArray(prod.features) 
+                ? prod.features 
+                : (typeof prod.features === 'string' ? prod.features.split(',').map(f => f.trim()) : []);
+
+              return (
+                <motion.div
+                  key={prod.id || idx}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.05 }}
+                  whileHover={{ y: -6 }}
+                  className="bg-white rounded-3xl border border-slate-200 shadow-lg shadow-slate-100/50 hover:shadow-xl hover:border-primary/20 overflow-hidden text-left flex flex-col justify-between h-full transition-all duration-300"
+                >
+                  {/* Product Card Top Accent Header */}
+                  <div className={`h-3 bg-gradient-to-r ${prod.gradient || 'from-blue-600 to-sky-500'}`} />
+                  
+                  <div className="p-6 md:p-8 space-y-6 flex-1 flex flex-col justify-between">
+                    
+                    {/* Header Icon & Title */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary shadow-sm">
+                          <FaTools className="text-base text-primary" />
+                        </div>
+                        <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary">
+                          Dynamic Product
+                        </span>
+                      </div>
+
+                      <div className="space-y-1">
+                        <h3 className="font-extrabold text-slate-900 text-lg leading-tight">
+                          {prod.name}
+                        </h3>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">
+                          {prod.tagline}
+                        </p>
+                      </div>
                     </div>
-                    <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary">
-                      Dynamic Product
-                    </span>
+
+                    {/* Features List checklist */}
+                    <div className="pt-4 border-t border-slate-100 flex-1">
+                      <h4 className="text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-3">Key Features</h4>
+                      <ul className="space-y-2">
+                        {featuresArray.map((feat, fIdx) => (
+                          <li key={fIdx} className="flex items-start gap-2.5 text-xs text-slate-650 font-medium">
+                            <FaCheck className="text-emerald-500 text-[10px] mt-0.5 flex-shrink-0" />
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Discover product action */}
+                    <div className="pt-6">
+                      <button 
+                        onClick={() => setSelectedProduct(prod)}
+                        className="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-primary hover:text-white border border-slate-200 hover:border-primary text-slate-700 text-xs font-bold text-center block transition-all duration-200 cursor-pointer"
+                      >
+                        Select & Request Info &rarr;
+                      </button>
+                    </div>
+
                   </div>
-
-                  <div className="space-y-1">
-                    <h3 className="font-extrabold text-slate-900 text-lg leading-tight">
-                      {prod.name}
-                    </h3>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">
-                      {prod.tagline}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Features List checklist */}
-                <div className="pt-4 border-t border-slate-100 flex-1">
-                  <h4 className="text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-3">Key Features</h4>
-                  <ul className="space-y-2">
-                    {prod.features.map((feat, fIdx) => (
-                      <li key={fIdx} className="flex items-start gap-2.5 text-xs text-slate-650 font-medium">
-                        <FaCheck className="text-emerald-500 text-[10px] mt-0.5 flex-shrink-0" />
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Discover product action */}
-                <div className="pt-6">
-                  <Link 
-                    to="/contact" 
-                    className="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-primary hover:text-white border border-slate-200 hover:border-primary text-slate-700 text-xs font-bold text-center block transition-all duration-200"
-                  >
-                    Request Live Demo &rarr;
-                  </Link>
-                </div>
-
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
+      {/* Selected Product Detail Modal */}
+      {selectedProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 md:p-8 space-y-6 text-left relative animate-scaleUp">
+            {/* Close button */}
+            <button 
+              onClick={() => setSelectedProduct(null)} 
+              className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 font-black text-sm"
+            >
+              ✕
+            </button>
+
+            <div>
+              <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest block mb-1">
+                Configure Product License
+              </span>
+              <h3 className="font-black text-slate-800 text-xl leading-tight">
+                {selectedProduct.name}
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">{selectedProduct.tagline}</p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-[10px] font-bold text-slate-450 uppercase tracking-wider mb-2">Capabilities Checklist</h4>
+                <div className="flex flex-wrap gap-2">
+                  {(Array.isArray(selectedProduct.features) ? selectedProduct.features : (typeof selectedProduct.features === 'string' ? selectedProduct.features.split(',').map(f => f.trim()) : [])).map((feat, fIdx) => (
+                    <span key={fIdx} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-700 text-[10px] font-semibold">
+                      ✓ {feat}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 pt-4 space-y-3.5">
+                <div>
+                  <h4 className="text-xs font-bold text-slate-800">Request Demo / Pricing Spec</h4>
+                  <p className="text-[10px] text-slate-400 mt-0.5">Submit your details to request custom integrations or licensing terms.</p>
+                </div>
+
+                <form onSubmit={handleInquirySubmit} className="space-y-3">
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Full Name</label>
+                    <input 
+                      type="text" 
+                      value={inquiryName} 
+                      onChange={(e) => setInquiryName(e.target.value)}
+                      placeholder="Jane Doe" 
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition"
+                      required 
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Email Address</label>
+                      <input 
+                        type="email" 
+                        value={inquiryEmail} 
+                        onChange={(e) => setInquiryEmail(e.target.value)}
+                        placeholder="jane@example.com" 
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition"
+                        required 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Phone Number</label>
+                      <input 
+                        type="tel" 
+                        value={inquiryPhone} 
+                        onChange={(e) => setInquiryPhone(e.target.value)}
+                        placeholder="+91 98765 43210" 
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Project / Use Case Description</label>
+                    <textarea 
+                      value={inquiryMessage} 
+                      onChange={(e) => setInquiryMessage(e.target.value)}
+                      rows="3"
+                      placeholder="Briefly describe your team size and operational use case..." 
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition resize-none"
+                      required 
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submittingInquiry}
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white text-[11px] font-bold uppercase tracking-wider transition shadow-md shadow-blue-500/10 active:scale-98 disabled:opacity-70"
+                  >
+                    {submittingInquiry ? 'Submitting Request...' : '🚀 Submit Demo Request'}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ToastContainer position="top-right" autoClose={3000} theme="light" />
     </div>
   );
 }
