@@ -16,6 +16,15 @@ export default function Home() {
   const [aboutDesc, setAboutDesc] = useState('');
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
+  const industryScrollRef = useRef(null);
+
+  // Industry inquiry state
+  const [selectedIndustry, setSelectedIndustry] = useState(null);
+  const [industryName, setIndustryName] = useState('');
+  const [industryEmail, setIndustryEmail] = useState('');
+  const [industryPhone, setIndustryPhone] = useState('');
+  const [industryMessage, setIndustryMessage] = useState('');
+  const [submittingIndustry, setSubmittingIndustry] = useState(false);
 
   useEffect(() => {
     async function loadHomeData() {
@@ -56,6 +65,48 @@ export default function Home() {
   const scrollRight = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: 340, behavior: 'smooth' });
+    }
+  };
+
+  const scrollIndustryLeft = () => {
+    if (industryScrollRef.current) {
+      industryScrollRef.current.scrollBy({ left: -360, behavior: 'smooth' });
+    }
+  };
+
+  const scrollIndustryRight = () => {
+    if (industryScrollRef.current) {
+      industryScrollRef.current.scrollBy({ left: 360, behavior: 'smooth' });
+    }
+  };
+
+  const handleIndustrySubmit = async (e) => {
+    e.preventDefault();
+    if (!industryName || !industryEmail || !industryMessage) {
+      toast.error("Please fill in name, email, and message.");
+      return;
+    }
+    setSubmittingIndustry(true);
+    try {
+      const { submitContactForm } = await import('../services/serviceAPI');
+      await submitContactForm({
+        name: industryName,
+        email: industryEmail,
+        phone: industryPhone,
+        subject: `Inquiry: ${selectedIndustry.title}`,
+        message: industryMessage
+      });
+      toast.success("Thank you! Your inquiry has been sent successfully.");
+      setIndustryName('');
+      setIndustryEmail('');
+      setIndustryPhone('');
+      setIndustryMessage('');
+      setSelectedIndustry(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to submit inquiry. Please try again.");
+    } finally {
+      setSubmittingIndustry(false);
     }
   };
 
@@ -224,145 +275,129 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Screenshot 5: Industries We Power & Scale Section */}
-      <section className="container max-w-7xl mx-auto px-6 py-16">
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          className="text-center max-w-xl mx-auto mb-16"
+      {/* Industries We Power & Scale Section */}
+      <section className="container max-w-7xl mx-auto px-6 py-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeUp}
+            className="text-left"
+          >
+            <span className="text-xs font-bold text-primary uppercase tracking-widest block mb-2">
+              Targeted Verticals
+            </span>
+            <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">
+              Industries We <span className="gradient-text-blue font-black">Power & Scale</span>
+            </h2>
+            <div className="w-12 h-1 bg-accent mb-3" />
+            <p className="text-slate-500 text-xs leading-relaxed max-w-md">
+              We adapt our custom-coded microservices to target exact operational constraints across high-value business fields.
+            </p>
+          </motion.div>
+
+          {/* Industry Scroll Controls */}
+          <div className="flex items-center gap-2 self-start md:self-end">
+            <button
+              onClick={scrollIndustryLeft}
+              className="w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-blue-600 flex items-center justify-center transition shadow-sm hover:shadow-md active:scale-95"
+              title="Scroll Left"
+            >
+              <FaChevronLeft className="text-xs" />
+            </button>
+            <button
+              onClick={scrollIndustryRight}
+              className="w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-blue-600 flex items-center justify-center transition shadow-sm hover:shadow-md active:scale-95"
+              title="Scroll Right"
+            >
+              <FaChevronRight className="text-xs" />
+            </button>
+          </div>
+        </div>
+
+        {/* Scrollable Track */}
+        <div 
+          ref={industryScrollRef}
+          className="flex overflow-x-auto gap-6 pb-6 select-none scrollbar-hide scroll-smooth snap-x snap-mandatory"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-wider mb-3">
-            Targeted Verticals
-          </span>
-          <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">
-            Industries We <span className="gradient-text-blue font-black">Power & Scale</span>
-          </h2>
-          <div className="w-12 h-1 bg-accent mx-auto mb-4" />
-          <p className="text-slate-505 text-xs leading-relaxed max-w-md mx-auto">
-            We adapt our custom-coded microservices to target exact operational constraints across high-value business fields.
-          </p>
-        </motion.div>
-
-        {/* Grid layout of 5 cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
-          
-          {/* Card 1: FinTech & Finance */}
-          <motion.div 
-            initial={{ opacity: 0, y: 25 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -6 }}
-            className="bg-white p-8 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl hover:border-primary/25 transition-all duration-300 space-y-6 flex flex-col justify-between"
-          >
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 shadow-sm">
-                <FaCreditCard className="text-lg" />
+          {[
+            {
+              id: 'fintech',
+              icon: <FaCreditCard className="text-lg" />,
+              color: 'sky',
+              title: 'FinTech & Finance',
+              subtitle: 'Financial Technology & Transaction Systems',
+              desc: 'Secure payment gateways, blockchain ledgers, automated trading algorithms, and real-time financial dashboards.',
+              details: 'We design and deploy military-grade financial architectures. Our services cover multi-currency support, ledger integrations, real-time transaction pipelines, automated risk analysis, compliance-aligned audit logs, and fraud prevention engines.',
+              image: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=600&auto=format&fit=crop'
+            },
+            {
+              id: 'ai',
+              icon: <FaMicrochip className="text-lg" />,
+              color: 'indigo',
+              title: 'AI & Automations',
+              subtitle: 'Machine Learning & Robotic Process Automations',
+              desc: 'Machine learning models, predictive analytics, intelligent chatbots, and enterprise-grade workflow automation systems.',
+              details: 'Integrate predictive intelligence directly into your operational flows. We build customized generative models, vector databases, semantic search modules, robotic process schedulers, and cognitive agent workflows.',
+              image: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?q=80&w=600&auto=format&fit=crop'
+            },
+            {
+              id: 'retail',
+              icon: <FaShoppingBag className="text-lg" />,
+              color: 'orange',
+              title: 'Retail & E-Commerce',
+              subtitle: 'High-Volume Digital Commerce & Marketplaces',
+              desc: 'Fast checkout pipelines, automated abandoned-cart alerts, instant payment syncs, and multi-tenant seller boards.',
+              details: 'Scale your inventory throughput and customer reach with optimized pipelines. We develop secure checkouts, automated cart recovery triggers, multi-tenant merchant portals, and analytics metrics dashboards.',
+              image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600&auto=format&fit=crop'
+            },
+            {
+              id: 'health',
+              icon: <FaHospital className="text-lg" />,
+              color: 'teal',
+              title: 'Healthcare & MedTech',
+              subtitle: 'Patient Care and Secure Medical Registries',
+              desc: 'Clinic scheduling calendars, HIPAA-secure patient record tables, biometric check-ins, and direct automated invoice logs.',
+              details: 'We build HIPAA-compliant clinic registers, biometric authentication logs, smart appointment calendars, real-time billing processors, and medical inventory management nodes.',
+              image: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=600&auto=format&fit=crop'
+            },
+            {
+              id: 'saas',
+              icon: <FaRocket className="text-lg" />,
+              color: 'pink',
+              title: 'Startups & SaaS Tech',
+              subtitle: 'SaaS Platforms & Agile Software Architectures',
+              desc: 'Agile codebases equipped with secure Firebase authentications, real-time subscription meters, and fast API nodes.',
+              details: 'Launch and iterate quickly with clean, future-proof microservices. We build customizable billing frameworks, multi-tenant sub-merchant routes, real-time server monitors, and high-performance serverless configurations.',
+              image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=600&auto=format&fit=crop'
+            }
+          ].map((item, idx) => (
+            <motion.div 
+              key={item.id}
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -6 }}
+              onClick={() => setSelectedIndustry(item)}
+              className="w-[280px] sm:w-[320px] md:w-[350px] shrink-0 snap-start bg-white p-8 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 space-y-6 flex flex-col justify-between cursor-pointer"
+            >
+              <div className="space-y-4">
+                <div className={`w-12 h-12 rounded-2xl bg-${item.color}-50 border border-${item.color}-100 flex items-center justify-center text-${item.color}-600 shadow-sm`}>
+                  {item.icon}
+                </div>
+                <h3 className="font-extrabold text-slate-800 text-base">{item.title}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed min-h-[48px]">
+                  {item.desc}
+                </p>
               </div>
-              <h3 className="font-extrabold text-slate-900 text-base">FinTech & Finance</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Secure payment gateways, blockchain ledgers, automated trading algorithms, and real-time financial dashboards.
-              </p>
-            </div>
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Explore Configuration</span>
-              <span className="text-xs text-slate-450">&rarr;</span>
-            </div>
-          </motion.div>
-
-          {/* Card 2: AI & Automations */}
-          <motion.div 
-            initial={{ opacity: 0, y: 25 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -6 }}
-            className="bg-white p-8 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl hover:border-primary/25 transition-all duration-300 space-y-6 flex flex-col justify-between"
-          >
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
-                <FaMicrochip className="text-lg" />
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Explore Configuration</span>
+                <span className="text-xs text-slate-400 group-hover:translate-x-1 transition-transform">&rarr;</span>
               </div>
-              <h3 className="font-extrabold text-slate-900 text-base">AI & Automations</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Machine learning models, predictive analytics, intelligent chatbots, and enterprise-grade workflow automation systems.
-              </p>
-            </div>
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Explore Configuration</span>
-              <span className="text-xs text-slate-455">&rarr;</span>
-            </div>
-          </motion.div>
-
-          {/* Card 3: Retail & E-Commerce */}
-          <motion.div 
-            initial={{ opacity: 0, y: 25 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -6 }}
-            className="bg-white p-8 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl hover:border-primary/25 transition-all duration-300 space-y-6 flex flex-col justify-between"
-          >
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 shadow-sm">
-                <FaShoppingBag className="text-lg" />
-              </div>
-              <h3 className="font-extrabold text-slate-900 text-base">Retail & E-Commerce</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Fast checkout pipelines, automated abandoned-cart alerts, instant payment syncs, and multi-tenant seller boards.
-              </p>
-            </div>
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Explore Configuration</span>
-              <span className="text-xs text-slate-460">&rarr;</span>
-            </div>
-          </motion.div>
-
-          {/* Card 4: Healthcare & MedTech */}
-          <motion.div 
-            initial={{ opacity: 0, y: 25 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -6 }}
-            className="bg-white p-8 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl hover:border-primary/25 transition-all duration-300 space-y-6 flex flex-col justify-between"
-          >
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 shadow-sm">
-                <FaHospital className="text-lg" />
-              </div>
-              <h3 className="font-extrabold text-slate-900 text-base">Healthcare & MedTech</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Clinic scheduling calendars, HIPAA-secure patient record tables, biometric check-ins, and direct automated invoice logs.
-              </p>
-            </div>
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Explore Configuration</span>
-              <span className="text-xs text-slate-465">&rarr;</span>
-            </div>
-          </motion.div>
-
-          {/* Card 5: Startups & SaaS Tech */}
-          <motion.div 
-            initial={{ opacity: 0, y: 25 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -6 }}
-            className="bg-white p-8 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl hover:border-primary/25 transition-all duration-300 space-y-6 flex flex-col justify-between"
-          >
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-pink-50 border border-pink-100 flex items-center justify-center text-pink-600 shadow-sm">
-                <FaRocket className="text-lg" />
-              </div>
-              <h3 className="font-extrabold text-slate-900 text-base">Startups & SaaS Tech</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Agile codebases equipped with secure Firebase authentications, real-time subscription meters, and fast API nodes.
-              </p>
-            </div>
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Explore Configuration</span>
-              <span className="text-xs text-slate-470">&rarr;</span>
-            </div>
-          </motion.div>
-
+            </motion.div>
+          ))}
         </div>
       </section>
 
@@ -680,6 +715,119 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Selected Industry Modal with Contact Form */}
+      {selectedIndustry && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full p-6 md:p-8 space-y-6 text-left animate-scaleUp relative max-h-[90vh] overflow-y-auto">
+            {/* Close button */}
+            <button 
+              onClick={() => setSelectedIndustry(null)} 
+              className="absolute top-6 right-6 text-slate-400 hover:text-slate-650 font-black text-sm"
+            >
+              ✕
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-sm flex-shrink-0">
+                {selectedIndustry.icon}
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest block">
+                  Industry Configuration Specs
+                </span>
+                <h3 className="font-black text-slate-800 text-lg sm:text-xl leading-tight">
+                  {selectedIndustry.title}
+                </h3>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              {/* Left Column: Specs */}
+              <div className="space-y-4">
+                <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-md">
+                  <img 
+                    src={selectedIndustry.image} 
+                    alt={selectedIndustry.title} 
+                    className="w-full h-40 object-cover"
+                  />
+                </div>
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Architecture Details</h4>
+                  <p className="text-slate-600 text-xs leading-relaxed font-medium">
+                    {selectedIndustry.details}
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Column: Inquiry Form */}
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-xs font-bold text-slate-800">Submit Specs Inquiry</h4>
+                  <p className="text-[10px] text-slate-450 mt-0.5">Let's configure solutions for your business operations.</p>
+                </div>
+
+                <form onSubmit={handleIndustrySubmit} className="space-y-3.5">
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Full Name</label>
+                    <input 
+                      type="text" 
+                      value={industryName} 
+                      onChange={(e) => setIndustryName(e.target.value)}
+                      placeholder="John Doe" 
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition"
+                      required 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Email Address</label>
+                    <input 
+                      type="email" 
+                      value={industryEmail} 
+                      onChange={(e) => setIndustryEmail(e.target.value)}
+                      placeholder="john@example.com" 
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition"
+                      required 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Phone Number</label>
+                    <input 
+                      type="tel" 
+                      value={industryPhone} 
+                      onChange={(e) => setIndustryPhone(e.target.value)}
+                      placeholder="+91 98765 43210" 
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Project Message</label>
+                    <textarea 
+                      value={industryMessage} 
+                      onChange={(e) => setIndustryMessage(e.target.value)}
+                      rows="3"
+                      placeholder="Tell us about your technical specifications or operational needs..." 
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition resize-none"
+                      required 
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submittingIndustry}
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white text-[11px] font-bold uppercase tracking-wider transition-all duration-300 shadow-md shadow-blue-500/10 active:scale-98 disabled:opacity-70"
+                  >
+                    {submittingIndustry ? 'Sending Inquiry...' : '🚀 Submit Specifications'}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
