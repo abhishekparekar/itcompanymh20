@@ -280,24 +280,6 @@ export default function Home() {
               We provide bespoke development and engineering workflows designed around your business needs.
             </p>
           </motion.div>
-
-          {/* Slider Navigation Buttons */}
-          <div className="flex items-center gap-2 self-start md:self-end">
-            <button
-              onClick={scrollLeft}
-              className="w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-blue-600 flex items-center justify-center transition shadow-sm hover:shadow-md active:scale-95"
-              title="Scroll Left"
-            >
-              <FaChevronLeft className="text-xs" />
-            </button>
-            <button
-              onClick={scrollRight}
-              className="w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-blue-600 flex items-center justify-center transition shadow-sm hover:shadow-md active:scale-95"
-              title="Scroll Right"
-            >
-              <FaChevronRight className="text-xs" />
-            </button>
-          </div>
         </div>
 
         {loading ? (
@@ -351,24 +333,6 @@ export default function Home() {
               We adapt our custom-coded microservices to target exact operational constraints across high-value business fields.
             </p>
           </motion.div>
-
-          {/* Industry Scroll Controls */}
-          <div className="flex items-center gap-2 self-start md:self-end">
-            <button
-              onClick={scrollIndustryLeft}
-              className="w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-blue-600 flex items-center justify-center transition shadow-sm hover:shadow-md active:scale-95"
-              title="Scroll Left"
-            >
-              <FaChevronLeft className="text-xs" />
-            </button>
-            <button
-              onClick={scrollIndustryRight}
-              className="w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-blue-600 flex items-center justify-center transition shadow-sm hover:shadow-md active:scale-95"
-              title="Scroll Right"
-            >
-              <FaChevronRight className="text-xs" />
-            </button>
-          </div>
         </div>
 
         {/* Scrollable Track */}
@@ -484,16 +448,16 @@ export default function Home() {
               <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
               <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
 
-              <div className="flex w-max animate-ticker-reverse hover:[animation-play-state:paused] gap-10 md:gap-16 py-4">
+              <div className="flex w-max animate-ticker-reverse hover:[animation-play-state:paused] gap-6 md:gap-10 py-3">
                 {logos.concat(logos).concat(logos).concat(logos).concat(logos).map((logo, idx) => (
                   <div 
                     key={idx} 
-                    className="w-[180px] sm:w-[220px] md:w-[260px] shrink-0 flex items-center justify-center h-28 md:h-32 px-6 select-none"
+                    className="w-[110px] sm:w-[130px] md:w-[150px] shrink-0 flex items-center justify-center h-14 md:h-20 px-3 select-none"
                   >
                     <img
                       src={logo.url}
                       alt={logo.name || 'Brand Logo'}
-                      className="max-h-16 sm:max-h-20 md:max-h-24 max-w-full object-contain transition-transform duration-300 hover:scale-110"
+                      className="max-h-8 sm:max-h-10 md:max-h-12 max-w-full object-contain transition-transform duration-300 hover:scale-110"
                       loading="lazy"
                     />
                   </div>
