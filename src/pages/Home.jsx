@@ -448,16 +448,16 @@ export default function Home() {
               <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
               <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
 
-              <div className="flex w-max animate-ticker-reverse hover:[animation-play-state:paused] gap-6 md:gap-10 py-3">
+              <div className="flex w-max animate-ticker-reverse hover:[animation-play-state:paused] gap-6 md:gap-8 py-3">
                 {logos.concat(logos).concat(logos).concat(logos).concat(logos).map((logo, idx) => (
                   <div 
                     key={idx} 
-                    className="w-[110px] sm:w-[130px] md:w-[150px] shrink-0 flex items-center justify-center h-14 md:h-20 px-3 select-none"
+                    className="w-[140px] sm:w-[180px] md:w-[220px] shrink-0 flex items-center justify-center h-20 sm:h-24 md:h-28 px-4 select-none"
                   >
                     <img
                       src={logo.url}
                       alt={logo.name || 'Brand Logo'}
-                      className="max-h-8 sm:max-h-10 md:max-h-12 max-w-full object-contain transition-transform duration-300 hover:scale-110"
+                      className="max-h-12 sm:max-h-16 md:max-h-18 max-w-full object-contain transition-transform duration-300 hover:scale-110"
                       loading="lazy"
                     />
                   </div>
