@@ -2,19 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
-import { FaLock, FaEnvelope, FaUserShield, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
+import { FaLock, FaEnvelope, FaUserShield, FaSignInAlt } from 'react-icons/fa';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Admin() {
-  const { currentUser, userData, login, signup, logout } = useAuth();
+  const { currentUser, userData, login, logout } = useAuth();
   const navigate = useNavigate();
-  const [isLoginTab, setIsLoginTab] = useState(true);
 
   // Form states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('user'); // default role selection
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -32,49 +29,15 @@ export default function Admin() {
     }
 
     setLoading(true);
-    if (isLoginTab) {
-      // Login
-      try {
-        await login(email, password);
-        toast.success("Successfully logged in.");
-      } catch (err) {
-        console.error("Login failed:", err);
-        toast.error(err.message || "Invalid credentials.");
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      // Register
-      if (password !== confirmPassword) {
-        toast.error("Passwords do not match.");
-        setLoading(false);
-        return;
-      }
-      if (password.length < 6) {
-        toast.error("Password must be at least 6 characters.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        await signup(email, password, role);
-        toast.success(`Account created successfully as ${role}!`);
-        
-        if (role === 'admin') {
-          navigate('/admin/dashboard');
-        } else {
-          // If they registered as normal user, reset forms and let them know
-          setEmail('');
-          setPassword('');
-          setConfirmPassword('');
-          setIsLoginTab(true);
-        }
-      } catch (err) {
-        console.error("Registration failed:", err);
-        toast.error(err.message || "Failed to create account.");
-      } finally {
-        setLoading(false);
-      }
+    // Login
+    try {
+      await login(email, password);
+      toast.success("Successfully logged in.");
+    } catch (err) {
+      console.error("Login failed:", err);
+      toast.error(err.message || "Invalid credentials.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -136,35 +99,11 @@ export default function Admin() {
             <FaUserShield className="text-white text-lg" />
           </div>
           <h2 className="font-extrabold text-xl text-slate-800">
-            {isLoginTab ? "Portal Authentication" : "Register Credentials"}
+            Portal Authentication
           </h2>
           <p className="text-[11px] text-slate-400">
-            {isLoginTab ? "Access administrative settings dashboard." : "Create user or admin profile credentials."}
+            Access administrative settings dashboard.
           </p>
-        </div>
-
-        {/* Tab Headers */}
-        <div className="grid grid-cols-2 p-1 rounded-full bg-slate-100 border border-slate-200/50">
-          <button
-            onClick={() => { setIsLoginTab(true); setEmail(''); setPassword(''); }}
-            className={`py-2 text-[11px] font-bold rounded-full transition ${
-              isLoginTab 
-                ? 'bg-white text-slate-800 shadow-sm border border-slate-200/50' 
-                : 'text-slate-400 hover:text-slate-700'
-            }`}
-          >
-            Sign In
-          </button>
-          <button
-            onClick={() => { setIsLoginTab(false); setEmail(''); setPassword(''); }}
-            className={`py-2 text-[11px] font-bold rounded-full transition ${
-              !isLoginTab 
-                ? 'bg-white text-slate-800 shadow-sm border border-slate-200/50' 
-                : 'text-slate-400 hover:text-slate-700'
-            }`}
-          >
-            Create Account
-          </button>
         </div>
 
         {/* Auth Form */}
@@ -207,55 +146,13 @@ export default function Admin() {
             </div>
           </div>
 
-          {/* Confirm Password (Register Only) */}
-          {!isLoginTab && (
-            <div className="space-y-1.5 text-left">
-              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
-                  <FaLock className="text-xs" />
-                </span>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
-                  required
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Role Selection dropdown (Register Only) */}
-          {!isLoginTab && (
-            <div className="space-y-1.5 text-left">
-              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                Select Account Role
-              </label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:outline-none text-xs text-slate-700 transition cursor-pointer"
-              >
-                <option value="user">User (Standard Access)</option>
-                <option value="admin">Admin (Full Setting Access)</option>
-              </select>
-              <span className="block text-[9px] text-slate-400 italic mt-1 leading-relaxed">
-                Admins can modify site services, content descriptions, contact channels, and view user queries.
-              </span>
-            </div>
-          )}
-
           <button
             type="submit"
             disabled={loading}
             className="w-full py-3 px-4 bg-black hover:bg-slate-850 text-white font-bold rounded-full transition duration-200 text-center text-xs mt-4 flex items-center justify-center space-x-2 shadow-md shadow-black/10"
           >
-            {isLoginTab ? <FaSignInAlt className="text-xs" /> : <FaUserPlus className="text-xs" />}
-            <span>{loading ? "Authenticating..." : isLoginTab ? "Sign In" : "Register Profile"}</span>
+            <FaSignInAlt className="text-xs" />
+            <span>{loading ? "Authenticating..." : "Sign In"}</span>
           </button>
         </form>
 

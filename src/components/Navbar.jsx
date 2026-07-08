@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { FaBars, FaTimes, FaChevronDown } from 'react-icons/fa';
 import * as FaIcons from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext';
 import ufgsLogo from '../assets/images/ufgslogo.jpeg';
 import { getServices } from '../services/serviceAPI';
 
 export default function Navbar() {
-  const { currentUser, logout } = useAuth();
-  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showServicesMenu, setShowServicesMenu] = useState(false);
@@ -131,15 +128,6 @@ export default function Navbar() {
         >
           Let's Talk
         </Link>
-
-        {currentUser && (
-          <Link
-            to="/admin/dashboard"
-            className="px-4 py-2 rounded-full bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 text-[11px] font-bold transition border border-slate-200 hover:border-blue-200"
-          >
-            Console
-          </Link>
-        )}
       </div>
 
       <button
@@ -182,32 +170,6 @@ export default function Navbar() {
             >
               Let's Talk
             </Link>
-
-            {currentUser ? (
-              <>
-                <Link
-                  to="/admin/dashboard"
-                  onClick={() => setMobileOpen(false)}
-                  className="w-full text-center py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold"
-                >
-                  Admin Console
-                </Link>
-                <button
-                  onClick={() => { handleLogout(); setMobileOpen(false); }}
-                  className="w-full py-2.5 text-center text-rose-500 text-sm font-bold hover:bg-rose-50 rounded-xl transition"
-                >
-                  Log Out
-                </button>
-              </>
-            ) : (
-              <Link
-                to="/admin"
-                onClick={() => setMobileOpen(false)}
-                className="w-full text-center py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-bold"
-              >
-                Admin Login
-              </Link>
-            )}
           </div>
         </div>
       )}

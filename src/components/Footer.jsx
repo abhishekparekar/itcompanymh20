@@ -216,9 +216,6 @@ export default function Footer() {
       <div className="border-t border-slate-900/60 bg-[#080e21] py-6 z-10 relative">
         <div className="container max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-semibold">
           <p>{copyright}</p>
-          <div className="flex gap-4">
-            <Link to="/admin" className="hover:text-accent transition-colors">Admin Portal</Link>
-          </div>
         </div>
       </div>
     </footer>
