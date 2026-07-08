@@ -59,7 +59,7 @@ export default function Navbar() {
         className="flex items-center gap-2.5 select-none group flex-shrink-0"
       >
         {/* Logo image */}
-        <div className="h-10 sm:h-11 md:h-12 w-auto overflow-hidden flex items-center flex-shrink-0">
+        <div className="h-11 sm:h-12 md:h-13 w-auto overflow-hidden flex items-center flex-shrink-0">
           <img
             src={ufgsLogo}
             alt="UF Global Solutions Logo"
@@ -68,11 +68,11 @@ export default function Navbar() {
           />
         </div>
         {/* Company name — branding text */}
-        <div className="flex flex-col leading-tight">
-          <span className="text-[11px] sm:text-[12px] md:text-[13px] font-black text-primary tracking-tight whitespace-nowrap">
+        <div className="flex flex-col leading-none">
+          <span className="text-[12px] sm:text-[13px] md:text-[14px] font-black text-primary tracking-tight whitespace-nowrap">
             UF Global Solutions
           </span>
-          <span className="text-[7.5px] sm:text-[8px] font-black text-accent uppercase tracking-widest">
+          <span className="text-[8px] sm:text-[9px] font-black text-accent uppercase tracking-widest mt-0.5">
             PVT. LTD.
           </span>
         </div>
