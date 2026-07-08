@@ -17,6 +17,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const industryScrollRef = useRef(null);
+  const brandsScrollRef = useRef(null);
+  const testimonialsScrollRef = useRef(null);
 
   // Industry inquiry state
   const [selectedIndustry, setSelectedIndustry] = useState(null);
@@ -86,6 +88,38 @@ export default function Home() {
     }, 4500);
     return () => clearInterval(interval);
   }, []);
+
+  // Auto-scroll effect for Brands We Work With
+  useEffect(() => {
+    if (loading || logos.length === 0) return;
+    const interval = setInterval(() => {
+      if (brandsScrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = brandsScrollRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          brandsScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          brandsScrollRef.current.scrollBy({ left: 240, behavior: 'smooth' });
+        }
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [loading, logos]);
+
+  // Auto-scroll effect for Testimonials
+  useEffect(() => {
+    if (loading || testimonials.length === 0) return;
+    const interval = setInterval(() => {
+      if (testimonialsScrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = testimonialsScrollRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          testimonialsScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          testimonialsScrollRef.current.scrollBy({ left: 360, behavior: 'smooth' });
+        }
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [loading, testimonials]);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -455,18 +489,15 @@ export default function Home() {
           {logos.length === 0 ? (
             <p className="text-center text-xs text-slate-400">No brand logos uploaded yet.</p>
           ) : (
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={staggerContainer}
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 items-center justify-center"
+            <div 
+              ref={brandsScrollRef}
+              className="flex overflow-x-auto gap-6 pb-4 select-none scrollbar-hide scroll-smooth snap-x snap-mandatory"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {logos.map((logo, idx) => (
-                <motion.div 
-                  variants={fadeUp}
+                <div 
                   key={logo.id || idx} 
-                  className="flex items-center justify-center p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-accent/30 transition group h-20"
+                  className="w-[180px] sm:w-[220px] shrink-0 snap-start flex items-center justify-center p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-accent/30 transition group h-20"
                 >
                   <img
                     src={logo.url}
@@ -474,9 +505,9 @@ export default function Home() {
                     className="max-h-10 max-w-[80%] object-contain filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition duration-300"
                     loading="lazy"
                   />
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           )}
         </div>
       </section>
@@ -505,47 +536,43 @@ export default function Home() {
         {testimonials.length === 0 ? (
           <p className="text-center text-xs text-slate-400">No testimonials published yet.</p>
         ) : (
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            {testimonials.map((t, idx) => (
-              <motion.div 
-                variants={fadeUp}
-                key={t.id || idx} 
-                whileHover={{ y: -6 }}
-                className="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-md hover:shadow-xl hover:border-primary/25 transition-all duration-300 flex flex-col justify-between h-full space-y-6 text-left"
-              >
-                <div className="space-y-4">
-                  <div className="text-accent text-2xl flex items-center justify-between">
-                    <FaQuoteLeft className="opacity-40" />
-                    <div className="flex gap-0.5 text-amber-500 text-[10px]">
-                      {Array.from({ length: t.rating || 5 }).map((_, i) => (
-                        <FaStar key={i} />
-                      ))}
+            <div 
+              ref={testimonialsScrollRef}
+              className="flex overflow-x-auto gap-6 pb-6 select-none scrollbar-hide scroll-smooth snap-x snap-mandatory"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {testimonials.map((t, idx) => (
+                <div 
+                  key={t.id || idx} 
+                  className="w-[280px] sm:w-[320px] md:w-[360px] shrink-0 snap-start bg-white p-8 rounded-3xl border border-slate-200/80 shadow-md hover:shadow-xl hover:border-primary/25 transition-all duration-300 flex flex-col justify-between h-full space-y-6 text-left"
+                >
+                  <div className="space-y-4">
+                    <div className="text-accent text-2xl flex items-center justify-between">
+                      <FaQuoteLeft className="opacity-40" />
+                      <div className="flex gap-0.5 text-amber-500 text-[10px]">
+                        {Array.from({ length: t.rating || 5 }).map((_, i) => (
+                          <FaStar key={i} />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-slate-600 text-xs leading-relaxed italic">
+                      "{t.content}"
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center gap-3.5 border-t border-slate-100 pt-4 mt-auto">
+                    {/* Avatar circle with name initials */}
+                    <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 text-primary font-black text-[11px] flex items-center justify-center flex-shrink-0 uppercase">
+                      {t.name?.slice(0, 2) || "CL"}
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-slate-800 text-xs leading-tight">{t.name}</h4>
+                      <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">{t.role}</p>
                     </div>
                   </div>
-                  <p className="text-slate-600 text-xs leading-relaxed italic">
-                    "{t.content}"
-                  </p>
                 </div>
-                
-                <div className="flex items-center gap-3.5 border-t border-slate-100 pt-4 mt-auto">
-                  {/* Avatar circle with name initials */}
-                  <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 text-primary font-black text-[11px] flex items-center justify-center flex-shrink-0 uppercase">
-                    {t.name?.slice(0, 2) || "CL"}
-                  </div>
-                  <div>
-                    <h4 className="font-extrabold text-slate-800 text-xs leading-tight">{t.name}</h4>
-                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">{t.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+              ))}
+            </div>
         )}
       </section>
 
