@@ -185,12 +185,12 @@ export default function Home() {
   };
 
   return (
-    <div className="pb-16 bg-transparent space-y-20">
+    <div className="pb-8 bg-transparent">
       {/* Hero Header */}
       <Hero />
 
       {/* Statistics Section — Infinite Ticker */}
-      <section className="bg-dark py-10 relative overflow-hidden border-y border-slate-800">
+      <section className="bg-dark py-5 sm:py-8 relative overflow-hidden border-y border-slate-800">
         <div className="absolute inset-0 opacity-5 bg-grid-pattern" />
 
         {/* Edge fade masks */}
@@ -239,14 +239,14 @@ export default function Home() {
                   className="flex items-center"
                 >
                   {/* Stat card */}
-                  <div className="flex flex-col items-center justify-center px-8 sm:px-12 py-3 min-w-[140px] sm:min-w-[180px] text-center group">
-                    <div className="text-xl sm:text-2xl text-accent mb-1 group-hover:scale-110 transition-transform duration-200">
+                  <div className="flex flex-col items-center justify-center px-4 sm:px-8 md:px-12 py-2 min-w-[100px] sm:min-w-[140px] md:min-w-[180px] text-center group">
+                    <div className="text-sm sm:text-lg md:text-xl text-accent mb-0.5 group-hover:scale-110 transition-transform duration-200">
                       {icon}
                     </div>
-                    <div className="text-2xl sm:text-3xl font-black text-white leading-none tracking-tight">
+                    <div className="text-lg sm:text-2xl md:text-3xl font-black text-white leading-none tracking-tight">
                       {item.value}
                     </div>
-                    <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 whitespace-nowrap">
+                    <p className="text-[8px] sm:text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5 whitespace-nowrap">
                       {item.label}
                     </p>
                   </div>

@@ -34,7 +34,7 @@ export default function Hero() {
   });
 
   return (
-    <section className="relative bg-transparent grid-pattern flex items-center pt-20 pb-8 overflow-hidden">
+    <section className="relative bg-transparent grid-pattern flex items-center pt-20 pb-4 sm:pb-8 overflow-hidden">
 
       {/* Background orbs */}
       <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary-light/5 rounded-full blur-[80px] pointer-events-none z-0" />
@@ -183,7 +183,7 @@ export default function Hero() {
 
           {/* ── Mobile: small developer image ── */}
           <motion.div
-            className="lg:hidden flex justify-center mt-4"
+            className="lg:hidden flex justify-center mt-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
@@ -191,7 +191,7 @@ export default function Hero() {
             <img
               src={developerImg}
               alt="UFGS Developer"
-              className="w-52 sm:w-64 object-contain drop-shadow-xl"
+              className="w-40 sm:w-56 object-contain drop-shadow-xl"
             />
           </motion.div>
 
