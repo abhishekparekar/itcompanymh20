@@ -448,7 +448,7 @@ export default function Home() {
               <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
               <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
 
-              <div className="flex w-max animate-ticker-reverse hover:[animation-play-state:paused] gap-3 md:gap-4 py-3">
+              <div className="flex w-max animate-ticker-reverse hover:[animation-play-state:paused] gap-2 md:gap-4 py-3">
                 {logos.concat(logos).concat(logos).concat(logos).concat(logos).map((logo, idx) => (
                   <div 
                     key={idx} 
