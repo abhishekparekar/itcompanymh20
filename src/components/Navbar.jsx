@@ -67,15 +67,6 @@ export default function Navbar() {
             style={{ maxWidth: '120px' }}
           />
         </div>
-        {/* Company short name — hidden on very small screens */}
-        <span className="hidden sm:flex flex-col leading-tight">
-          <span className="text-[11px] md:text-[13px] font-extrabold text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors duration-200 whitespace-nowrap">
-            UF Global Solutions
-          </span>
-          <span className="text-[8px] md:text-[9px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">
-            Pvt. Ltd.
-          </span>
-        </span>
       </Link>
 
       <div className="hidden md:flex items-center bg-slate-100/80 py-1 px-1.5 rounded-full space-x-0.5 border border-slate-200/40">
