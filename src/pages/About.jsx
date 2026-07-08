@@ -99,7 +99,7 @@ export default function About() {
                 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]"
               >
                 Transforming Ideas <br />
-                Into <span className="gradient-text-blue font-black">Digital Reality</span>
+                Into <span className="gradient-text-red font-black">Digital Reality</span>
               </motion.h1>
 
               {/* Subtext */}

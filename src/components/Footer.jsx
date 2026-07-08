@@ -108,8 +108,8 @@ export default function Footer() {
               </div>
             </Link>
             <div className="leading-tight">
-              <p className="text-white font-extrabold text-base sm:text-lg tracking-tight">UF Global Solutions</p>
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Pvt. Ltd.</p>
+              <p className="text-white font-black text-base sm:text-lg tracking-tight">UF Global Solutions</p>
+              <p className="text-[10px] text-accent uppercase tracking-widest font-black">PVT. LTD.</p>
               <p className="text-[11px] text-slate-400 mt-1.5 max-w-[220px] sm:max-w-xs leading-relaxed">
                 {tagline || 'Smart digital solutions for modern businesses.'}
               </p>

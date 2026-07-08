@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getBlogs, seedBlogs, submitContactForm } from '../services/serviceAPI';
 import { toast, ToastContainer } from 'react-toastify';
+import videoBg from '../assets/video/animation3.mp4';
 
 const CATEGORIES = [
   "ALL",
@@ -74,13 +75,35 @@ export default function Blog() {
   );
 
   return (
-    <div className="pb-24 bg-transparent min-h-[90vh]">
+    <div className="pb-24 bg-transparent min-h-screen">
       
       {/* Blog Page Hero Header */}
-      <section className="relative pt-32 pb-14 bg-transparent grid-pattern text-center overflow-hidden">
+      <section className="bg-slate-950 text-white relative overflow-hidden min-h-[60vh] flex items-center pt-24 pb-14 sm:pt-32 sm:pb-20 text-center">
+        {/* Background Video */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src={videoBg} type="video/mp4" />
+        </video>
+
+        {/* Transparent dark overlay for readability */}
+        <div className="absolute inset-0 bg-slate-950/30 z-0" />
+        <div
+          className="absolute inset-0 z-0 opacity-10"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
         
-        {/* Glow spots */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-80 h-80 bg-primary/5 rounded-full blur-[80px] pointer-events-none z-0" />
+        {/* Animated ambient glowing circles */}
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/15 rounded-full blur-[120px] pointer-events-none z-0 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-sky-500/10 rounded-full blur-[90px] pointer-events-none z-0" />
 
         <div className="container max-w-5xl mx-auto px-6 relative z-10 space-y-6">
           
@@ -88,9 +111,10 @@ export default function Blog() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-wider mx-auto select-none"
+            className="inline-flex items-center gap-2 text-[10px] font-bold text-sky-300 uppercase tracking-widest bg-sky-950/50 backdrop-blur-md px-4 py-2 rounded-full border border-sky-500/20 shadow-[0_0_15px_rgba(56,189,248,0.15)] mx-auto select-none"
           >
-            <span>💡</span> Insights & Articles
+            <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse inline-block" />
+            Insights & Articles
           </motion.div>
 
           {/* Heading Title */}
@@ -98,9 +122,9 @@ export default function Blog() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-tight"
+            className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight drop-shadow-sm filter"
           >
-            Latest SEO & <span className="gradient-text-blue font-black">Technology Blogs</span>
+            Latest SEO & <span className="gradient-text-red font-black">Technology Blogs</span>
           </motion.h1>
 
           {/* Subtext description */}
@@ -108,7 +132,7 @@ export default function Blog() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="max-w-2xl mx-auto text-xs md:text-sm text-slate-500 leading-relaxed font-medium"
+            className="max-w-2xl mx-auto text-xs md:text-sm text-slate-200 leading-relaxed font-medium"
           >
             Expert strategies, software guides, website templates, and technological automation reviews for small and large-scale enterprises.
           </motion.p>
@@ -124,10 +148,10 @@ export default function Blog() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-200 border cursor-pointer ${
+                className={`px-4 py-2 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 border cursor-pointer backdrop-blur-sm ${
                   selectedCategory === cat
-                    ? 'bg-primary border-primary text-white shadow-md shadow-primary/10'
-                    : 'bg-white border-slate-200 text-slate-600 hover:text-slate-800 hover:border-slate-350'
+                    ? 'bg-gradient-to-r from-blue-600 to-sky-500 border-transparent text-white shadow-lg shadow-blue-500/25 active:scale-95'
+                    : 'bg-slate-950/40 border-white/10 text-slate-300 hover:text-white hover:bg-slate-900/60 hover:border-white/20 active:scale-95'
                 }`}
               >
                 {cat}

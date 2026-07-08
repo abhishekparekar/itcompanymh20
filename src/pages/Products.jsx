@@ -125,7 +125,7 @@ export default function Products() {
                 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]"
               >
                 Complete Business Solutions <br />
-                <span className="gradient-text-blue font-black">For Modern Companies</span>
+                <span className="gradient-text-red font-black">For Modern Companies</span>
               </motion.h1>
 
               {/* Subtext */}

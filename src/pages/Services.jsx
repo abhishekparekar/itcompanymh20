@@ -5,6 +5,7 @@ import ServiceCard from "../components/ServiceCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import { FaPaperPlane, FaPhoneAlt, FaEnvelope, FaClock, FaCheckCircle, FaLaptopCode, FaAndroid, FaApple, FaTools, FaBrain, FaCloud } from "react-icons/fa";
+import videoBg from "../assets/video/animation2.mp4";
 
 export default function Services() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -114,38 +115,59 @@ export default function Services() {
   const labelClass = "block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1";
 
   return (
-    <div className="space-y-8 pb-16">
+    <div className="space-y-8 pb-16 min-h-screen bg-transparent">
       <ToastContainer position="top-right" autoClose={3000} theme="light" />
 
       {/* Services Hero Header */}
-      <section className="relative pt-28 pb-12 bg-gradient-to-br from-[#001f42] via-[#002A54] to-[#003d7a] overflow-hidden text-center text-white">
-        <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-400/10 rounded-full blur-[100px] pointer-events-none z-0" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-sky-400/10 rounded-full blur-[70px] pointer-events-none z-0" />
+      <section className="bg-slate-950 text-white relative overflow-hidden min-h-[60vh] flex items-center pt-24 pb-14 sm:pt-32 sm:pb-20 text-center">
+        {/* Background Video */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src={videoBg} type="video/mp4" />
+        </video>
+
+        {/* Transparent dark overlay for readability */}
+        <div className="absolute inset-0 bg-slate-950/30 z-0" />
+        <div
+          className="absolute inset-0 z-0 opacity-10"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+        
+        {/* Animated ambient glowing circles */}
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/15 rounded-full blur-[120px] pointer-events-none z-0 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-sky-500/10 rounded-full blur-[90px] pointer-events-none z-0" />
 
         <div className="container max-w-7xl mx-auto px-4 relative z-10">
           <motion.span 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-blue-300 uppercase tracking-widest mb-2"
+            className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-sky-300 uppercase tracking-widest bg-sky-950/50 backdrop-blur-md px-4 py-2 rounded-full border border-sky-500/20 shadow-[0_0_15px_rgba(56,189,248,0.15)] mx-auto select-none mb-3 animate-pulse"
           >
-            <span className="w-4 h-px bg-blue-400 inline-block" />
+            <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse inline-block" />
             Capabilities & Portfolios
-            <span className="w-4 h-px bg-blue-400 inline-block" />
           </motion.span>
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black mb-3"
+            className="text-3xl sm:text-4xl md:text-5xl font-black mb-3 text-white leading-tight drop-shadow-sm filter"
           >
-            Our Enterprise <span className="text-sky-400">Services</span>
+            Our Enterprise <span className="gradient-text-red font-black">Services</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-blue-100/80 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed"
+            className="text-slate-200 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed font-medium"
           >
             We deliver state-of-the-art software systems, web engineering workflows, and intelligent integrations built to scale.
           </motion.p>

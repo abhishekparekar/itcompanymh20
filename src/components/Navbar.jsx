@@ -41,8 +41,8 @@ export default function Navbar() {
   const navLinkClass = ({ isActive }) =>
     `text-[11px] font-bold uppercase tracking-wide transition-all duration-200 px-3.5 py-1.5 rounded-full whitespace-nowrap ${
       isActive
-        ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
-        : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
+        ? 'bg-accent text-white shadow-sm shadow-accent/25'
+        : 'text-slate-700 hover:text-white hover:bg-accent'
     }`;
 
   return (
@@ -69,11 +69,11 @@ export default function Navbar() {
         </div>
         {/* Company name — branding text */}
         <div className="hidden sm:flex flex-col leading-tight">
-          <span className="text-[12px] md:text-[13px] font-extrabold text-slate-800 tracking-tight whitespace-nowrap group-hover:text-blue-600 transition-colors">
+          <span className="text-[12px] md:text-[13px] font-black text-primary tracking-tight whitespace-nowrap">
             UF Global Solutions
           </span>
-          <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">
-            Pvt. Ltd.
+          <span className="text-[8px] font-black text-accent uppercase tracking-widest">
+            PVT. LTD.
           </span>
         </div>
       </Link>
@@ -93,8 +93,8 @@ export default function Navbar() {
             className={({ isActive }) =>
               `text-[11px] font-bold uppercase tracking-wide transition-all duration-200 flex items-center gap-1 px-3.5 py-1.5 rounded-full whitespace-nowrap ${
                 isActive || showServicesMenu
-                  ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
-                  : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
+                  ? 'bg-accent text-white shadow-sm shadow-accent/25'
+                  : 'text-slate-700 hover:text-white hover:bg-accent'
               }`
             }
           >
@@ -114,13 +114,13 @@ export default function Navbar() {
                       key={item.id}
                       to={`/services?id=${item.id}`}
                       onClick={() => setShowServicesMenu(false)}
-                      className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-blue-50 transition group"
+                      className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-accent/10 transition group"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+                      <div className="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs group-hover:bg-accent group-hover:text-white transition-colors duration-200">
                         <IconComp />
                       </div>
                       <div>
-                        <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight group-hover:text-blue-600">{item.title}</h5>
+                        <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight group-hover:text-accent">{item.title}</h5>
                         <p className="text-[9px] text-slate-400 mt-0.5 font-medium line-clamp-1">{item.description}</p>
                       </div>
                     </Link>
@@ -139,7 +139,7 @@ export default function Navbar() {
       <div className="hidden md:flex items-center space-x-2">
         <Link
           to="/contact"
-          className="px-5 py-2 text-[11px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-blue-600 to-sky-400 hover:from-blue-700 hover:to-sky-500 text-white rounded-full transition-all duration-300 shadow-md shadow-blue-500/20 hover:-translate-y-0.5"
+          className="px-5 py-2 text-[11px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-accent to-accent-dark hover:from-accent-dark hover:to-accent text-white rounded-full transition-all duration-300 shadow-md shadow-accent/20 hover:-translate-y-0.5"
         >
           Let's Talk
         </Link>
@@ -147,7 +147,7 @@ export default function Navbar() {
 
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="md:hidden p-2 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition"
+        className="md:hidden p-2 rounded-lg text-slate-600 hover:text-white hover:bg-accent focus:outline-none transition"
       >
         {mobileOpen ? <FaTimes className="text-lg" /> : <FaBars className="text-lg" />}
       </button>
@@ -169,7 +169,7 @@ export default function Navbar() {
               onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
                 `block px-4 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wide transition ${
-                  isActive ? 'bg-blue-600 text-white' : 'text-slate-700 hover:bg-blue-50 hover:text-blue-600'
+                  isActive ? 'bg-accent text-white' : 'text-slate-700 hover:bg-accent hover:text-white'
                 }`
               }
             >
@@ -181,7 +181,7 @@ export default function Navbar() {
             <Link
               to="/contact"
               onClick={() => setMobileOpen(false)}
-              className="w-full text-center py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-400 text-white text-sm font-bold shadow"
+              className="w-full text-center py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-dark text-white text-sm font-bold shadow shadow-accent/15"
             >
               Let's Talk
             </Link>

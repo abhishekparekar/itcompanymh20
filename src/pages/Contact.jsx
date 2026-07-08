@@ -5,6 +5,7 @@ import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp } from "react-
 import { COMPANY } from "../constants";
 import { ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
+import videoBg2 from "../assets/video/animation4.mp4";
 
 export default function Contact() {
   const [email, setEmail] = useState(COMPANY.email);
@@ -77,73 +78,121 @@ export default function Contact() {
       <ToastContainer position="top-right" autoClose={3000} theme="light" />
 
       {/* ── Hero Banner ── */}
-      <section className="relative pt-24 pb-8 sm:pt-28 sm:pb-10 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#001f42] via-[#002A54] to-[#003d7a] z-0" />
+      <section className="relative pt-24 pb-14 sm:pt-32 sm:pb-20 overflow-hidden min-h-[60vh] flex items-center">
+        {/* Background Video */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src={videoBg2} type="video/mp4" />
+        </video>
+
+        {/* Transparent dark overlay for readability */}
+        <div className="absolute inset-0 bg-slate-950/30 z-0" />
         <div
           className="absolute inset-0 z-0 opacity-10"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)",
+              "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
             backgroundSize: "28px 28px",
           }}
         />
-        <div className="absolute top-0 right-0 w-64 sm:w-[400px] h-64 sm:h-[400px] bg-blue-400/10 rounded-full blur-[100px] pointer-events-none z-0" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-            <span className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-blue-300 uppercase tracking-widest mb-3">
-              <span className="w-5 h-px bg-blue-400 inline-block" />
-              Contact Us
-              <span className="w-5 h-px bg-blue-400 inline-block" />
-            </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight mb-3">
-              Let's Build Something
-              <span className="block text-sky-400">Great Together</span>
-            </h1>
-            <p className="max-w-md mx-auto text-blue-100/80 text-xs sm:text-sm leading-relaxed">
-              Questions about our IT services, training, or staffing? Our expert team is ready to help.
-            </p>
-          </motion.div>
+        {/* Ambient glows */}
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/15 rounded-full blur-[120px] pointer-events-none z-0 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-sky-500/10 rounded-full blur-[90px] pointer-events-none z-0" />
 
-          {/* Quick stat pills */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10 text-center w-full">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.5 }}
-            className="flex flex-wrap justify-center gap-2 mt-5"
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="flex flex-col items-center gap-5"
           >
-            {[
-              { num: "185+", label: "Projects" },
-              { num: "103+", label: "Clients" },
-              { num: "24h", label: "Response" },
-              { num: "7+", label: "Cities" },
-            ].map((s) => (
-              <div key={s.label} className="bg-white/8 border border-white/10 rounded-2xl px-4 py-2.5 text-center min-w-[72px]">
-                <p className="text-lg sm:text-2xl font-black text-sky-400">{s.num}</p>
-                <p className="text-[9px] text-blue-200 font-semibold uppercase tracking-wide">{s.label}</p>
-              </div>
-            ))}
+            <motion.span
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 text-[11px] font-bold text-sky-300 uppercase tracking-widest bg-sky-950/50 backdrop-blur-md px-4 py-2 rounded-full border border-sky-500/20 shadow-[0_0_15px_rgba(56,189,248,0.15)]"
+            >
+              <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse inline-block" />
+              Contact Us
+            </motion.span>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight tracking-tight"
+              style={{ textShadow: "0 0 60px rgba(169,29,34,0.3), 0 2px 20px rgba(0,0,0,0.6)" }}
+            >
+              Let's Build Something{" "}
+              <span className="gradient-text-red font-black">
+                Great Together
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="max-w-xl text-slate-200 text-sm sm:text-base leading-relaxed font-medium"
+              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
+            >
+              Questions about our IT services, training, or staffing? Our expert team is ready to help.
+            </motion.p>
+
+            {/* Quick stat pills */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="flex flex-wrap justify-center gap-3 mt-2"
+            >
+              {[
+                { num: "185+", label: "Projects" },
+                { num: "103+", label: "Clients" },
+                { num: "24h", label: "Response" },
+                { num: "7+", label: "Cities" },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl px-5 py-3 text-center min-w-[80px] hover:bg-white/15 transition-all duration-300"
+                >
+                  <p className="text-xl sm:text-2xl font-black text-accent" style={{ textShadow: "0 0 20px rgba(169,29,34,0.5)" }}>{s.num}</p>
+                  <p className="text-[9px] text-blue-200 font-bold uppercase tracking-widest mt-0.5">{s.label}</p>
+                </div>
+              ))}
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
       {/* ── Main Content ── */}
-      <section className="relative pb-8 sm:pb-10 -mt-2">
+      <section className="relative pb-16 sm:pb-20 pt-12 sm:pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-            {/* LEFT: Contact Info + Map */}
+            {/* LEFT: Contact Info */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="lg:col-span-5 space-y-4"
+              className="lg:col-span-5 space-y-5"
             >
-              <div className="bg-white rounded-3xl shadow-lg border border-slate-100 p-5 sm:p-6 space-y-4">
+              <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 p-6 sm:p-7 space-y-5 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-sky-400" />
                 <div>
-                  <h2 className="text-lg font-extrabold text-slate-800">Contact Channels</h2>
-                  <p className="text-slate-400 text-xs mt-0.5">Reach our team directly.</p>
+                  <span className="inline-flex items-center gap-2 text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                    Direct Contact
+                  </span>
+                  <h2 className="text-xl font-extrabold text-slate-800">Contact Channels</h2>
+                  <p className="text-slate-400 text-xs mt-1">Reach our team directly.</p>
                 </div>
 
                 {loading ? (
@@ -151,23 +200,23 @@ export default function Contact() {
                     <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : (
-                  <div className="space-y-2.5">
+                  <div className="space-y-3">
                     {contactItems.map((item) => (
                       <div
                         key={item.label}
-                        className="flex items-start gap-3 p-3.5 bg-slate-50 hover:bg-blue-50/50 border border-slate-100 hover:border-blue-200 rounded-2xl transition-all duration-200"
+                        className="flex items-start gap-3.5 p-4 bg-slate-50/80 hover:bg-blue-50/60 border border-slate-100 hover:border-blue-200/70 rounded-2xl transition-all duration-300 group"
                       >
-                        <div className={`w-9 h-9 ${item.bg} rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                        <div className={`w-10 h-10 ${item.bg} rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow duration-300`}>
                           {item.icon}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{item.label}</p>
+                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">{item.label}</p>
                           {item.clickable ? (
-                            <a href={item.href} className="text-slate-800 font-extrabold text-xs hover:text-blue-600 transition break-all">
+                            <a href={item.href} className="text-slate-800 font-extrabold text-sm hover:text-blue-600 transition-colors duration-200 break-all">
                               {item.value}
                             </a>
                           ) : (
-                            <p className="text-slate-700 font-semibold text-xs leading-relaxed">{item.value}</p>
+                            <p className="text-slate-700 font-semibold text-sm leading-relaxed">{item.value}</p>
                           )}
                         </div>
                       </div>
@@ -179,14 +228,12 @@ export default function Contact() {
                   href={`https://wa.me/${COMPANY.whatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider transition-all shadow-md shadow-emerald-500/20 hover:-translate-y-0.5"
+                  className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-extrabold uppercase tracking-wider transition-all duration-300 shadow-lg shadow-emerald-500/20 hover:-translate-y-0.5 active:scale-95"
                 >
-                  <FaWhatsapp className="text-base" />
+                  <FaWhatsapp className="text-lg" />
                   Chat on WhatsApp
                 </a>
               </div>
-
-
             </motion.div>
 
             {/* RIGHT: Contact Form */}
@@ -197,14 +244,15 @@ export default function Contact() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="lg:col-span-7"
             >
-              <div className="bg-white rounded-3xl shadow-lg border border-slate-100 p-4 sm:p-6">
-                <div className="mb-4 pb-4 border-b border-slate-100">
-                  <span className="inline-flex items-center gap-2 text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">
-                    <span className="w-4 h-px bg-blue-400 inline-block" />
+              <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 p-6 sm:p-8 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sky-400 to-blue-600" />
+                <div className="mb-6 pb-5 border-b border-slate-100">
+                  <span className="inline-flex items-center gap-2 text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-2">
+                    <span className="w-2 h-2 rounded-full bg-sky-500" />
                     Send a Message
                   </span>
-                  <h2 className="text-lg font-extrabold text-slate-800">Submit Your Inquiry</h2>
-                  <p className="text-slate-400 text-xs mt-0.5">We respond within 24 business hours.</p>
+                  <h2 className="text-xl font-extrabold text-slate-800">Submit Your Inquiry</h2>
+                  <p className="text-slate-400 text-xs mt-1">We respond within 24 business hours.</p>
                 </div>
                 <ContactForm />
               </div>

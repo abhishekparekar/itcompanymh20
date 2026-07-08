@@ -57,7 +57,7 @@ export default function Hero() {
             {/* Heading */}
             <motion.h1 variants={item} className="text-[28px] font-black text-slate-900 tracking-tight leading-[1.15]">
               Building Smart Digital Solutions{' '}
-              <span className="gradient-text-blue">for Modern Businesses</span>
+              <span className="gradient-text-red">for Modern Businesses</span>
             </motion.h1>
 
             {/* Description */}
@@ -126,7 +126,7 @@ export default function Hero() {
 
             <motion.h1 variants={item} className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">
               Building Smart Digital Solutions{' '}
-              <span className="gradient-text-blue font-black">for Modern Businesses</span>
+              <span className="gradient-text-red font-black">for Modern Businesses</span>
             </motion.h1>
 
             <motion.p variants={item} className="text-slate-500 text-sm leading-relaxed max-w-lg">

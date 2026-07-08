@@ -344,7 +344,7 @@ export default function Home() {
               Targeted Verticals
             </span>
             <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">
-              Industries We <span className="gradient-text-blue font-black">Power & Scale</span>
+              Industries We <span className="gradient-text-red font-black">Power & Scale</span>
             </h2>
             <div className="w-12 h-1 bg-accent mb-3" />
             <p className="text-slate-500 text-xs leading-relaxed max-w-md">
@@ -708,7 +708,7 @@ export default function Home() {
                 </span>
                 <h2 className="text-3xl md:text-4xl font-black leading-tight mb-4">
                   Let's Build Something
-                  <span className="block text-sky-400">Great Together</span>
+                  <span className="block gradient-text-red">Great Together</span>
                 </h2>
                 <p className="text-blue-100/80 text-sm leading-relaxed max-w-md">
                   Have a project in mind? Fill out the form and our team of expert engineers will reach out within 24 hours to discuss your requirements.
