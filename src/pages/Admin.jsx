@@ -126,13 +126,13 @@ export default function Admin() {
       <ToastContainer position="top-right" autoClose={4000} theme="colored" />
 
       {/* Decorative subtle background gradient */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-[#0b4a8f]/5 rounded-full blur-[80px] pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-primary/5 rounded-full blur-[80px] pointer-events-none"></div>
 
       <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-8 max-w-md w-full relative z-10 space-y-6">
         
         {/* Logo and Brand */}
         <div className="text-center space-y-2">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#0b4a8f] to-[#1e6ebf] flex items-center justify-center mx-auto shadow-md">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center mx-auto shadow-md">
             <FaUserShield className="text-white text-lg" />
           </div>
           <h2 className="font-extrabold text-xl text-slate-800">
@@ -182,7 +182,7 @@ export default function Admin() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="developer@itsolution.com"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#0b4a8f] focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
                 required
               />
             </div>
@@ -201,7 +201,7 @@ export default function Admin() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#0b4a8f] focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
                 required
               />
             </div>
@@ -222,7 +222,7 @@ export default function Admin() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#0b4a8f] focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
                   required
                 />
               </div>
@@ -238,7 +238,7 @@ export default function Admin() {
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#0b4a8f] focus:outline-none text-xs text-slate-700 transition cursor-pointer"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:outline-none text-xs text-slate-700 transition cursor-pointer"
               >
                 <option value="user">User (Standard Access)</option>
                 <option value="admin">Admin (Full Setting Access)</option>

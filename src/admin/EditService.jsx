@@ -87,32 +87,19 @@ export default function EditService({ serviceId, onSuccess }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-gray-950/40 p-6 md:p-8 rounded-3xl border border-gray-900">
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            Service Title Name
-          </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Cloud Cost Optimization Audit"
-            className="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-900 focus:border-[#82b443] focus:outline-none text-sm text-white placeholder-gray-700 transition"
-            required
-          />
+    <form onSubmit={handleSubmit} className="space-y-5 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Service Title *</label>
+          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g. Cloud Cost Optimization"
+            className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+            required />
         </div>
-
-        <div className="space-y-2">
-          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            Choose Graphic Icon Symbol
-          </label>
-          <select
-            value={icon}
-            onChange={(e) => setIcon(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-900 focus:border-[#82b443] focus:outline-none text-sm text-white transition cursor-pointer"
-          >
+        <div>
+          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Icon Symbol</label>
+          <select value={icon} onChange={(e) => setIcon(e.target.value)}
+            className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition cursor-pointer">
             {iconsList.map((item) => (
               <option key={item.value} value={item.value}>{item.label}</option>
             ))}
@@ -120,59 +107,38 @@ export default function EditService({ serviceId, onSuccess }) {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">
-          Service Cover Image URL (Unsplash or direct image link)
-        </label>
-        <input
-          type="url"
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
-          placeholder="e.g. https://images.unsplash.com/photo..."
-          className="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-900 focus:border-[#82b443] focus:outline-none text-sm text-white placeholder-gray-750 transition"
-        />
+      <div>
+        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cover Image URL (optional)</label>
+        <input type="url" value={image} onChange={(e) => setImage(e.target.value)}
+          placeholder="Leave blank to keep existing image..."
+          className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition" />
       </div>
 
-      <div className="space-y-2">
-        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">
-          Brief Teaser Description (Max 150 characters)
-        </label>
-        <input
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Short summary displayed on catalog cards grid..."
-          className="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-900 focus:border-[#82b443] focus:outline-none text-sm text-white placeholder-gray-705 transition"
-          required
-        />
+      <div>
+        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Brief Description *</label>
+        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)}
+          placeholder="Short summary shown on service cards..."
+          className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+          required />
       </div>
 
-      <div className="space-y-2">
-        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">
-          Detailed Solution Specifications (markdown or long text)
-        </label>
-        <textarea
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
-          rows="6"
-          placeholder="Detailed explanation, setup methods, specs..."
-          className="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-900 focus:border-[#82b443] focus:outline-none text-sm text-white placeholder-gray-705 transition resize-none"
-          required
-        ></textarea>
+      <div>
+        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Detailed Specifications *</label>
+        <textarea value={details} onChange={(e) => setDetails(e.target.value)}
+          rows="5" placeholder="Comprehensive engineering details, SLAs, setup methods..."
+          className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition resize-none"
+          required />
       </div>
 
-      <div className="pt-4 flex justify-end">
-        <button
-          type="submit"
-          disabled={submitting}
-          className="py-3.5 px-6 bg-[#82b443] hover:bg-[#689433] disabled:bg-gray-800 text-white text-xs font-bold rounded-xl transition flex items-center space-x-2 shadow"
-        >
-          <FaEdit className="text-xs" />
-          <span>{submitting ? "Saving Config..." : "Save Config Details"}</span>
+      <div className="flex justify-end pt-2">
+        <button type="submit" disabled={submitting}
+          className="py-2.5 px-6 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-xs font-bold rounded-lg transition flex items-center gap-2 shadow-md shadow-blue-500/20 w-full sm:w-auto justify-center">
+          <FaEdit className="text-xs flex-shrink-0" />
+          {submitting ? "Saving..." : "Save Changes"}
         </button>
       </div>
-
     </form>
   );
 }
+
 

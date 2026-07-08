@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { submitContactForm } from '../services/serviceAPI';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import { submitContactForm } from "../services/serviceAPI";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ContactForm() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [subject, setSubject] = useState('');
-  const [message, setMessage] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -17,22 +17,11 @@ export default function ContactForm() {
       toast.error("Please fill in all required fields (*).");
       return;
     }
-
     setSubmitting(true);
     try {
-      await submitContactForm({
-        name,
-        email,
-        phone,
-        subject,
-        message
-      });
+      await submitContactForm({ name, email, phone, subject, message });
       toast.success("Thank you! Your message has been sent successfully.");
-      setName('');
-      setEmail('');
-      setPhone('');
-      setSubject('');
-      setMessage('');
+      setName(""); setEmail(""); setPhone(""); setSubject(""); setMessage("");
     } catch (err) {
       console.error(err);
       toast.error("Failed to submit message. Please try again later.");
@@ -41,93 +30,52 @@ export default function ContactForm() {
     }
   };
 
+  const inputClass = "w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition bg-slate-50 hover:bg-white";
+  const labelClass = "block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1";
+
   return (
-    <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl shadow-slate-100 border border-slate-200 text-left">
+    <div className="text-left">
       <ToastContainer position="top-right" autoClose={3000} />
-      
-      <h3 className="text-xl font-bold text-[#0b4a8f] mb-2">Send Us a Message</h3>
-      <p className="text-xs text-slate-500 mb-6">We will get back to you within 24 hours.</p>
-      
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-              Full Name *
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. John Doe"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#0b4a8f] focus:ring-1 focus:ring-[#0b4a8f] focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
-              required
-            />
+          <div>
+            <label className={labelClass}>Full Name *</label>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. John Doe" className={inputClass} required />
           </div>
-
-          <div className="space-y-1">
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-              Email Address *
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g. john@example.com"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#0b4a8f] focus:ring-1 focus:ring-[#0b4a8f] focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
-              required
-            />
+          <div>
+            <label className={labelClass}>Email Address *</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+              placeholder="e.g. john@example.com" className={inputClass} required />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="e.g. +91 98765 43210"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#0b4a8f] focus:ring-1 focus:ring-[#0b4a8f] focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
-            />
+          <div>
+            <label className={labelClass}>Phone Number</label>
+            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
+              placeholder="e.g. +91 98765 43210" className={inputClass} />
           </div>
-
-          <div className="space-y-1">
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-              Subject *
-            </label>
-            <input
-              type="text"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              placeholder="e.g. Project Inquiry"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#0b4a8f] focus:ring-1 focus:ring-[#0b4a8f] focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition"
-              required
-            />
+          <div>
+            <label className={labelClass}>Subject *</label>
+            <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)}
+              placeholder="e.g. Project Inquiry" className={inputClass} required />
           </div>
         </div>
 
-        <div className="space-y-1">
-          <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-            Detailed Message *
-          </label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows="5"
-            placeholder="Type details about your requirements, project scope, timelines..."
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#0b4a8f] focus:ring-1 focus:ring-[#0b4a8f] focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition resize-none"
-            required
-          ></textarea>
+        <div>
+          <label className={labelClass}>Your Message *</label>
+          <textarea value={message} onChange={(e) => setMessage(e.target.value)}
+            rows="4" placeholder="Tell us about your project, requirements, timelines..."
+            className={inputClass + " resize-none"} required />
         </div>
 
         <button
           type="submit"
           disabled={submitting}
-          className="w-full btn-primary justify-center py-3 text-xs font-bold rounded-xl"
+          className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white text-xs font-extrabold uppercase tracking-wider transition-all duration-300 shadow-lg shadow-blue-500/20 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          {submitting ? "Sending message..." : "Send Message"}
+          {submitting ? "Sending..." : "Send Message"}
         </button>
       </form>
     </div>

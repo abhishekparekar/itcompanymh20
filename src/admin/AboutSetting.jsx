@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { getSiteSettings, updateSiteSettings } from '../services/serviceAPI';
 import { toast } from 'react-toastify';
 import { FaSave, FaChartBar, FaBullseye, FaEye } from 'react-icons/fa';
@@ -75,35 +75,36 @@ export default function AboutSetting() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-10">
-        <div className="w-8 h-8 border-4 border-[#82b443] border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex justify-center items-center py-10 bg-white rounded-2xl border border-slate-200">
+        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
+  const inputClass = "w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition";
+  const labelClass = "block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 bg-gray-950/40 p-6 md:p-8 rounded-3xl border border-gray-900">
+    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm text-left">
       
       {/* Description */}
-      <div className="space-y-2">
-        <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
-          Company Description Summary
-        </label>
+      <div className="space-y-1">
+        <label className={labelClass}>Company Description Summary</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows="4"
           placeholder="Brief explanation of corporate history and capabilities..."
-          className="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-900 focus:border-[#82b443] focus:outline-none text-sm text-white placeholder-gray-600 transition resize-none"
+          className={inputClass + " resize-none"}
           required
         ></textarea>
       </div>
 
       {/* Mission & Vision */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="flex items-center space-x-2 text-xs font-semibold text-gray-300 uppercase tracking-wider">
-            <FaBullseye className="text-indigo-400 text-xs" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <label className="flex items-center space-x-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+            <FaBullseye className="text-blue-500 text-xs" />
             <span>Corporate Mission Statement</span>
           </label>
           <textarea
@@ -111,14 +112,14 @@ export default function AboutSetting() {
             onChange={(e) => setMission(e.target.value)}
             rows="3"
             placeholder="Empower clients through robust engineering..."
-            className="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-900 focus:border-[#82b443] focus:outline-none text-sm text-white placeholder-gray-600 transition resize-none"
+            className={inputClass + " resize-none"}
             required
           ></textarea>
         </div>
 
-        <div className="space-y-2">
-          <label className="flex items-center space-x-2 text-xs font-semibold text-gray-300 uppercase tracking-wider">
-            <FaEye className="text-indigo-400 text-xs" />
+        <div className="space-y-1">
+          <label className="flex items-center space-x-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+            <FaEye className="text-blue-500 text-xs" />
             <span>Corporate Vision Statement</span>
           </label>
           <textarea
@@ -126,42 +127,42 @@ export default function AboutSetting() {
             onChange={(e) => setVision(e.target.value)}
             rows="3"
             placeholder="To be the global benchmark of IT engineering..."
-            className="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-900 focus:border-[#82b443] focus:outline-none text-sm text-white placeholder-gray-600 transition resize-none"
+            className={inputClass + " resize-none"}
             required
           ></textarea>
         </div>
       </div>
 
       {/* Key Metrics / Stats */}
-      <div className="space-y-4 pt-4 border-t border-gray-900">
-        <h3 className="flex items-center space-x-2 text-xs font-semibold text-gray-300 uppercase tracking-wider">
-          <FaChartBar className="text-indigo-400 text-xs" />
+      <div className="space-y-4 pt-4 border-t border-slate-100">
+        <h3 className="flex items-center space-x-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+          <FaChartBar className="text-blue-500 text-xs" />
           <span>Dynamic Stats Panel (4 stats required)</span>
         </h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map((stat, i) => (
-            <div key={i} className="p-4 bg-gray-950 border border-gray-900 rounded-xl space-y-3">
-              <span className="text-[10px] uppercase font-bold text-gray-550 block">Stat #{i + 1}</span>
+            <div key={i} className="p-4 bg-slate-50 border border-slate-200/60 rounded-xl space-y-3">
+              <span className="text-[10px] uppercase font-bold text-blue-600 block">Stat #{i + 1}</span>
               <div>
-                <label className="block text-[9px] text-gray-500 uppercase tracking-wider mb-1">Value (e.g. 100+)</label>
+                <label className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1">Value (e.g. 100+)</label>
                 <input
                   type="text"
                   value={stat.value}
                   onChange={(e) => handleStatChange(i, 'value', e.target.value)}
                   placeholder="300+"
-                  className="w-full px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-700 transition"
+                  className={inputClass}
                   required
                 />
               </div>
               <div>
-                <label className="block text-[9px] text-gray-500 uppercase tracking-wider mb-1">Label (e.g. Projects)</label>
+                <label className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1">Label (e.g. Projects)</label>
                 <input
                   type="text"
                   value={stat.label}
                   onChange={(e) => handleStatChange(i, 'label', e.target.value)}
                   placeholder="Cloud Installs"
-                  className="w-full px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-700 transition"
+                  className={inputClass}
                   required
                 />
               </div>
@@ -171,18 +172,17 @@ export default function AboutSetting() {
       </div>
 
       {/* Action Button */}
-      <div className="pt-6 border-t border-gray-900 flex justify-end">
+      <div className="pt-4 border-t border-slate-100 flex justify-end">
         <button
           type="submit"
           disabled={saving}
-          className="py-3 px-6 bg-[#82b443] hover:bg-[#689433] disabled:bg-gray-800 text-white text-xs font-bold rounded-xl transition flex items-center space-x-2 shadow"
+          className="w-full sm:w-auto py-2.5 px-6 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white text-xs font-bold rounded-lg transition flex items-center justify-center space-x-2 shadow-md shadow-blue-500/20"
         >
           <FaSave className="text-xs" />
-          <span>{saving ? "Saving Changes..." : "Update Settings"}</span>
+          <span>{saving ? "Saving..." : "Update Settings"}</span>
         </button>
       </div>
 
     </form>
   );
 }
-

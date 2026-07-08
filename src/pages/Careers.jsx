@@ -105,11 +105,11 @@ export default function Careers() {
   const categories = Array.from(new Set(jobs.map(job => job.category))).filter(Boolean);
 
   return (
-    <div className="pt-28 pb-12 min-h-screen bg-slate-50">
+    <div className="pt-28 pb-12 min-h-screen bg-transparent">
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
       
       {/* Banner: partner for talent. */}
-      <div className="bg-[#0B1E36] text-white py-16 relative overflow-hidden">
+      <div className="bg-primary text-white py-16 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-grid-pattern" />
         <div className="container max-w-7xl mx-auto px-6 relative z-10 text-left space-y-6">
           <h1 className="text-4xl md:text-6xl font-light tracking-tight text-white mb-8">
@@ -220,7 +220,7 @@ export default function Careers() {
                     return prev;
                   });
                 }}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 cursor-pointer focus:border-[#0b4a8f] focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 cursor-pointer focus:border-primary focus:outline-none"
               >
                 <option value="">All Categories</option>
                 {categories.map((cat) => (
@@ -244,7 +244,7 @@ export default function Careers() {
                     return prev;
                   });
                 }}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 cursor-pointer focus:border-[#0b4a8f] focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 cursor-pointer focus:border-primary focus:outline-none"
               >
                 <option value="">All Types</option>
                 <option value="Permanent">Permanent</option>
@@ -280,7 +280,7 @@ export default function Careers() {
 
           {loading ? (
             <div className="flex justify-center py-20">
-              <div className="w-10 h-10 border-4 border-[#0b4a8f] border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : filteredJobs.length === 0 ? (
             <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 space-y-4">
@@ -299,10 +299,10 @@ export default function Careers() {
                 >
                   <div className="space-y-3 flex-grow">
                     <div className="flex flex-wrap gap-2 items-center">
-                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#0b4a8f]/10 border border-[#0b4a8f]/20 text-[#0b4a8f]">
+                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary">
                         {job.category}
                       </span>
-                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#82b443]/10 border border-[#82b443]/20 text-[#82b443]">
+                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-accent/10 border border-accent/20 text-accent">
                         {job.type}
                       </span>
                     </div>
@@ -323,7 +323,7 @@ export default function Careers() {
                   <div className="flex-shrink-0">
                     <button
                       onClick={() => setSelectedJob(job)}
-                      className="py-2.5 px-5 bg-[#82b443] hover:bg-[#689433] text-white text-xs font-bold rounded-xl transition shadow"
+                      className="py-2.5 px-5 bg-accent hover:bg-accent-dark text-white text-xs font-bold rounded-xl transition shadow"
                     >
                       Apply Now
                     </button>
@@ -349,7 +349,7 @@ export default function Careers() {
                   ✕
                 </button>
               </div>
-              <p className="text-[#0b4a8f] font-bold text-xs mt-2">
+              <p className="text-primary font-bold text-xs mt-2">
                 {selectedJob.title} &middot; <span className="text-slate-500 font-normal">{selectedJob.category}</span>
               </p>
             </div>
@@ -364,7 +364,7 @@ export default function Careers() {
                   value={applicantName}
                   onChange={(e) => setApplicantName(e.target.value)}
                   placeholder="e.g. John Doe"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-[#0b4a8f] focus:outline-none"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-primary focus:outline-none"
                   required
                 />
               </div>
@@ -378,7 +378,7 @@ export default function Careers() {
                   value={applicantEmail}
                   onChange={(e) => setApplicantEmail(e.target.value)}
                   placeholder="e.g. john@example.com"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-[#0b4a8f] focus:outline-none"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-primary focus:outline-none"
                   required
                 />
               </div>
@@ -392,7 +392,7 @@ export default function Careers() {
                   value={applicantResume}
                   onChange={(e) => setApplicantResume(e.target.value)}
                   placeholder="e.g. https://drive.google.com/your-cv..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-[#0b4a8f] focus:outline-none"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-primary focus:outline-none"
                   required
                 />
               </div>
@@ -406,7 +406,7 @@ export default function Careers() {
                   onChange={(e) => setApplicantCover(e.target.value)}
                   rows="3"
                   placeholder="Why do you want to join our engineering and deployment team?"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-[#0b4a8f] focus:outline-none resize-none"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-primary focus:outline-none resize-none"
                 ></textarea>
               </div>
 
@@ -421,7 +421,7 @@ export default function Careers() {
                 <button
                   type="submit"
                   disabled={submittingApp}
-                  className="py-2.5 px-5 bg-[#82b443] hover:bg-[#689433] text-white font-bold rounded-xl text-xs transition shadow"
+                  className="py-2.5 px-5 bg-accent hover:bg-accent-dark text-white font-bold rounded-xl text-xs transition shadow"
                 >
                   {submittingApp ? "Submitting..." : "Submit Application"}
                 </button>

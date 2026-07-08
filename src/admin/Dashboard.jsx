@@ -13,7 +13,9 @@ import {
   FaHome,
   FaBuilding,
   FaCommentAlt,
-  FaUserTie
+  FaUserTie,
+  FaBars,
+  FaTimes
 } from 'react-icons/fa';
 
 import AboutSetting from './AboutSetting';
@@ -309,197 +311,153 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen flex flex-col md:flex-row text-slate-700 pt-20 admin-console-wrapper">
-      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+    <div className="flex h-screen overflow-hidden bg-slate-100">
+      <ToastContainer position="top-right" autoClose={3000} theme="light" />
 
-      {/* Mobile Menu Toggle Bar */}
-      <div className="md:hidden bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-20 z-20 shadow-sm">
-        <div className="flex items-center space-x-2 text-left">
-          <FaUserShield className="text-[#0b4a8f] text-sm" />
-          <span className="font-bold text-xs uppercase tracking-wider text-slate-800">
-            Admin: {activeTab.replace('-', ' ')}
-          </span>
-        </div>
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-750 rounded-lg text-xs font-bold transition border border-slate-200"
-        >
-          {mobileMenuOpen ? 'Hide Menu' : 'Show Menu'}
-        </button>
-      </div>
+      {/* Mobile overlay backdrop */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
 
       {/* Sidebar navigation */}
-      <aside className={`w-full md:w-64 bg-white border-r border-slate-200 flex-col justify-between py-6 flex-shrink-0 shadow-sm ${mobileMenuOpen ? 'flex' : 'hidden md:flex'}`}>
-        <div className="space-y-6">
+      <aside
+        className={`fixed md:static inset-y-0 left-0 z-40 w-64 flex flex-col justify-between bg-[#002A54] text-white flex-shrink-0 shadow-2xl transition-transform duration-300 ease-in-out ${
+          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
+      >
+        <div className="flex flex-col h-full">
           
-          {/* Dashboard Header */}
-          <div className="px-6 flex items-center space-x-3 text-left">
-            <div className="w-8 h-8 rounded-lg bg-[#0b4a8f] flex items-center justify-center shadow-md">
-              <FaUserShield className="text-white text-sm" />
+          {/* Sidebar Header */}
+          <div className="px-4 py-4 flex items-center justify-between border-b border-white/10">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-xl bg-blue-500 flex items-center justify-center shadow-lg flex-shrink-0">
+                <FaUserShield className="text-white text-base" />
+              </div>
+              <div>
+                <span className="font-extrabold text-sm text-white tracking-wide block">ADMIN CONSOLE</span>
+                <span className="text-[9px] text-blue-300 font-semibold block uppercase leading-none mt-0.5">UF Global Solutions</span>
+              </div>
             </div>
-            <div>
-              <span className="font-bold text-sm text-slate-800 tracking-wide block">
-                ADMIN CONSOLE
-              </span>
-              <span className="text-[9px] text-[#82b443] font-bold block uppercase leading-none mt-0.5">
-                Dynamic Editor
-              </span>
-            </div>
+            {/* Close button - mobile only */}
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="md:hidden p-2 rounded-lg text-blue-300 hover:bg-white/10 hover:text-white transition flex-shrink-0"
+            >
+              <FaTimes className="text-base" />
+            </button>
           </div>
 
-          <hr className="border-slate-100 mx-4" />
-
           {/* Nav links */}
-          <nav className="px-3 space-y-1">
-            <button
-              onClick={() => setActiveTab('services')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition ${
-                activeTab === 'services' || activeTab === 'add-service' || activeTab === 'edit-service'
-                  ? 'bg-black text-white shadow-md shadow-black/10' 
-                  : 'hover:bg-slate-50 text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              <FaBriefcase className="text-sm" />
-              <span>Manage Services</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('about')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition ${
-                activeTab === 'about' 
-                  ? 'bg-black text-white shadow-md shadow-black/10' 
-                  : 'hover:bg-slate-50 text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              <FaInfoCircle className="text-sm" />
-              <span>About Us Settings</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('contact')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition ${
-                activeTab === 'contact' 
-                  ? 'bg-black text-white shadow-md shadow-black/10' 
-                  : 'hover:bg-slate-50 text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              <FaEnvelopeOpenText className="text-sm" />
-              <span>Contact Channels & Inbox</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('footer')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition ${
-                activeTab === 'footer' 
-                  ? 'bg-black text-white shadow-md shadow-black/10' 
-                  : 'hover:bg-slate-50 text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              <FaGlobe className="text-sm" />
-              <span>Footer Configuration</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('brands')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition ${
-                activeTab === 'brands' 
-                  ? 'bg-black text-white shadow-md shadow-black/10' 
-                  : 'hover:bg-slate-50 text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              <FaBuilding className="text-sm" />
-              <span>Manage Brands</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('testimonials')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition ${
-                activeTab === 'testimonials' 
-                  ? 'bg-black text-white shadow-md shadow-black/10' 
-                  : 'hover:bg-slate-50 text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              <FaCommentAlt className="text-sm" />
-              <span>Manage Testimonials</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('careers')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition ${
-                activeTab === 'careers' 
-                  ? 'bg-black text-white shadow-md shadow-black/10' 
-                  : 'hover:bg-slate-50 text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              <FaUserTie className="text-sm" />
-              <span>Manage Careers</span>
-            </button>
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            {[
+              { id: 'services', icon: FaBriefcase, label: 'Manage Services', match: ['services','add-service','edit-service'] },
+              { id: 'about', icon: FaInfoCircle, label: 'About Us Settings', match: ['about'] },
+              { id: 'contact', icon: FaEnvelopeOpenText, label: 'Contact & Inbox', match: ['contact'] },
+              { id: 'footer', icon: FaGlobe, label: 'Footer Config', match: ['footer'] },
+              { id: 'brands', icon: FaBuilding, label: 'Manage Brands', match: ['brands'] },
+              { id: 'testimonials', icon: FaCommentAlt, label: 'Testimonials', match: ['testimonials'] },
+              { id: 'careers', icon: FaUserTie, label: 'Manage Careers', match: ['careers'] },
+            ].map(({ id, icon: Icon, label, match }) => {
+              const isActive = match.includes(activeTab);
+              return (
+                <button
+                  key={id}
+                  onClick={() => { setActiveTab(id); setMobileMenuOpen(false); }}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 ${
+                    isActive
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                      : 'text-blue-200 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  <Icon className="text-sm flex-shrink-0" />
+                  <span>{label}</span>
+                </button>
+              );
+            })}
           </nav>
         </div>
 
-        {/* Sidebar Footer options */}
-        <div className="px-3 space-y-2">
+        {/* Sidebar Footer */}
+        <div className="px-3 py-4 border-t border-white/10 space-y-1">
+          <div className="px-4 py-2 mb-2">
+            <p className="text-[10px] text-blue-300 font-medium truncate">{currentUser?.email}</p>
+            <p className="text-[9px] text-blue-400/70">Administrator</p>
+          </div>
           <Link
             to="/"
-            className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[11px] font-semibold text-gray-400 hover:bg-gray-900 hover:text-white transition"
+            className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[11px] font-semibold text-blue-200 hover:bg-white/10 hover:text-white transition"
           >
             <FaHome className="text-xs" />
-            <span>Go to Live Site</span>
+            <span>View Live Site</span>
           </Link>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[11px] font-semibold text-rose-455 hover:bg-rose-500/10 hover:text-rose-400 transition"
+            className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[11px] font-semibold text-rose-300 hover:bg-rose-500/20 hover:text-rose-200 transition"
           >
             <FaSignOutAlt className="text-xs" />
-            <span>Log Out Portal</span>
+            <span>Log Out</span>
           </button>
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-grow p-6 md:p-10 max-w-5xl overflow-y-auto">
-        
-        {/* Top header status */}
-        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-6 mb-8 gap-4 text-left">
-          <div>
-            <h1 className="font-extrabold text-2xl text-slate-800">
-              {activeTab === 'services' && "IT Capabilities & Solutions Catalog"}
-              {activeTab === 'add-service' && "Add New Service Architecture"}
-              {activeTab === 'edit-service' && "Edit Service Configuration"}
-              {activeTab === 'about' && "About Us Dynamic Settings"}
-              {activeTab === 'contact' && "Contact Channels & Message Inbox"}
-              {activeTab === 'footer' && "Site Footer Configuration"}
-              {activeTab === 'brands' && "Manage Client Brand Logos"}
-              {activeTab === 'testimonials' && "Manage Client Testimonial Cards"}
-              {activeTab === 'careers' && "Manage Careers & Job Openings"}
-            </h1>
-            <p className="text-xs text-slate-450 mt-1">
-              Currently logged in as: <span className="text-slate-700 font-bold">{currentUser?.email}</span> (Admin privileges active)
-            </p>
+      {/* Main Content Wrapper */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+        {/* Top Header Bar */}
+        <header className="bg-white border-b border-slate-200 px-4 py-3 md:px-6 md:py-4 flex items-center justify-between shadow-sm flex-shrink-0">
+          <div className="flex items-center gap-3">
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition"
+            >
+              <FaBars className="text-base" />
+            </button>
+            <div className="min-w-0">
+              <h1 className="font-extrabold text-base md:text-lg text-slate-800 leading-tight truncate">
+                {activeTab === 'services' && 'Services Catalog'}
+                {activeTab === 'add-service' && 'Add Service'}
+                {activeTab === 'edit-service' && 'Edit Service'}
+                {activeTab === 'about' && 'About Settings'}
+                {activeTab === 'contact' && 'Contact & Inbox'}
+                {activeTab === 'footer' && 'Footer Config'}
+                {activeTab === 'brands' && 'Brand Logos'}
+                {activeTab === 'testimonials' && 'Testimonials'}
+                {activeTab === 'careers' && 'Careers & Jobs'}
+              </h1>
+              <p className="text-[10px] text-slate-400 mt-0.5 hidden sm:block">UF Global Solutions Admin Panel</p>
+            </div>
           </div>
 
-           {activeTab === 'services' && (
-            <button
-              onClick={() => setActiveTab('add-service')}
-              className="py-2.5 px-5 bg-black hover:bg-slate-850 text-white text-xs font-bold rounded-full transition shadow"
-            >
-              + Create Service Profile
-            </button>
-          )}
-
-          {(activeTab === 'add-service' || activeTab === 'edit-service') && (
-            <button
-              onClick={() => setActiveTab('services')}
-              className="py-2.5 px-5 bg-white border border-slate-200 hover:border-slate-350 text-slate-700 text-xs font-bold rounded-full transition flex items-center space-x-2"
-            >
-              <FaArrowLeft className="text-[10px]" />
-              <span>Back to Catalog</span>
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {activeTab === 'services' && (
+              <button
+                onClick={() => setActiveTab('add-service')}
+                className="py-1.5 px-3 md:py-2 md:px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full transition shadow-md shadow-blue-500/20 whitespace-nowrap"
+              >
+                + Add
+              </button>
+            )}
+            {(activeTab === 'add-service' || activeTab === 'edit-service') && (
+              <button
+                onClick={() => setActiveTab('services')}
+                className="py-1.5 px-3 md:py-2 md:px-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-full transition flex items-center gap-1.5"
+              >
+                <FaArrowLeft className="text-[10px]" />
+                <span className="hidden sm:inline">Back</span>
+              </button>
+            )}
+          </div>
         </header>
 
-        {/* Tab Render Switchboard */}
-        <section className="animate-fadeIn">
+        {/* Scrollable main content */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+
+          {/* Tab Render Switchboard */}
+          <section className="animate-fadeIn">
           {activeTab === 'services' && (
             <div className="space-y-6">
               <DataTable 
@@ -547,47 +505,41 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'brands' && (
-            <div className="space-y-8 bg-gray-950/40 p-6 md:p-8 rounded-3xl border border-gray-900">
-              <h3 className="font-display font-extrabold text-lg text-white border-b border-gray-900 pb-3">
-                Dynamic Brand Logos Catalog
+            <div className="space-y-6 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+              <h3 className="font-extrabold text-lg text-slate-800 border-b border-slate-100 pb-3">
+                Brand Logos Manager
               </h3>
               
               {/* Form to add brand */}
-              <form onSubmit={handleAddBrand} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end bg-gray-950/60 p-4 rounded-2xl border border-gray-900">
+              <form onSubmit={handleAddBrand} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <div className="space-y-1 text-left">
-                  <label className="block text-[10px] font-bold text-gray-405 uppercase tracking-wider">
-                    Brand name
-                  </label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Brand Name</label>
                   <input
                     type="text"
                     value={newBrandName}
                     onChange={(e) => setNewBrandName(e.target.value)}
                     placeholder="e.g. SONY"
-                    className="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-600 transition"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
                     required
                   />
                 </div>
-                
                 <div className="space-y-1 text-left">
-                  <label className="block text-[10px] font-bold text-gray-405 uppercase tracking-wider">
-                    Logo Image URL
-                  </label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Logo Image URL</label>
                   <input
                     type="url"
                     value={newBrandUrl}
                     onChange={(e) => setNewBrandUrl(e.target.value)}
-                    placeholder="e.g. https://logo.clearbit.com/sony.com"
-                    className="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-600 transition"
+                    placeholder="https://logo.clearbit.com/sony.com"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
                     required
                   />
                 </div>
-
                 <button
                   type="submit"
                   disabled={addingBrand}
-                  className="py-2.5 px-4 bg-[#82b443] hover:bg-[#689433] text-white text-xs font-bold rounded-xl transition shadow flex items-center justify-center gap-1.5"
+                  className="py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-md shadow-blue-500/20"
                 >
-                  {addingBrand ? "Uploading..." : "Add Brand"}
+                  {addingBrand ? 'Uploading...' : 'Add Brand'}
                 </button>
               </form>
 
@@ -620,81 +572,50 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'testimonials' && (
-            <div className="space-y-8 bg-gray-950/40 p-6 md:p-8 rounded-3xl border border-gray-900">
-              <h3 className="font-display font-extrabold text-lg text-white border-b border-gray-900 pb-3">
-                Dynamic Client Testimonials Editor
+            <div className="space-y-6 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+              <h3 className="font-extrabold text-lg text-slate-800 border-b border-slate-100 pb-3">
+                Client Testimonials Manager
               </h3>
-              
               {/* Form to add testimonial */}
-              <form onSubmit={handleAddTestimonial} className="space-y-4 bg-gray-950/60 p-4 rounded-2xl border border-gray-900 text-left">
+              <form onSubmit={handleAddTestimonial} className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-left">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-gray-450 uppercase tracking-wider">
-                      Client name
-                    </label>
-                    <input
-                      type="text"
-                      value={newClientName}
-                      onChange={(e) => setNewClientName(e.target.value)}
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Client Name</label>
+                    <input type="text" value={newClientName} onChange={(e) => setNewClientName(e.target.value)}
                       placeholder="e.g. John Smith"
-                      className="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-600 transition"
-                      required
-                    />
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required />
                   </div>
-
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-gray-455 uppercase tracking-wider">
-                      Client role / designation
-                    </label>
-                    <input
-                      type="text"
-                      value={newClientRole}
-                      onChange={(e) => setNewClientRole(e.target.value)}
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Role / Designation</label>
+                    <input type="text" value={newClientRole} onChange={(e) => setNewClientRole(e.target.value)}
                       placeholder="e.g. CEO, TechCorp Solutions"
-                      className="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-600 transition"
-                      required
-                    />
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required />
                   </div>
-
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-gray-450 uppercase tracking-wider">
-                      Star rating (1 - 5)
-                    </label>
-                    <select
-                      value={newRating}
-                      onChange={(e) => setNewRating(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white cursor-pointer transition"
-                    >
-                      <option value="5">5 Stars</option>
-                      <option value="4">4 Stars</option>
-                      <option value="3">3 Stars</option>
-                      <option value="2">2 Stars</option>
-                      <option value="1">1 Star</option>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Star Rating</label>
+                    <select value={newRating} onChange={(e) => setNewRating(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 cursor-pointer transition">
+                      <option value="5">5 Stars ⭐⭐⭐⭐⭐</option>
+                      <option value="4">4 Stars ⭐⭐⭐⭐</option>
+                      <option value="3">3 Stars ⭐⭐⭐</option>
+                      <option value="2">2 Stars ⭐⭐</option>
+                      <option value="1">1 Star ⭐</option>
                     </select>
                   </div>
                 </div>
-
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-bold text-gray-450 uppercase tracking-wider">
-                    Feedback / testimonial content
-                  </label>
-                  <textarea
-                    value={newTestimonialContent}
-                    onChange={(e) => setNewTestimonialContent(e.target.value)}
-                    rows="3"
-                    placeholder="Enter what the client said about your custom development services..."
-                    className="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-600 transition resize-none"
-                    required
-                  ></textarea>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Testimonial Content</label>
+                  <textarea value={newTestimonialContent} onChange={(e) => setNewTestimonialContent(e.target.value)}
+                    rows="3" placeholder="What the client said about your services..."
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition resize-none"
+                    required></textarea>
                 </div>
-
                 <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={addingTestimonial}
-                    className="py-2 px-5 bg-[#82b443] hover:bg-[#689433] text-white text-xs font-bold rounded-xl transition shadow flex items-center justify-center gap-1.5"
-                  >
-                    {addingTestimonial ? "Saving..." : editTestimonialId ? "Update Testimonial" : "Add Testimonial"}
+                  <button type="submit" disabled={addingTestimonial}
+                    className="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-md shadow-blue-500/20">
+                    {addingTestimonial ? 'Saving...' : editTestimonialId ? 'Update' : 'Add Testimonial'}
                   </button>
                 </div>
               </form>
@@ -731,37 +652,24 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'careers' && (
-            <div className="space-y-8 bg-gray-950/40 p-6 md:p-8 rounded-3xl border border-gray-900">
-              <h3 className="font-display font-extrabold text-lg text-white border-b border-gray-900 pb-3">
-                Dynamic Job Postings Editor
+            <div className="space-y-6 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+              <h3 className="font-extrabold text-lg text-slate-800 border-b border-slate-100 pb-3">
+                Job Openings Manager
               </h3>
-              
               {/* Form to add job */}
-              <form onSubmit={handleAddJob} className="space-y-4 bg-gray-950/60 p-4 rounded-2xl border border-gray-900 text-left">
+              <form onSubmit={handleAddJob} className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-left">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-gray-450 uppercase tracking-wider">
-                      Job Position Title
-                    </label>
-                    <input
-                      type="text"
-                      value={newJobTitle}
-                      onChange={(e) => setNewJobTitle(e.target.value)}
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Job Title</label>
+                    <input type="text" value={newJobTitle} onChange={(e) => setNewJobTitle(e.target.value)}
                       placeholder="e.g. Senior Software Engineer"
-                      className="w-full px-3 py-2 bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-600 transition"
-                      required
-                    />
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required />
                   </div>
-
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-gray-450 uppercase tracking-wider">
-                      Employment Category
-                    </label>
-                    <select
-                      value={newJobCategory}
-                      onChange={(e) => setNewJobCategory(e.target.value)}
-                      className="w-full px-3 py-2 bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white cursor-pointer transition"
-                    >
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Category</label>
+                    <select value={newJobCategory} onChange={(e) => setNewJobCategory(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 cursor-pointer transition">
                       <option value="Engineering">Engineering</option>
                       <option value="Manufacturing">Manufacturing</option>
                       <option value="Supply Chain & Logistics">Supply Chain & Logistics</option>
@@ -774,86 +682,49 @@ export default function Dashboard() {
                       <option value="Legal & Compliance">Legal & Compliance</option>
                       <option value="Sales & Marketing">Sales & Marketing</option>
                       <option value="CXO">CXO</option>
-                      <option value="Custom">Custom (Write Below)...</option>
+                      <option value="Custom">Custom...</option>
                     </select>
-
                     {newJobCategory === 'Custom' && (
-                      <input
-                        type="text"
-                        value={customCategory}
-                        onChange={(e) => setCustomCategory(e.target.value)}
-                        placeholder="Enter dynamic category name"
-                        className="w-full mt-2 px-3 py-2 bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-600 transition"
-                        required
-                      />
+                      <input type="text" value={customCategory} onChange={(e) => setCustomCategory(e.target.value)}
+                        placeholder="Enter custom category" required
+                        className="w-full mt-2 px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition" />
                     )}
                   </div>
-
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-gray-450 uppercase tracking-wider">
-                      Employment Type
-                    </label>
-                    <select
-                      value={newJobType}
-                      onChange={(e) => setNewJobType(e.target.value)}
-                      className="w-full px-3 py-2 bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white cursor-pointer transition"
-                    >
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Employment Type</label>
+                    <select value={newJobType} onChange={(e) => setNewJobType(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 cursor-pointer transition">
                       <option value="Permanent">Permanent</option>
                       <option value="Contract">Contract</option>
                     </select>
                   </div>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-gray-450 uppercase tracking-wider">
-                      Job Location
-                    </label>
-                    <input
-                      type="text"
-                      value={newJobLocation}
-                      onChange={(e) => setNewJobLocation(e.target.value)}
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Location</label>
+                    <input type="text" value={newJobLocation} onChange={(e) => setNewJobLocation(e.target.value)}
                       placeholder="e.g. Pune / Remote"
-                      className="w-full px-3 py-2 bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-600 transition"
-                      required
-                    />
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required />
                   </div>
-
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-gray-455 uppercase tracking-wider">
-                      Experience Requirement
-                    </label>
-                    <input
-                      type="text"
-                      value={newJobExperience}
-                      onChange={(e) => setNewJobExperience(e.target.value)}
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Experience</label>
+                    <input type="text" value={newJobExperience} onChange={(e) => setNewJobExperience(e.target.value)}
                       placeholder="e.g. 2-4 Years"
-                      className="w-full px-3 py-2 bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-600 transition"
-                    />
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition" />
                   </div>
                 </div>
-
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-bold text-gray-450 uppercase tracking-wider">
-                    Role Description & Requirements
-                  </label>
-                  <textarea
-                    value={newJobDescription}
-                    onChange={(e) => setNewJobDescription(e.target.value)}
-                    rows="3"
-                    placeholder="Enter what the job role entails, keys skills required, daily tasks..."
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-800 focus:border-[#82b443] focus:outline-none text-xs text-white placeholder-gray-600 transition resize-none"
-                    required
-                  ></textarea>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Role Description</label>
+                  <textarea value={newJobDescription} onChange={(e) => setNewJobDescription(e.target.value)}
+                    rows="3" placeholder="Describe the job role, key skills, and daily tasks..."
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition resize-none"
+                    required></textarea>
                 </div>
-
                 <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={addingJob}
-                    className="py-2 px-5 bg-[#82b443] hover:bg-[#689433] text-white text-xs font-bold rounded-xl transition shadow flex items-center justify-center gap-1.5"
-                  >
-                    {addingJob ? "Saving..." : editJobId ? "Update Job" : "Add Job Posting"}
+                  <button type="submit" disabled={addingJob}
+                    className="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-md shadow-blue-500/20">
+                    {addingJob ? 'Saving...' : editJobId ? 'Update Job' : 'Add Job Posting'}
                   </button>
                 </div>
               </form>
@@ -890,9 +761,10 @@ export default function Dashboard() {
               />
             </div>
           )}
-        </section>
+          </section>
 
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

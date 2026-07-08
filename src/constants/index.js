@@ -3,14 +3,14 @@
 // ============================================================
 
 export const COMPANY = {
-  name: 'iCoded Automation Pvt. Ltd.',
-  shortName: 'iCoded',
-  tagline: 'Transforming Business Ideas into Powerful Digital Solutions.',
-  website: 'https://icoded.in',
-  email: 'hello@icoded.in',
+  name: 'UF Global Solutions Pvt Ltd',
+  shortName: 'UFGS',
+  tagline: 'Building Smart Digital Solutions for Modern Businesses.',
+  website: 'https://ufglobalsolutions.com',
+  email: 'hello@ufglobalsolutions.com',
   phone: '+91 98765 43210',
   whatsapp: '919876543210',
-  address: 'iCoded Automation Pvt. Ltd., Tech Park, Coimbatore, Tamil Nadu - 641001',
+  address: 'UF Global Solutions Pvt Ltd, Tech Park, Mumbai, Maharashtra - 400076',
   founded: '2019',
   mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125323.19787348783!2d76.91271479551085!3d11.004555861788037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba859af2f971cb5%3A0x2fc1c81e183ed282!2sCoimbatore%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1720341000000',
 };
@@ -200,7 +200,7 @@ export const TESTIMONIALS = [
   {
     name: 'Rajesh Kumar',
     role: 'CEO, RetailNexus Pvt. Ltd.',
-    content: 'iCoded built our entire ERP from scratch. The quality, speed, and post-launch support have been exceptional. Our operations are 3× more efficient now.',
+    content: 'UFGS built our entire ERP from scratch. The quality, speed, and post-launch support have been exceptional. Our operations are 3× more efficient now.',
     rating: 5,
     avatar: 'RK',
     gradient: 'from-blue-600 to-cyan-500',
@@ -208,7 +208,7 @@ export const TESTIMONIALS = [
   {
     name: 'Priya Shankar',
     role: 'CTO, EduVerse Technologies',
-    content: 'Our LMS platform built by iCoded handles 50,000+ students without a single hiccup. The UI is beautiful and teachers love it.',
+    content: 'Our LMS platform built by UFGS handles 50,000+ students without a single hiccup. The UI is beautiful and teachers love it.',
     rating: 5,
     avatar: 'PS',
     gradient: 'from-purple-600 to-pink-500',
@@ -216,7 +216,7 @@ export const TESTIMONIALS = [
   {
     name: 'Mohammed Faiz',
     role: 'Founder, QuickDeliver Logistics',
-    content: 'From concept to launch in 6 weeks. iCoded\'s team is incredibly fast and professional. Our delivery tracking app is now our biggest competitive advantage.',
+    content: 'From concept to launch in 6 weeks. UFGS\'s team is incredibly fast and professional. Our delivery tracking app is now our biggest competitive advantage.',
     rating: 5,
     avatar: 'MF',
     gradient: 'from-green-600 to-teal-500',
@@ -224,7 +224,7 @@ export const TESTIMONIALS = [
   {
     name: 'Anitha Rajan',
     role: 'Director, HealthFirst Hospitals',
-    content: 'The HMS iCoded developed has completely transformed our patient management. Appointment booking, billing, and pharmacy — all integrated perfectly.',
+    content: 'The HMS UFGS developed has completely transformed our patient management. Appointment booking, billing, and pharmacy — all integrated perfectly.',
     rating: 5,
     avatar: 'AR',
     gradient: 'from-rose-600 to-orange-500',

@@ -163,37 +163,46 @@ export async function seedDatabase(force = false) {
     const servicesCol = collection(db, 'services');
     const servicesSnapshot = await getDocs(servicesCol);
     
-    if (servicesSnapshot.empty || force) {
+    let hasOldDefaults = false;
+    if (!servicesSnapshot.empty) {
+      hasOldDefaults = servicesSnapshot.docs.some(docSnap => 
+        docSnap.data().title === "Cloud Migration & Infrastructure"
+      );
+    }
+
+    if (servicesSnapshot.empty || force || hasOldDefaults) {
       console.log("Seeding services...");
+      
+      if ((force || hasOldDefaults) && !servicesSnapshot.empty) {
+        for (const docSnap of servicesSnapshot.docs) {
+          const title = docSnap.data().title;
+          if (force || ["Cloud Migration & Infrastructure", "Cybersecurity & Pentesting", "Enterprise Web Solutions", "AI & Data Analytics"].includes(title)) {
+            await deleteDoc(doc(db, 'services', docSnap.id));
+          }
+        }
+      }
       
       const defaultServices = [
         {
-          title: "Cloud Migration & Infrastructure",
-          description: "Seamless cloud transformations, virtualization, scaling, and hybrid architecture designs.",
-          details: "Our cloud engineering team handles seamless migration from on-premise infrastructure to industry-leading providers (AWS, Azure, Google Cloud). We build scalable microservices, manage security compliance, and implement CI/CD deployment pipelines that reduce infrastructure overhead up to 40%.",
-          icon: "FaCloud",
-          image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop"
-        },
-        {
-          title: "Cybersecurity & Pentesting",
-          description: "Zero-trust architecture, threat vulnerability assessments, firewalls, and system auditing.",
-          details: "Protect your proprietary assets with modern defense strategies. We provide white-box pentesting, continuous intrusion monitoring, endpoint security management, and comprehensive team safety audits to defend your workspace against ransomwares and modern phishing attacks.",
-          icon: "FaShieldAlt",
-          image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop"
-        },
-        {
-          title: "Enterprise Web Solutions",
-          description: "High-performance websites, portals, E-commerce, and bespoke administrative software.",
-          details: "We build customized, fast-loading, React-based dashboards, APIs, and client portals tailored for high user throughput. By using modern server-side hydration techniques and database caching layer designs, we optimize page render times and ensure 99.9% availability.",
+          title: "Managed IT Solutions",
+          description: "Sleek, round-the-clock IT management, networking, system integration, security auditing, and workspace assistance.",
+          details: "We offer professional hardware maintenance, live network configurations, regular pentesting audits, cloud backup designs, and remote helpdesk operations to keep your team running at 100% efficiency.",
           icon: "FaLaptopCode",
-          image: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=600&auto=format&fit=crop"
+          image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=600&auto=format&fit=crop"
         },
         {
-          title: "AI & Data Analytics",
-          description: "Machine learning integration, automated reporting, data engineering, and ETL pipelines.",
-          details: "Unlock data-driven growth. We construct automated ETL processing workflows that translate raw customer touchpoints into real-time visual charts. Integrate LLMs and custom AI agents directly within your support chat and business pipelines to scale efficiency.",
-          icon: "FaDatabase",
-          image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600&auto=format&fit=crop"
+          title: "Corporate Training",
+          description: "Tailored upskilling programs, tech stack bootcamps, and executive coaching tailored for modern workforces.",
+          details: "Upskill your developers, database engineers, and project leads with customized bootcamps covering cloud deployments, container orchestration, microservices integration, and cybersecurity standards.",
+          icon: "FaUserGraduate",
+          image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=600&auto=format&fit=crop"
+        },
+        {
+          title: "Staffing Solutions",
+          description: "Elite talent sourcing, staff augmentation, permanent recruitment, and executive search for tech roles.",
+          details: "We bridge the tech talent gap by sourcing top software engineers, system admins, cloud specialists, and QA engineers. Whether you need short-term contract staff or direct hires, our vetting pipeline delivers the right expertise.",
+          icon: "FaUsers",
+          image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=600&auto=format&fit=crop"
         }
       ];
 
@@ -386,19 +395,19 @@ export async function seedTestimonials() {
         {
           name: 'Rajesh Kumar',
           role: 'CEO, RetailNexus Pvt. Ltd.',
-          content: 'iCoded built our entire ERP from scratch. The quality, speed, and post-launch support have been exceptional. Our operations are 3× more efficient now.',
+          content: 'UFGS built our entire ERP from scratch. The quality, speed, and post-launch support have been exceptional. Our operations are 3× more efficient now.',
           rating: 5
         },
         {
           name: 'Priya Shankar',
           role: 'CTO, EduVerse Technologies',
-          content: 'Our LMS platform built by iCoded handles 50,000+ students without a single hiccup. The UI is beautiful and teachers love it.',
+          content: 'Our LMS platform built by UFGS handles 50,000+ students without a single hiccup. The UI is beautiful and teachers love it.',
           rating: 5
         },
         {
           name: 'Mohammed Faiz',
           role: 'Founder, QuickDeliver Logistics',
-          content: 'From concept to launch in 6 weeks. iCoded\'s team is incredibly fast and professional. Our delivery tracking app is now our biggest competitive advantage.',
+          content: 'From concept to launch in 6 weeks. UFGS\'s team is incredibly fast and professional. Our delivery tracking app is now our biggest competitive advantage.',
           rating: 5
         }
       ];

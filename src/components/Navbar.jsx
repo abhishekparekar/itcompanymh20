@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { FaBars, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaBars, FaTimes, FaChevronDown } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import ufgsLogo from '../assets/images/ufgslogo.jpeg';
 
 export default function Navbar() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  
-  // Hover dropdown state indicators
-  const [showMegaMenu, setShowMegaMenu] = useState(false);
-  const [showTalentMenu, setShowTalentMenu] = useState(false);
-
-  // Mobile navigation collapse toggles
-  const [mobileJobsOpen, setMobileJobsOpen] = useState(false);
-  const [mobileTalentOpen, setMobileTalentOpen] = useState(false);
+  const [showServicesMenu, setShowServicesMenu] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -32,372 +26,153 @@ export default function Navbar() {
     }
   };
 
+  const navLinkClass = ({ isActive }) =>
+    `text-[11px] font-bold uppercase tracking-wide transition-all duration-200 px-3.5 py-1.5 rounded-full whitespace-nowrap ${
+      isActive
+        ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+        : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
+    }`;
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled
-        ? 'bg-white shadow-md border-b border-slate-100 py-3'
-        : 'bg-white/95 backdrop-blur-sm border-b border-slate-100 py-4'
-    }`}>
-      <div className="container max-w-7xl mx-auto px-6 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2 select-none group">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#0b4a8f] to-[#1e6ebf] flex items-center justify-center shadow-md">
-            <span className="text-white font-black text-base">iC</span>
-          </div>
-          <div>
-            <span className="font-bold text-slate-800 text-lg tracking-tight group-hover:text-[#0b4a8f] transition-colors">
-              iCoded
-            </span>
-            <span className="text-[9px] text-[#82b443] font-bold block uppercase tracking-wider leading-none">
-              Automation Pvt. Ltd.
-            </span>
-          </div>
-        </Link>
+    <nav
+      className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-300 max-w-7xl flex items-center justify-between ${
+        scrolled
+          ? 'top-2 w-[96%] md:w-[92%] bg-white shadow-xl border border-slate-200/90 py-2 px-5 rounded-full'
+          : 'top-3 w-[94%] md:w-[88%] bg-white/95 backdrop-blur-md border border-slate-200/60 shadow-lg py-2.5 px-5 rounded-full'
+      }`}
+    >
+      <Link to="/" className="flex items-center space-x-2 select-none group flex-shrink-0">
+        <div className="h-9 w-auto overflow-hidden flex items-center">
+          <img src={ufgsLogo} alt="UF Global Solutions Logo" className="h-9 object-contain rounded-md" />
+        </div>
+      </Link>
 
-        {/* Center Navigation Links inside light-grey pill container */}
-        <div className="hidden md:flex items-center bg-slate-100/90 py-1.5 px-2 rounded-full space-x-1 border border-slate-200/30">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              `text-[10px] font-bold uppercase tracking-wider transition px-3 py-1.5 rounded-full ${
-                isActive
-                  ? 'bg-white text-[#0b4a8f] shadow-sm border border-slate-200/50'
-                  : 'text-slate-650 hover:text-[#0b4a8f]'
-              }`
-            }
-          >
-            Home
-          </NavLink>
-          
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              `text-[10px] font-bold uppercase tracking-wider transition px-3 py-1.5 rounded-full ${
-                isActive
-                  ? 'bg-white text-[#0b4a8f] shadow-sm border border-slate-200/50'
-                  : 'text-slate-650 hover:text-[#0b4a8f]'
-              }`
-            }
-          >
-            About Us
-          </NavLink>
+      <div className="hidden md:flex items-center bg-slate-100/80 py-1 px-1.5 rounded-full space-x-0.5 border border-slate-200/40">
+        <NavLink to="/" className={navLinkClass}>Home</NavLink>
+        <NavLink to="/about" className={navLinkClass}>About</NavLink>
+        <NavLink to="/products" className={navLinkClass}>Products</NavLink>
 
+        <div
+          className="relative"
+          onMouseEnter={() => setShowServicesMenu(true)}
+          onMouseLeave={() => setShowServicesMenu(false)}
+        >
           <NavLink
             to="/services"
             className={({ isActive }) =>
-              `text-[10px] font-bold uppercase tracking-wider transition px-3 py-1.5 rounded-full ${
-                isActive
-                  ? 'bg-white text-[#0b4a8f] shadow-sm border border-slate-200/50'
-                  : 'text-slate-650 hover:text-[#0b4a8f]'
+              `text-[11px] font-bold uppercase tracking-wide transition-all duration-200 flex items-center gap-1 px-3.5 py-1.5 rounded-full whitespace-nowrap ${
+                isActive || showServicesMenu
+                  ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+                  : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
               }`
             }
           >
-            Services
+            <span>Services</span>
+            <FaChevronDown className={`text-[8px] transition-transform duration-200 ${showServicesMenu ? 'rotate-180' : ''}`} />
           </NavLink>
 
-          {/* Find a job Dropdown trigger */}
-          <div 
-            className="relative"
-            onMouseEnter={() => { setShowMegaMenu(true); setShowTalentMenu(false); }}
-            onMouseLeave={() => setShowMegaMenu(false)}
-          >
-            <button 
-              onClick={() => navigate('/careers')}
-              className={`text-[10px] font-bold uppercase tracking-wider transition flex items-center gap-1.5 px-3 py-1.5 rounded-full ${
-                showMegaMenu ? 'bg-white text-[#0b4a8f] shadow-sm' : 'text-slate-650 hover:text-[#0b4a8f]'
-              }`}
-            >
-              <span>Find a Job</span>
-              <span className="text-[7px]">{showMegaMenu ? '▲' : '▼'}</span>
-            </button>
-
-            {/* Simple Dynamic Dropdown */}
-            {showMegaMenu && (
-              <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-slate-200 shadow-xl rounded-2xl p-2.5 z-50 text-left animate-fadeIn">
-                <div className="space-y-1">
-                  <Link 
-                    to="/careers" 
-                    onClick={() => setShowMegaMenu(false)}
-                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-[#0b4a8f]/10 flex items-center justify-center text-[#0b4a8f]">
-                      💼
-                    </div>
-                    <div>
-                      <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight">All Openings</h5>
-                      <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">Explore active job listings</p>
-                    </div>
-                  </Link>
-
-                  <Link 
-                    to="/careers?type=Contract" 
-                    onClick={() => setShowMegaMenu(false)}
-                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                      📝
-                    </div>
-                    <div>
-                      <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight">Contract Roles</h5>
-                      <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">Project-based staffing terms</p>
-                    </div>
-                  </Link>
-
-                  <Link 
-                    to="/careers?type=Permanent" 
-                    onClick={() => setShowMegaMenu(false)}
-                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500">
-                      🏢
-                    </div>
-                    <div>
-                      <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight">Permanent Roles</h5>
-                      <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">Full-time placement options</p>
-                    </div>
-                  </Link>
-
-                  <Link 
-                    to="/careers?category=CXO" 
-                    onClick={() => setShowMegaMenu(false)}
-                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
-                      💎
-                    </div>
-                    <div>
-                      <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight">Executive Roles</h5>
-                      <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">CXO & enterprise management</p>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* For Talent Dropdown trigger */}
-          <div 
-            className="relative"
-            onMouseEnter={() => { setShowTalentMenu(true); setShowMegaMenu(false); }}
-            onMouseLeave={() => setShowTalentMenu(false)}
-          >
-            <button 
-              onClick={() => navigate('/careers')}
-              className={`text-[10px] font-bold uppercase tracking-wider transition flex items-center gap-1.5 px-3 py-1.5 rounded-full ${
-                showTalentMenu ? 'bg-white text-[#0b4a8f] shadow-sm' : 'text-slate-650 hover:text-[#0b4a8f]'
-              }`}
-            >
-              <span>For Talent</span>
-              <span className="text-[7px]">{showTalentMenu ? '▲' : '▼'}</span>
-            </button>
-
-            {/* Simple Dynamic Dropdown */}
-            {showTalentMenu && (
-              <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-slate-200 shadow-xl rounded-2xl p-2.5 z-50 text-left animate-fadeIn">
-                <div className="space-y-1">
-                  <Link 
-                    to="/contact?subject=Join+Talent+Pool" 
-                    onClick={() => setShowTalentMenu(false)}
-                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-[#0b4a8f]/10 flex items-center justify-center text-[#0b4a8f]">
-                      🎯
-                    </div>
-                    <div>
-                      <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight">Join Talent Pool</h5>
-                      <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">Submit professional data profiles</p>
-                    </div>
-                  </Link>
-
-                  <Link 
-                    to="/careers" 
-                    onClick={() => setShowTalentMenu(false)}
-                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-500">
-                      🎓
-                    </div>
-                    <div>
-                      <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight">Career Advice</h5>
-                      <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">Review templates & career tests</p>
-                    </div>
-                  </Link>
-
-                  <Link 
-                    to="/contact?subject=Register+Institute" 
-                    onClick={() => setShowTalentMenu(false)}
-                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-[#82b443]/10 flex items-center justify-center text-[#82b443]">
-                      🌱
-                    </div>
-                    <div>
-                      <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight">Bridging Futures</h5>
-                      <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">University & college connections</p>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <NavLink
-            to="/contact"
-            className={({ isActive }) =>
-              `text-[10px] font-bold uppercase tracking-wider transition px-3 py-1.5 rounded-full ${
-                isActive
-                  ? 'bg-white text-[#0b4a8f] shadow-sm border border-slate-200/50'
-                  : 'text-slate-650 hover:text-[#0b4a8f]'
-              }`
-            }
-          >
-            Contact Us
-          </NavLink>
-        </div>
-
-        {/* Right CTA / Admin Buttons */}
-        <div className="hidden md:flex items-center space-x-3">
-          <Link to="/contact" className="btn-primary">
-            <span>Enquire Now</span>
-            <span className="text-xs">→</span>
-          </Link>
-          {currentUser ? (
-            <div className="flex items-center space-x-2">
-              <Link to="/admin/dashboard" className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
-                Console
-              </Link>
-              <button onClick={handleLogout} className="text-xs font-bold text-rose-600 hover:text-rose-500 transition px-2">
-                Log Out
-              </button>
+          {showServicesMenu && (
+            <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-slate-100 shadow-2xl rounded-2xl p-2.5 z-50 animate-fadeIn">
+              {[
+                { icon: '??', label: 'Managed IT Solutions', sub: 'Enterprise IT management', to: '/services?id=managed-it' },
+                { icon: '??', label: 'Corporate Training', sub: 'Skill development programs', to: '/services?id=corporate-training' },
+                { icon: '??', label: 'Staffing Solutions', sub: 'Recruitment and placement', to: '/services?id=staffing-solutions' },
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  onClick={() => setShowServicesMenu(false)}
+                  className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-blue-50 transition group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-sm">
+                    {item.icon}
+                  </div>
+                  <div>
+                    <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight group-hover:text-blue-600">{item.label}</h5>
+                    <p className="text-[9px] text-slate-400 mt-0.5 font-medium">{item.sub}</p>
+                  </div>
+                </Link>
+              ))}
             </div>
-          ) : (
-            <Link to="/admin" className="px-4 py-2 rounded-full border border-slate-300 hover:border-[#0b4a8f] text-slate-600 hover:text-[#0b4a8f] text-xs font-bold transition">
-              Admin
-            </Link>
           )}
         </div>
 
-        {/* Mobile Toggle Button */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 rounded-lg text-slate-600 hover:text-[#0b4a8f] focus:outline-none"
-        >
-          {mobileOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
-        </button>
+        <NavLink to="/blog" className={navLinkClass}>Blog</NavLink>
+        <NavLink to="/careers" className={navLinkClass}>Career</NavLink>
+        <NavLink to="/contact" className={navLinkClass}>Contact</NavLink>
       </div>
 
-      {/* Mobile Menu */}
+      <div className="hidden md:flex items-center space-x-2">
+        <Link
+          to="/contact"
+          className="px-5 py-2 text-[11px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-blue-600 to-sky-400 hover:from-blue-700 hover:to-sky-500 text-white rounded-full transition-all duration-300 shadow-md shadow-blue-500/20 hover:-translate-y-0.5"
+        >
+          Let's Talk
+        </Link>
+
+        {currentUser && (
+          <Link
+            to="/admin/dashboard"
+            className="px-4 py-2 rounded-full bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 text-[11px] font-bold transition border border-slate-200 hover:border-blue-200"
+          >
+            Console
+          </Link>
+        )}
+      </div>
+
+      <button
+        onClick={() => setMobileOpen(!mobileOpen)}
+        className="md:hidden p-2 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition"
+      >
+        {mobileOpen ? <FaTimes className="text-lg" /> : <FaBars className="text-lg" />}
+      </button>
+
       {mobileOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-xl py-6 px-6 animate-fadeIn space-y-4 max-h-[80vh] overflow-y-auto">
-          <div className="flex flex-col space-y-3">
+        <div className="md:hidden absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 shadow-2xl rounded-3xl py-5 px-5 animate-fadeIn space-y-1">
+          {[
+            { to: '/', label: 'Home' },
+            { to: '/about', label: 'About' },
+            { to: '/products', label: 'Products' },
+            { to: '/services', label: 'Services' },
+            { to: '/blog', label: 'Blog' },
+            { to: '/careers', label: 'Career' },
+            { to: '/contact', label: 'Contact' },
+          ].map((item) => (
             <NavLink
-              to="/"
+              key={item.to}
+              to={item.to}
               onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
-                `text-sm font-bold uppercase tracking-wider transition ${
-                  isActive ? 'text-[#0b4a8f]' : 'text-slate-600'
+                `block px-4 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wide transition ${
+                  isActive ? 'bg-blue-600 text-white' : 'text-slate-700 hover:bg-blue-50 hover:text-blue-600'
                 }`
               }
             >
-              Home
+              {item.label}
             </NavLink>
-            
-            <NavLink
-              to="/about"
-              onClick={() => setMobileOpen(false)}
-              className={({ isActive }) =>
-                `text-sm font-bold uppercase tracking-wider transition ${
-                  isActive ? 'text-[#0b4a8f]' : 'text-slate-600'
-                }`
-              }
-            >
-              About Us
-            </NavLink>
+          ))}
 
-            <NavLink
-              to="/services"
-              onClick={() => setMobileOpen(false)}
-              className={({ isActive }) =>
-                `text-sm font-bold uppercase tracking-wider transition ${
-                  isActive ? 'text-[#0b4a8f]' : 'text-slate-600'
-                }`
-              }
-            >
-              Services
-            </NavLink>
-
-            {/* Mobile jobs collapse */}
-            <div className="space-y-2">
-              <button 
-                onClick={() => setMobileJobsOpen(!mobileJobsOpen)}
-                className="w-full flex items-center justify-between text-sm font-bold uppercase tracking-wider text-slate-600 transition focus:outline-none"
-              >
-                <span>Find a Job</span>
-                {mobileJobsOpen ? <FaChevronUp className="text-[10px]" /> : <FaChevronDown className="text-[10px]" />}
-              </button>
-              {mobileJobsOpen && (
-                <div className="pl-4 flex flex-col space-y-2.5 pt-1 text-slate-500 text-xs font-semibold border-l border-slate-100">
-                  <Link to="/careers" onClick={() => setMobileOpen(false)}>All Openings</Link>
-                  <Link to="/careers?type=Contract" onClick={() => setMobileOpen(false)}>Contract Roles</Link>
-                  <Link to="/careers?type=Permanent" onClick={() => setMobileOpen(false)}>Permanent Roles</Link>
-                  <Link to="/careers?category=CXO" onClick={() => setMobileOpen(false)}>Executive Roles</Link>
-                </div>
-              )}
-            </div>
-
-            {/* Mobile talent collapse */}
-            <div className="space-y-2">
-              <button 
-                onClick={() => setMobileTalentOpen(!mobileTalentOpen)}
-                className="w-full flex items-center justify-between text-sm font-bold uppercase tracking-wider text-slate-600 transition focus:outline-none"
-              >
-                <span>For Talent</span>
-                {mobileTalentOpen ? <FaChevronUp className="text-[10px]" /> : <FaChevronDown className="text-[10px]" />}
-              </button>
-              {mobileTalentOpen && (
-                <div className="pl-4 flex flex-col space-y-2.5 pt-1 text-slate-500 text-xs font-semibold border-l border-slate-100">
-                  <Link to="/contact?subject=Join+Talent+Pool" onClick={() => setMobileOpen(false)}>Join Talent Pool</Link>
-                  <Link to="/careers" onClick={() => setMobileOpen(false)}>Career Advice</Link>
-                  <Link to="/contact?subject=Register+Institute" onClick={() => setMobileOpen(false)}>Bridging Futures</Link>
-                </div>
-              )}
-            </div>
-
-            <NavLink
-              to="/contact"
-              onClick={() => setMobileOpen(false)}
-              className={({ isActive }) =>
-                `text-sm font-bold uppercase tracking-wider transition ${
-                  isActive ? 'text-[#0b4a8f]' : 'text-slate-650'
-                }`
-              }
-            >
-              Contact Us
-            </NavLink>
-          </div>
-
-          <hr className="border-slate-100" />
-
-          <div className="flex flex-col gap-2 pt-2">
+          <div className="border-t border-slate-100 pt-3 mt-3 flex flex-col gap-2">
             <Link
               to="/contact"
               onClick={() => setMobileOpen(false)}
-              className="w-full text-center py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold block"
+              className="w-full text-center py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-400 text-white text-sm font-bold shadow"
             >
-              Enquire Now
+              Let's Talk
             </Link>
+
             {currentUser ? (
               <>
                 <Link
                   to="/admin/dashboard"
                   onClick={() => setMobileOpen(false)}
-                  className="w-full text-center py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold block"
+                  className="w-full text-center py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold"
                 >
                   Admin Console
                 </Link>
                 <button
                   onClick={() => { handleLogout(); setMobileOpen(false); }}
-                  className="w-full py-2.5 text-center text-rose-600 text-xs font-bold"
+                  className="w-full py-2.5 text-center text-rose-500 text-sm font-bold hover:bg-rose-50 rounded-xl transition"
                 >
                   Log Out
                 </button>
@@ -406,7 +181,7 @@ export default function Navbar() {
               <Link
                 to="/admin"
                 onClick={() => setMobileOpen(false)}
-                className="w-full text-center py-2.5 rounded-xl border border-slate-300 text-slate-600 text-xs font-bold block"
+                className="w-full text-center py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-bold"
               >
                 Admin Login
               </Link>
