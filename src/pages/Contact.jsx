@@ -190,17 +190,7 @@ export default function Contact() {
                 </a>
               </div>
 
-              {/* Map */}
-              <div className="rounded-3xl overflow-hidden border border-slate-200 shadow-md bg-white" style={{ aspectRatio: '16/9' }}>
-                <iframe
-                  title="Company Location Map"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3782.3804868205213!2d73.84478427514336!3d18.55683938254429!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf36676aa90f%3A0x7d6f51be02f4d6d6!2sPune%20University%20Rd%2C%20Pune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1699900000000!5m2!1sen!2sin"
-                  className="w-full h-full border-none"
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
+
             </motion.div>
 
             {/* RIGHT: Contact Form */}
