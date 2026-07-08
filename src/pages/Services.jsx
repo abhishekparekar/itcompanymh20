@@ -1,12 +1,10 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getServices, seedDatabase } from "../services/serviceAPI";
+import { getServices, seedDatabase, submitContactForm } from "../services/serviceAPI";
 import ServiceCard from "../components/ServiceCard";
 import { motion, AnimatePresence } from "framer-motion";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "../firebase/firebase";
 import { toast, ToastContainer } from "react-toastify";
-import { FaFileUpload, FaArrowLeft } from "react-icons/fa";
+import { FaPaperPlane, FaPhoneAlt, FaEnvelope, FaClock, FaCheckCircle, FaLaptopCode, FaAndroid, FaApple, FaTools, FaBrain, FaCloud } from "react-icons/fa";
 
 export default function Services() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -14,30 +12,49 @@ export default function Services() {
   const [loading, setLoading] = useState(true);
   const [selectedService, setSelectedService] = useState(null);
 
-  // Application / Inquiry form state
-  const [showApplyForm, setShowApplyForm] = useState(false);
+  // Form states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [resumeBase64, setResumeBase64] = useState("");
-  const [resumeFileName, setResumeFileName] = useState("");
-  const [coverLetter, setCoverLetter] = useState("");
+  const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const detailSectionRef = useRef(null);
 
   useEffect(() => {
     async function fetchAllServices() {
       try {
         await seedDatabase();
         const data = await getServices();
-        setServices(data);
+        
+        // Custom sort to match exactly: Website, Android, iOS, Custom Software, AI/ML, Cloud AI
+        const orderedTitles = [
+          "Website Development",
+          "Android Application Development",
+          "iOS Application",
+          "Custom Software",
+          "AI/ML",
+          "Cloud AI"
+        ];
+        
+        const sortedData = [...data].sort((a, b) => {
+          const indexA = orderedTitles.indexOf(a.title);
+          const indexB = orderedTitles.indexOf(b.title);
+          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+          if (indexA !== -1) return -1;
+          if (indexB !== -1) return 1;
+          return 0;
+        });
+
+        setServices(sortedData);
         
         // Auto select by query param id
         const serviceId = searchParams.get("id");
-        const matching = data.find((s) => s.id === serviceId);
+        const matching = sortedData.find((s) => s.id === serviceId);
         if (matching) {
           setSelectedService(matching);
-        } else if (data.length > 0) {
-          setSelectedService(data[0]); // Default fallback
+        } else if (sortedData.length > 0) {
+          setSelectedService(sortedData[0]); // Default fallback
         }
       } catch (err) {
         console.error("Failed to load services:", err);
@@ -55,59 +72,36 @@ export default function Services() {
       const matching = services.find((s) => s.id === serviceId);
       if (matching) {
         setSelectedService(matching);
-        setShowApplyForm(false); // Reset form state when changing tab
+        // Scroll to details section smoothly
+        setTimeout(() => {
+          detailSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
       }
     }
   }, [searchParams, services]);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error("File size must be under 2MB.");
-        e.target.value = "";
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setResumeBase64(event.target.result);
-        setResumeFileName(file.name);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleApplySubmit = async (e) => {
+  const handleInquirySubmit = async (e) => {
     e.preventDefault();
-    if (!name || !email || !phone || !resumeBase64) {
-      toast.error("Please fill in all required fields and upload your CV.");
+    if (!name || !email || !message) {
+      toast.error("Please fill in all required fields (*).");
       return;
     }
 
     setSubmitting(true);
     try {
-      const appRef = collection(db, "jobApplications");
-      await addDoc(appRef, {
-        jobTitle: selectedService.title,
-        jobCategory: "Services Inquiry / Recruitment",
-        applicantName: name,
-        applicantEmail: email,
-        applicantPhone: phone,
-        applicantResume: resumeBase64,
-        applicantResumeName: resumeFileName,
-        applicantCover: coverLetter,
-        createdAt: new Date().toISOString(),
+      await submitContactForm({
+        name,
+        email,
+        phone,
+        subject: `Service Inquiry: ${selectedService.title}`,
+        message,
       });
 
-      toast.success("Application/Inquiry submitted successfully!");
-      // Reset form states
+      toast.success("Thank you! Your inquiry has been sent successfully.");
       setName("");
       setEmail("");
       setPhone("");
-      setResumeBase64("");
-      setResumeFileName("");
-      setCoverLetter("");
-      setShowApplyForm(false);
+      setMessage("");
     } catch (err) {
       console.error(err);
       toast.error("Failed to submit inquiry. Please try again.");
@@ -116,25 +110,24 @@ export default function Services() {
     }
   };
 
-  const inputClass = "w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition bg-slate-50 hover:bg-white";
+  const inputClass = "w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-700 placeholder-slate-400 transition bg-slate-50 hover:bg-white";
   const labelClass = "block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1";
 
   return (
-    <div className="space-y-12 pb-16">
+    <div className="space-y-8 pb-16">
       <ToastContainer position="top-right" autoClose={3000} theme="light" />
 
       {/* Services Hero Header */}
-      <section className="relative pt-32 pb-16 bg-gradient-to-br from-[#001f42] via-[#002A54] to-[#003d7a] overflow-hidden text-center text-white">
+      <section className="relative pt-28 pb-12 bg-gradient-to-br from-[#001f42] via-[#002A54] to-[#003d7a] overflow-hidden text-center text-white">
         <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-        {/* Glowing orbs */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] pointer-events-none z-0" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-sky-400/10 rounded-full blur-[80px] pointer-events-none z-0" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-400/10 rounded-full blur-[100px] pointer-events-none z-0" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-sky-400/10 rounded-full blur-[70px] pointer-events-none z-0" />
 
-        <div className="container max-w-7xl mx-auto px-6 relative z-10">
+        <div className="container max-w-7xl mx-auto px-4 relative z-10">
           <motion.span 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 text-[11px] font-bold text-blue-300 uppercase tracking-widest mb-3"
+            className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-blue-300 uppercase tracking-widest mb-2"
           >
             <span className="w-4 h-px bg-blue-400 inline-block" />
             Capabilities & Portfolios
@@ -144,46 +137,37 @@ export default function Services() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl font-black mb-3"
           >
             Our Enterprise <span className="text-sky-400">Services</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.25 }}
-            className="text-blue-100/80 text-sm max-w-xl mx-auto leading-relaxed"
+            transition={{ delay: 0.2 }}
+            className="text-blue-100/80 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed"
           >
-            We deliver state-of-the-art software systems, web engineering workflows, and recruitment solutions built to scale.
+            We deliver state-of-the-art software systems, web engineering workflows, and intelligent integrations built to scale.
           </motion.p>
         </div>
       </section>
 
-      {/* Grid of Dynamic Services */}
-      <section className="container max-w-7xl mx-auto px-6">
-        <motion.div 
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-xl mx-auto mb-10"
-        >
-          <h2 className="text-2xl font-extrabold text-slate-800 mb-2">Service Catalog</h2>
-          <div className="w-12 h-1 bg-accent mx-auto mb-3" />
+      {/* Dynamic Services Catalog Grid */}
+      <section className="container max-w-7xl mx-auto px-4">
+        <div className="text-center max-w-md mx-auto mb-8">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800 mb-1.5">Capabilities Catalog</h2>
+          <div className="w-10 h-1 bg-accent mx-auto mb-2" />
           <p className="text-slate-500 text-xs">
-            Browse our list of dynamic solutions designed to automate workflows and optimize outputs.
+            Browse our list of dynamic solutions designed to automate workflows and scale your business.
           </p>
-        </motion.div>
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center py-12">
-            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        ) : services.length === 0 ? (
-          <div className="text-center py-16 bg-slate-50 border rounded-2xl">
-            <p className="text-sm text-slate-400">No services found. Add some services in the admin dashboard catalog.</p>
+            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {services.map((service, idx) => (
               <div 
                 key={service.id || idx} 
@@ -200,145 +184,164 @@ export default function Services() {
         )}
       </section>
 
-      {/* Detailed view block for selected service */}
-      <AnimatePresence mode="wait">
-        {selectedService && (
-          <motion.section 
-            key={selectedService.id}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            transition={{ duration: 0.4 }}
-            className="bg-slate-50 py-12 border-y border-slate-200/50 text-left"
-          >
-            <div className="container max-w-5xl mx-auto px-6">
-              <div className="bg-white p-6 md:p-10 rounded-3xl border border-slate-200 shadow-xl shadow-slate-100/50 space-y-6">
-                
-                {/* Upper block header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-4">
-                  <div>
-                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider block mb-1">
-                      Detailed Specifications & Application
-                    </span>
-                    <h3 className="text-2xl font-black text-slate-800">{selectedService.title}</h3>
-                  </div>
-                  <div className="px-3.5 py-1.5 bg-blue-50 border border-blue-100 rounded-full text-blue-700 text-[10px] font-bold w-fit">
-                    Service ID: {selectedService.id?.slice(0, 8)}...
-                  </div>
-                </div>
-
-                {!showApplyForm ? (
-                  // Detail Information
-                  <div className="grid md:grid-cols-12 gap-8 items-start">
-                    <div className="md:col-span-8 space-y-6">
-                      <div className="space-y-2">
-                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Overview</h4>
-                        <p className="text-slate-600 text-sm leading-relaxed">{selectedService.description || selectedService.desc}</p>
-                      </div>
-                      
-                      {selectedService.details && (
-                        <div className="space-y-2 pt-4 border-t border-slate-100">
-                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Operational Workflows & Specs</h4>
-                          <p className="text-slate-600 text-xs leading-relaxed whitespace-pre-line font-medium">{selectedService.details}</p>
-                        </div>
-                      )}
-
-                      <div className="pt-4">
-                        <button
-                          onClick={() => setShowApplyForm(true)}
-                          className="py-3 px-6 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-blue-500/20 hover:-translate-y-0.5"
-                        >
-                          Apply / Inquire Now
-                        </button>
-                      </div>
+      {/* Detailed view block + Contact Form */}
+      <div ref={detailSectionRef} className="scroll-mt-24">
+        <AnimatePresence mode="wait">
+          {selectedService && (
+            <motion.section 
+              key={selectedService.id}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -24 }}
+              transition={{ duration: 0.4 }}
+              className="bg-slate-50 py-10 border-y border-slate-200/50 text-left"
+            >
+              <div className="container max-w-7xl mx-auto px-4">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  
+                  {/* LEFT: Details Block */}
+                  <div className="lg:col-span-7 bg-white p-5 sm:p-8 rounded-3xl border border-slate-100 shadow-sm space-y-5">
+                    
+                    {/* Header */}
+                    <div className="border-b border-slate-100 pb-4">
+                      <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider block mb-1">
+                        Service Profile
+                      </span>
+                      <h3 className="text-2xl font-black text-slate-800 leading-tight">
+                        {selectedService.title}
+                      </h3>
                     </div>
 
+                    {/* Image */}
                     {selectedService.image && (
-                      <div className="md:col-span-4 rounded-2xl overflow-hidden shadow-lg border border-slate-200">
+                      <div className="rounded-2xl overflow-hidden border border-slate-150 shadow-sm max-h-64">
                         <img 
                           src={selectedService.image} 
                           alt={selectedService.title} 
-                          className="w-full h-full object-cover aspect-[4/3]"
+                          className="w-full h-full object-cover aspect-[16/9]"
                         />
                       </div>
                     )}
+
+                    {/* Overview */}
+                    <div className="space-y-2">
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Overview</h4>
+                      <p className="text-slate-600 text-xs sm:text-sm leading-relaxed font-medium">
+                        {selectedService.description || selectedService.desc}
+                      </p>
+                    </div>
+                    
+                    {/* Specifications */}
+                    {selectedService.details && (
+                      <div className="space-y-2 pt-4 border-t border-slate-100">
+                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Core Features & Architecture</h4>
+                        <p className="text-slate-600 text-xs leading-relaxed whitespace-pre-line font-normal">
+                          {selectedService.details}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Core Promises List */}
+                    <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 text-xs">
+                      <div className="flex items-center gap-2">
+                        <FaCheckCircle className="text-emerald-500 text-sm flex-shrink-0" />
+                        <span>Responsive for all screen sizes</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FaCheckCircle className="text-emerald-500 text-sm flex-shrink-0" />
+                        <span>SEO optimized code structure</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FaCheckCircle className="text-emerald-500 text-sm flex-shrink-0" />
+                        <span>Secure database integration</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FaCheckCircle className="text-emerald-500 text-sm flex-shrink-0" />
+                        <span>24/7 dedicated support SLA</span>
+                      </div>
+                    </div>
                   </div>
-                ) : (
-                  // Application Form
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={() => setShowApplyForm(false)}
-                        className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition flex items-center gap-1"
-                      >
-                        <FaArrowLeft className="text-[10px]" /> Back
-                      </button>
-                      <span className="text-xs font-bold text-slate-500">Submit Application for {selectedService.title}</span>
+
+                  {/* RIGHT: Direct Inquiry Form */}
+                  <div className="lg:col-span-5 bg-white p-5 sm:p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div>
+                      <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest block mb-1">
+                        Inquire Now
+                      </span>
+                      <h3 className="text-lg font-extrabold text-slate-800">
+                        Start Your {selectedService.title} Project
+                      </h3>
+                      <p className="text-slate-400 text-xs mt-0.5">
+                        Tell us about your requirements and our developers will contact you.
+                      </p>
                     </div>
 
-                    <form onSubmit={handleApplySubmit} className="space-y-4 max-w-2xl">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className={labelClass}>Full Name *</label>
-                          <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-                            placeholder="John Doe" className={inputClass} required />
-                        </div>
-                        <div>
-                          <label className={labelClass}>Email Address *</label>
-                          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                            placeholder="john@example.com" className={inputClass} required />
-                        </div>
+                    <form onSubmit={handleInquirySubmit} className="space-y-3.5">
+                      <div>
+                        <label className={labelClass}>Full Name *</label>
+                        <input 
+                          type="text" 
+                          value={name} 
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="e.g. John Doe" 
+                          className={inputClass} 
+                          required 
+                        />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         <div>
-                          <label className={labelClass}>Phone Number *</label>
-                          <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
-                            placeholder="+91 98765 43210" className={inputClass} required />
+                          <label className={labelClass}>Email Address *</label>
+                          <input 
+                            type="email" 
+                            value={email} 
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="e.g. john@example.com" 
+                            className={inputClass} 
+                            required 
+                          />
                         </div>
                         <div>
-                          <label className={labelClass}>Upload CV/Resume * (PDF, Doc, Images under 2MB)</label>
-                          <div className="relative">
-                            <input 
-                              type="file" 
-                              onChange={handleFileChange}
-                              accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                              required={!resumeBase64}
-                            />
-                            <div className="w-full px-4 py-2.5 rounded-xl border border-dashed border-slate-300 bg-slate-50 hover:bg-white transition flex items-center justify-center gap-2 text-xs text-slate-500 font-medium">
-                              <FaFileUpload className="text-blue-500 text-base" />
-                              <span>{resumeFileName || "Choose resume file..."}</span>
-                            </div>
-                          </div>
+                          <label className={labelClass}>Phone Number</label>
+                          <input 
+                            type="tel" 
+                            value={phone} 
+                            onChange={(e) => setPhone(e.target.value)}
+                            placeholder="e.g. +91 98765 43210" 
+                            className={inputClass} 
+                          />
                         </div>
                       </div>
 
                       <div>
-                        <label className={labelClass}>Brief Statement / Message</label>
-                        <textarea value={coverLetter} onChange={(e) => setCoverLetter(e.target.value)}
-                          rows="4" placeholder="Briefly describe your requirements or career objective..."
-                          className={inputClass + " resize-none"} />
+                        <label className={labelClass}>Project Details & Requirements *</label>
+                        <textarea 
+                          value={message} 
+                          onChange={(e) => setMessage(e.target.value)}
+                          rows="4" 
+                          placeholder="Please describe what you are looking to build, expected timelines, or feature requests..."
+                          className={inputClass + " resize-none"} 
+                          required 
+                        />
                       </div>
 
-                      <div className="flex justify-end pt-2">
-                        <button
-                          type="submit"
-                          disabled={submitting}
-                          className="py-3 px-6 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-blue-500/20 disabled:opacity-75"
-                        >
-                          {submitting ? "Submitting..." : "Submit Inquiry"}
-                        </button>
-                      </div>
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full py-3 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white text-xs font-extrabold uppercase tracking-wider rounded-xl transition shadow-lg shadow-blue-500/20 hover:-translate-y-0.5 flex items-center justify-center gap-2 disabled:opacity-75"
+                      >
+                        <FaPaperPlane className="text-xs" />
+                        {submitting ? "Sending Inquiry..." : "Submit Project Request"}
+                      </button>
                     </form>
                   </div>
-                )}
 
+                </div>
               </div>
-            </div>
-          </motion.section>
-        )}
-      </AnimatePresence>
+            </motion.section>
+          )}
+        </AnimatePresence>
+      </div>
 
     </div>
   );

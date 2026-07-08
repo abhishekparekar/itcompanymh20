@@ -165,7 +165,8 @@ export async function seedDatabase(force = false) {
     
     let hasOldDefaults = false;
     if (!servicesSnapshot.empty) {
-      hasOldDefaults = servicesSnapshot.docs.some(docSnap => 
+      const hasCustomSoftware = servicesSnapshot.docs.some(docSnap => docSnap.data().title === "Custom Software");
+      hasOldDefaults = !hasCustomSoftware || servicesSnapshot.docs.some(docSnap => 
         ["Managed IT Solutions", "Corporate Training", "Staffing Solutions", "Cloud Migration & Infrastructure", "Enterprise Web Solutions", "Cybersecurity & Pentesting"].includes(docSnap.data().title)
       );
     }
@@ -202,11 +203,11 @@ export async function seedDatabase(force = false) {
           image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&auto=format&fit=crop"
         },
         {
-          title: "Cloud AI",
-          description: "Deploy scalable cloud-native AI infrastructures, cognitive microservices, and serverless pipelines.",
-          details: "We help integrate scalable AI/ML pipelines on AWS, Google Cloud, and Azure. We configure automated vision APIs, speech-to-text gateways, elastic container deployments (Kubernetes), and serverless machine learning APIs for real-time inference.",
-          icon: "FaCloud",
-          image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop"
+          title: "Custom Software",
+          description: "Enterprise ERP systems, custom CRM pipelines, and bespoke workflow automation engines.",
+          details: "We design and build bespoke software solutions to automate complex business workflows. From multi-branch ERP software to custom CRM integrations, database migrations, security audits, and dedicated dashboard consoles, we deliver scalable products tailored to your operational structure.",
+          icon: "FaTools",
+          image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=600&auto=format&fit=crop"
         },
         {
           title: "AI/ML",
@@ -214,6 +215,13 @@ export async function seedDatabase(force = false) {
           details: "Unlock actionable insights with custom PyTorch/TensorFlow models, predictive customer behavior algorithms, NLP engines, OCR automation, and automated recommendation engines tailored to your database models.",
           icon: "FaBrain",
           image: "https://images.unsplash.com/photo-1527474305487-b87b222841cc?q=80&w=600&auto=format&fit=crop"
+        },
+        {
+          title: "Cloud AI",
+          description: "Deploy scalable cloud-native AI infrastructures, cognitive microservices, and serverless pipelines.",
+          details: "We help integrate scalable AI/ML pipelines on AWS, Google Cloud, and Azure. We configure automated vision APIs, speech-to-text gateways, elastic container deployments (Kubernetes), and serverless machine learning APIs for real-time inference.",
+          icon: "FaCloud",
+          image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop"
         }
       ];
 
