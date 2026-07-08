@@ -41,7 +41,11 @@ export default function Navbar() {
           : 'top-3 w-[94%] md:w-[88%] bg-white/95 backdrop-blur-md border border-slate-200/60 shadow-lg py-2.5 px-5 rounded-full'
       }`}
     >
-      <Link to="/" className="flex items-center space-x-2 select-none group flex-shrink-0">
+      <Link 
+        to="/" 
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="flex items-center space-x-2 select-none group flex-shrink-0"
+      >
         <div className="h-9 w-auto overflow-hidden flex items-center">
           <img src={ufgsLogo} alt="UF Global Solutions Logo" className="h-9 object-contain rounded-md" />
         </div>
