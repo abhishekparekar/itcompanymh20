@@ -56,11 +56,26 @@ export default function Navbar() {
       <Link 
         to="/" 
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="flex items-center space-x-2 select-none group flex-shrink-0"
+        className="flex items-center gap-2 select-none group flex-shrink-0"
       >
-        <div className="h-9 w-auto overflow-hidden flex items-center">
-          <img src={ufgsLogo} alt="UF Global Solutions Logo" className="h-9 object-contain rounded-md" />
+        {/* Logo image — responsive height across breakpoints */}
+        <div className="h-8 sm:h-9 md:h-10 w-auto overflow-hidden flex items-center flex-shrink-0">
+          <img
+            src={ufgsLogo}
+            alt="UF Global Solutions Logo"
+            className="h-full w-auto object-contain rounded-md"
+            style={{ maxWidth: '120px' }}
+          />
         </div>
+        {/* Company short name — hidden on very small screens */}
+        <span className="hidden sm:flex flex-col leading-tight">
+          <span className="text-[11px] md:text-[13px] font-extrabold text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors duration-200 whitespace-nowrap">
+            UF Global Solutions
+          </span>
+          <span className="text-[8px] md:text-[9px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+            Pvt. Ltd.
+          </span>
+        </span>
       </Link>
 
       <div className="hidden md:flex items-center bg-slate-100/80 py-1 px-1.5 rounded-full space-x-0.5 border border-slate-200/40">
