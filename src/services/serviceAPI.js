@@ -166,43 +166,54 @@ export async function seedDatabase(force = false) {
     let hasOldDefaults = false;
     if (!servicesSnapshot.empty) {
       hasOldDefaults = servicesSnapshot.docs.some(docSnap => 
-        docSnap.data().title === "Cloud Migration & Infrastructure"
+        ["Managed IT Solutions", "Corporate Training", "Staffing Solutions", "Cloud Migration & Infrastructure", "Enterprise Web Solutions", "Cybersecurity & Pentesting"].includes(docSnap.data().title)
       );
     }
 
     if (servicesSnapshot.empty || force || hasOldDefaults) {
-      console.log("Seeding services...");
+      console.log("Seeding new services...");
       
-      if ((force || hasOldDefaults) && !servicesSnapshot.empty) {
+      if (!servicesSnapshot.empty) {
         for (const docSnap of servicesSnapshot.docs) {
-          const title = docSnap.data().title;
-          if (force || ["Cloud Migration & Infrastructure", "Cybersecurity & Pentesting", "Enterprise Web Solutions", "AI & Data Analytics"].includes(title)) {
-            await deleteDoc(doc(db, 'services', docSnap.id));
-          }
+          await deleteDoc(doc(db, 'services', docSnap.id));
         }
       }
       
       const defaultServices = [
         {
-          title: "Managed IT Solutions",
-          description: "Sleek, round-the-clock IT management, networking, system integration, security auditing, and workspace assistance.",
-          details: "We offer professional hardware maintenance, live network configurations, regular pentesting audits, cloud backup designs, and remote helpdesk operations to keep your team running at 100% efficiency.",
+          title: "Website Development",
+          description: "Build modern, fast, and SEO-friendly corporate websites and e-commerce platforms.",
+          details: "We specialize in developing premium web applications using React, Next.js, and modern CSS frameworks. Our sites are designed for fast page speeds, custom micro-interactions, responsive mobile layouts, and high search engine rankings.",
           icon: "FaLaptopCode",
-          image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=600&auto=format&fit=crop"
+          image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop"
         },
         {
-          title: "Corporate Training",
-          description: "Tailored upskilling programs, tech stack bootcamps, and executive coaching tailored for modern workforces.",
-          details: "Upskill your developers, database engineers, and project leads with customized bootcamps covering cloud deployments, container orchestration, microservices integration, and cybersecurity standards.",
-          icon: "FaUserGraduate",
-          image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=600&auto=format&fit=crop"
+          title: "Android Application Development",
+          description: "High-performance native and cross-platform Android mobile applications.",
+          details: "Our mobile team engineers feature-rich Android apps using Kotlin and Flutter. We configure background sync services, real-time push notifications, custom user onboarding screens, secure storage solutions, and optimal battery management protocols.",
+          icon: "FaAndroid",
+          image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop"
         },
         {
-          title: "Staffing Solutions",
-          description: "Elite talent sourcing, staff augmentation, permanent recruitment, and executive search for tech roles.",
-          details: "We bridge the tech talent gap by sourcing top software engineers, system admins, cloud specialists, and QA engineers. Whether you need short-term contract staff or direct hires, our vetting pipeline delivers the right expertise.",
-          icon: "FaUsers",
-          image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=600&auto=format&fit=crop"
+          title: "iOS Application",
+          description: "Premium iOS apps optimized for the Apple ecosystem and App Store compliance.",
+          details: "We design and develop premium iOS mobile apps using Swift and Flutter. We focus on strict adherence to the Apple Human Interface guidelines, butter-smooth animations, local face/touch ID authentication, and optimal memory management.",
+          icon: "FaApple",
+          image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&auto=format&fit=crop"
+        },
+        {
+          title: "Cloud AI",
+          description: "Deploy scalable cloud-native AI infrastructures, cognitive microservices, and serverless pipelines.",
+          details: "We help integrate scalable AI/ML pipelines on AWS, Google Cloud, and Azure. We configure automated vision APIs, speech-to-text gateways, elastic container deployments (Kubernetes), and serverless machine learning APIs for real-time inference.",
+          icon: "FaCloud",
+          image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop"
+        },
+        {
+          title: "AI/ML",
+          description: "Custom neural networks, natural language processing, predictive intelligence, and computer vision.",
+          details: "Unlock actionable insights with custom PyTorch/TensorFlow models, predictive customer behavior algorithms, NLP engines, OCR automation, and automated recommendation engines tailored to your database models.",
+          icon: "FaBrain",
+          image: "https://images.unsplash.com/photo-1527474305487-b87b222841cc?q=80&w=600&auto=format&fit=crop"
         }
       ];
 

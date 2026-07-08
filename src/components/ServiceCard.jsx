@@ -12,10 +12,12 @@ export default function ServiceCard({ service, index }) {
   const getServiceTag = (title = '') => {
     const t = title.toLowerCase();
     if (t.includes('web') || t.includes('website')) return 'WEB SYSTEMS';
+    if (t.includes('ai') || t.includes('ml') || t.includes('machine') || t.includes('intelligence')) return 'AI / ML SYSTEMS';
+    if (t.includes('cloud')) return 'CLOUD AI & ARCHITECTURE';
+    if (t.includes('app') || t.includes('android') || t.includes('ios') || t.includes('mobile')) return 'MOBILE APPS';
     if (t.includes('software') || t.includes('erp') || t.includes('crm')) return 'SOFTWARE ENGINEERING';
-    if (t.includes('app') || t.includes('mobile')) return 'MOBILE APPS';
     if (t.includes('marketing') || t.includes('seo') || t.includes('branding')) return 'DIGITAL GROWTH';
-    return 'SALES OPERATIONS';
+    return 'ENTERPRISE SERVICES';
   };
 
   // Mockup/Unsplash images corresponding to the layout in Screenshot 4

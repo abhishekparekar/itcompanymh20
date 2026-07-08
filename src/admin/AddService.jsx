@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { addService } from '../services/serviceAPI';
 import { toast } from 'react-toastify';
 import { FaPlusCircle } from 'react-icons/fa';
@@ -12,13 +12,18 @@ export default function AddService({ onSuccess }) {
   const [submitting, setSubmitting] = useState(false);
 
   const iconsList = [
-    { label: 'Laptop / Code (FaLaptopCode)', value: 'FaLaptopCode' },
-    { label: 'Cloud Computing (FaCloud)', value: 'FaCloud' },
+    { label: 'Code / Laptop (FaLaptopCode)', value: 'FaLaptopCode' },
+    { label: 'Code (FaCode)', value: 'FaCode' },
+    { label: 'Android (FaAndroid)', value: 'FaAndroid' },
+    { label: 'Apple (FaApple)', value: 'FaApple' },
+    { label: 'Brain / AI (FaBrain)', value: 'FaBrain' },
+    { label: 'Robot / ML (FaRobot)', value: 'FaRobot' },
+    { label: 'Cloud (FaCloud)', value: 'FaCloud' },
     { label: 'Shield / Security (FaShieldAlt)', value: 'FaShieldAlt' },
     { label: 'Database / Analytics (FaDatabase)', value: 'FaDatabase' },
-    { label: 'Network Architecture (FaNetworkWired)', value: 'FaNetworkWired' },
-    { label: 'Mobile Engineering (FaMobileAlt)', value: 'FaMobileAlt' },
-    { label: 'Settings / Tools (FaTools)', value: 'FaTools' }
+    { label: 'Network (FaNetworkWired)', value: 'FaNetworkWired' },
+    { label: 'Mobile (FaMobileAlt)', value: 'FaMobileAlt' },
+    { label: 'Tools (FaTools)', value: 'FaTools' }
   ];
 
   const handleSubmit = async (e) => {
