@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ContactForm from "../components/ContactForm";
 import { getSiteSettings } from "../services/serviceAPI";
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp, FaShieldAlt, FaBolt, FaHandshake } from "react-icons/fa";
@@ -12,6 +12,7 @@ export default function Contact() {
   const [address, setAddress] = useState(COMPANY.address);
   const [workingHours, setWorkingHours] = useState("Monday - Saturday: 9:00 AM - 6:00 PM");
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState([]);
 
   useEffect(() => {
     async function loadContactSettings() {
@@ -22,6 +23,11 @@ export default function Contact() {
           if (fetched.phone) setPhone(fetched.phone);
           if (fetched.address) setAddress(fetched.address);
           if (fetched.workingHours) setWorkingHours(fetched.workingHours);
+        }
+
+        const aboutFetched = await getSiteSettings("about");
+        if (aboutFetched && aboutFetched.stats) {
+          setStats(aboutFetched.stats);
         }
       } catch (err) {
         console.error("Error fetching contact settings:", err);
@@ -77,15 +83,18 @@ export default function Contact() {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="flex flex-wrap justify-center gap-5 mt-10"
           >
-            {[
-              { num: "185+", label: "Projects Delivered" },
-              { num: "103+", label: "Happy Clients" },
-              { num: "24h", label: "Response Time" },
-              { num: "7+", label: "Global Cities" },
-            ].map((s) => (
+            {(stats && stats.length >= 4
+              ? stats.slice(0, 4).map(s => ({ num: s.value, label: s.label }))
+              : [
+                  { num: "185+", label: "Projects Delivered" },
+                  { num: "103+", label: "Happy Clients" },
+                  { num: "24h", label: "Response Time" },
+                  { num: "7+", label: "Global Cities" },
+                ]
+            ).map((s) => (
               <div key={s.label} className="bg-white/5 border border-white/10 rounded-2xl px-6 py-3 text-center">
                 <p className="text-2xl font-black text-sky-400">{s.num}</p>
-                <p className="text-[10px] text-blue-200 font-semibold uppercase tracking-wide mt-0.5">{s.label}</p>
+                <p className="text-[10px] text-blue-200 font-semibold uppercase tracking-wide mt-0.5 truncate">{s.label}</p>
               </div>
             ))}
           </motion.div>

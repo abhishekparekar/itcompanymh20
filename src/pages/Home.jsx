@@ -215,62 +215,47 @@ export default function Home() {
             variants={staggerContainer}
             className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center items-center justify-center"
           >
-            
-            {/* Stat 1 */}
-            <motion.div variants={fadeUp} className="flex flex-col items-center space-y-1.5">
-              <div className="text-3xl text-accent mb-0.5">
-                <FaBriefcase className="inline" />
-              </div>
-              <div className="text-2xl md:text-3xl font-black text-white leading-none">
-                <CountUp end={25} enableScrollSpy scrollSpyOnce />+
-              </div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Years of Expertise</p>
-            </motion.div>
-
-            {/* Stat 2 */}
-            <motion.div variants={fadeUp} className="flex flex-col items-center space-y-1.5">
-              <div className="text-3xl text-accent mb-0.5">
-                <FaThumbsUp className="inline" />
-              </div>
-              <div className="text-2xl md:text-3xl font-black text-white leading-none">
-                <CountUp end={300} enableScrollSpy scrollSpyOnce />+
-              </div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Corporate Clientele</p>
-            </motion.div>
-
-            {/* Stat 3 */}
-            <motion.div variants={fadeUp} className="flex flex-col items-center space-y-1.5">
-              <div className="text-3xl text-accent mb-0.5">
-                <FaUsers className="inline" />
-              </div>
-              <div className="text-2xl md:text-3xl font-black text-white leading-none">
-                <CountUp end={5000} enableScrollSpy scrollSpyOnce separator="," />+
-              </div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Onboardings</p>
-            </motion.div>
-
-            {/* Stat 4 */}
-            <motion.div variants={fadeUp} className="flex flex-col items-center space-y-1.5">
-              <div className="text-3xl text-accent mb-0.5">
-                <FaBuilding className="inline" />
-              </div>
-              <div className="text-2xl md:text-3xl font-black text-white leading-none">
-                <CountUp end={2500} enableScrollSpy scrollSpyOnce separator="," />+
-              </div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">SMEs</p>
-            </motion.div>
-
-            {/* Stat 5 */}
-            <motion.div variants={fadeUp} className="flex flex-col items-center space-y-1.5 col-span-2 md:col-span-1">
-              <div className="text-3xl text-accent mb-0.5">
+            {(stats && stats.length === 5 && stats.every(s => s.value && s.label)
+              ? stats 
+              : [
+                  { value: '25+', label: 'Years of Expertise' },
+                  { value: '300+', label: 'Corporate Clientele' },
+                  { value: '5,000+', label: 'Onboardings' },
+                  { value: '2,500+', label: 'SMEs' },
+                  { value: '450K+', label: 'Professionals Trained' }
+                ]
+            ).map((item, idx) => {
+              // Extract numeric value for CountUp if possible
+              const match = item.value.match(/^([\d,]+)/);
+              const numberVal = match ? parseInt(match[0].replace(/,/g, ''), 10) : null;
+              const suffix = match ? item.value.slice(match[0].length) : item.value;
+              const icons = [
+                <FaBriefcase className="inline" />,
+                <FaThumbsUp className="inline" />,
+                <FaUsers className="inline" />,
+                <FaBuilding className="inline" />,
                 <FaUserGraduate className="inline" />
-              </div>
-              <div className="text-2xl md:text-3xl font-black text-white leading-none">
-                <CountUp end={450} enableScrollSpy scrollSpyOnce />K+
-              </div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Professionals Trained</p>
-            </motion.div>
+              ];
 
+              return (
+                <motion.div key={idx} variants={fadeUp} className="flex flex-col items-center space-y-1.5">
+                  <div className="text-3xl text-accent mb-0.5">
+                    {icons[idx] || <FaBriefcase className="inline" />}
+                  </div>
+                  <div className="text-2xl md:text-3xl font-black text-white leading-none">
+                    {numberVal !== null ? (
+                      <>
+                        <CountUp end={numberVal} enableScrollSpy scrollSpyOnce separator="," />
+                        {suffix}
+                      </>
+                    ) : (
+                      item.value
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{item.label}</p>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>

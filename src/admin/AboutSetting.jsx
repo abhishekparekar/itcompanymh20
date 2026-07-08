@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getSiteSettings, updateSiteSettings } from '../services/serviceAPI';
 import { toast } from 'react-toastify';
 import { FaSave, FaChartBar, FaBullseye, FaEye } from 'react-icons/fa';
@@ -8,8 +8,9 @@ export default function AboutSetting() {
   const [mission, setMission] = useState('');
   const [vision, setVision] = useState('');
   
-  // Stats state (array of 4 objects)
+  // Stats state (array of 5 objects)
   const [stats, setStats] = useState([
+    { value: '', label: '' },
     { value: '', label: '' },
     { value: '', label: '' },
     { value: '', label: '' },
@@ -26,8 +27,9 @@ export default function AboutSetting() {
           setDescription(fetched.description || '');
           setMission(fetched.mission || '');
           setVision(fetched.vision || '');
-          if (fetched.stats && fetched.stats.length === 4) {
-            setStats(fetched.stats);
+          if (fetched.stats && fetched.stats.length > 0) {
+            const filledStats = Array(5).fill(null).map((_, idx) => fetched.stats[idx] || { value: '', label: '' });
+            setStats(filledStats);
           }
         }
       } catch (err) {
@@ -137,10 +139,10 @@ export default function AboutSetting() {
       <div className="space-y-4 pt-4 border-t border-slate-100">
         <h3 className="flex items-center space-x-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
           <FaChartBar className="text-blue-500 text-xs" />
-          <span>Dynamic Stats Panel (4 stats required)</span>
+          <span>Dynamic Stats Panel (5 stats required)</span>
         </h3>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
           {stats.map((stat, i) => (
             <div key={i} className="p-4 bg-slate-50 border border-slate-200/60 rounded-xl space-y-3">
               <span className="text-[10px] uppercase font-bold text-blue-600 block">Stat #{i + 1}</span>

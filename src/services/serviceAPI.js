@@ -223,10 +223,11 @@ export async function seedDatabase(force = false) {
         mission: "To engineer scalable, resilient, and cutting-edge digital experiences that empower companies to lead their industries with absolute operational confidence.",
         vision: "To be the ultimate technology transformation partner globally, recognized for high-performance software engineering, security compliance, and robust technical architectures.",
         stats: [
-          { value: "12+", label: "Years Experience" },
-          { value: "320+", label: "Projects Completed" },
-          { value: "75+", label: "IT Professionals" },
-          { value: "99.98%", label: "System Uptime" }
+          { value: "25+", label: "Years of Expertise" },
+          { value: "300+", label: "Corporate Clientele" },
+          { value: "5,000+", label: "Onboardings" },
+          { value: "2,500+", label: "SMEs" },
+          { value: "450K+", label: "Professionals Trained" }
         ]
       });
     }
