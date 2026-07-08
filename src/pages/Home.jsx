@@ -467,19 +467,19 @@ export default function Home() {
           ) : (
             <div className="overflow-hidden w-full relative">
               {/* Fade masks on the edges for premium look */}
-              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
-              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
+              <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
 
-              <div className="flex w-max animate-ticker hover:[animation-play-state:paused] gap-6 py-2">
+              <div className="flex w-max animate-ticker-reverse hover:[animation-play-state:paused] gap-10 md:gap-16 py-4">
                 {logos.concat(logos).concat(logos).concat(logos).concat(logos).map((logo, idx) => (
                   <div 
                     key={idx} 
-                    className="w-[180px] sm:w-[220px] shrink-0 flex items-center justify-center p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-accent/30 transition group h-20"
+                    className="w-[180px] sm:w-[220px] md:w-[260px] shrink-0 flex items-center justify-center h-28 md:h-32 px-6 select-none"
                   >
                     <img
                       src={logo.url}
                       alt={logo.name || 'Brand Logo'}
-                      className="max-h-10 max-w-[80%] object-contain filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition duration-300"
+                      className="max-h-16 sm:max-h-20 md:max-h-24 max-w-full object-contain transition-transform duration-300 hover:scale-110"
                       loading="lazy"
                     />
                   </div>
