@@ -97,16 +97,20 @@ export default function Footer() {
         {/* Brand row — always full width on top */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 pb-8 border-b border-slate-800 mb-8">
           {/* Logo + tagline */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3.5">
             <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <div className="h-12 w-12 bg-white rounded-2xl p-1.5 flex items-center justify-center shadow-lg flex-shrink-0">
-                <img src={ufgsLogo} alt="UFGS Logo" className="h-full w-auto object-contain" />
+              <div className="h-14 w-14 bg-white rounded-2xl p-1.5 flex items-center justify-center shadow-xl flex-shrink-0 border border-white/10">
+                <img
+                  src={ufgsLogo}
+                  alt="UFGS Logo"
+                  className="h-full w-full object-contain rounded-xl"
+                />
               </div>
             </Link>
             <div className="leading-tight">
-              <p className="text-white font-extrabold text-sm">UF Global Solutions</p>
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest">Pvt. Ltd.</p>
-              <p className="text-[11px] text-slate-400 mt-1 max-w-[200px] sm:max-w-xs leading-relaxed">
+              <p className="text-white font-extrabold text-base sm:text-lg tracking-tight">UF Global Solutions</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Pvt. Ltd.</p>
+              <p className="text-[11px] text-slate-400 mt-1.5 max-w-[220px] sm:max-w-xs leading-relaxed">
                 {tagline || 'Smart digital solutions for modern businesses.'}
               </p>
             </div>

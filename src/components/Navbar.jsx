@@ -53,19 +53,28 @@ export default function Navbar() {
           : 'top-3 w-[94%] md:w-[88%] bg-white/95 backdrop-blur-md border border-slate-200/60 shadow-lg py-2.5 px-5 rounded-full'
       }`}
     >
-      <Link 
-        to="/" 
+      <Link
+        to="/"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="flex items-center gap-2 select-none group flex-shrink-0"
+        className="flex items-center gap-2.5 select-none group flex-shrink-0"
       >
-        {/* Logo image — responsive height across breakpoints */}
-        <div className="h-8 sm:h-9 md:h-10 w-auto overflow-hidden flex items-center flex-shrink-0">
+        {/* Logo image */}
+        <div className="h-9 sm:h-10 md:h-11 w-auto overflow-hidden flex items-center flex-shrink-0">
           <img
             src={ufgsLogo}
             alt="UF Global Solutions Logo"
-            className="h-full w-auto object-contain rounded-md"
-            style={{ maxWidth: '120px' }}
+            className="h-full w-auto object-contain rounded-lg"
+            style={{ maxWidth: '140px' }}
           />
+        </div>
+        {/* Company name — branding text */}
+        <div className="hidden sm:flex flex-col leading-tight">
+          <span className="text-[12px] md:text-[13px] font-extrabold text-slate-800 tracking-tight whitespace-nowrap group-hover:text-blue-600 transition-colors">
+            UF Global Solutions
+          </span>
+          <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">
+            Pvt. Ltd.
+          </span>
         </div>
       </Link>
 
