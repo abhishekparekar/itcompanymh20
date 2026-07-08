@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Hero from '../components/Hero';
 import ServiceCard from '../components/ServiceCard';
 import ContactForm from '../components/ContactForm';
@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
 
-import { FaBriefcase, FaThumbsUp, FaUsers, FaBuilding, FaUserGraduate, FaQuoteLeft, FaStar, FaCreditCard, FaMicrochip, FaShoppingBag, FaHospital, FaRocket } from 'react-icons/fa';
+import { FaBriefcase, FaThumbsUp, FaUsers, FaBuilding, FaUserGraduate, FaQuoteLeft, FaStar, FaCreditCard, FaMicrochip, FaShoppingBag, FaHospital, FaRocket, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 export default function Home() {
   const [services, setServices] = useState([]);
@@ -15,13 +15,14 @@ export default function Home() {
   const [testimonials, setTestimonials] = useState([]);
   const [aboutDesc, setAboutDesc] = useState('');
   const [loading, setLoading] = useState(true);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     async function loadHomeData() {
       try {
         await seedDatabase();
         const servicesData = await getServices();
-        setServices(servicesData.slice(0, 4)); // Show top 4 services on Home
+        setServices(servicesData); // Show all services in the scrolling carousel
         
         const aboutData = await getSiteSettings('about');
         if (aboutData && aboutData.description) {
@@ -45,6 +46,18 @@ export default function Home() {
     }
     loadHomeData();
   }, []);
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -340, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 340, behavior: 'smooth' });
+    }
+  };
 
   // Section Animation Variants
   const fadeUp = {
@@ -141,34 +154,60 @@ export default function Home() {
       </section>
 
       {/* Services Showcase */}
-      <section className="container max-w-7xl mx-auto px-6">
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          variants={fadeUp}
-          className="text-center max-w-2xl mx-auto mb-12"
-        >
-          <span className="text-xs font-bold text-primary uppercase tracking-widest block mb-2">
-            What We Do
-          </span>
-          <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">
-            Managed IT Service Portfolios
-          </h2>
-          <div className="w-12 h-1 bg-accent mx-auto mb-4" />
-          <p className="text-slate-500 text-xs leading-relaxed max-w-md mx-auto">
-            We provide bespoke development and engineering workflows designed around your business needs.
-          </p>
-        </motion.div>
+      <section className="container max-w-7xl mx-auto px-6 py-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={fadeUp}
+            className="text-left"
+          >
+            <span className="text-xs font-bold text-primary uppercase tracking-widest block mb-2">
+              What We Do
+            </span>
+            <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">
+              Managed IT Service Portfolios
+            </h2>
+            <div className="w-12 h-1 bg-accent mb-3" />
+            <p className="text-slate-500 text-xs leading-relaxed max-w-md">
+              We provide bespoke development and engineering workflows designed around your business needs.
+            </p>
+          </motion.div>
+
+          {/* Slider Navigation Buttons */}
+          <div className="flex items-center gap-2 self-start md:self-end">
+            <button
+              onClick={scrollLeft}
+              className="w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-blue-600 flex items-center justify-center transition shadow-sm hover:shadow-md active:scale-95"
+              title="Scroll Left"
+            >
+              <FaChevronLeft className="text-xs" />
+            </button>
+            <button
+              onClick={scrollRight}
+              className="w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-blue-600 flex items-center justify-center transition shadow-sm hover:shadow-md active:scale-95"
+              title="Scroll Right"
+            >
+              <FaChevronRight className="text-xs" />
+            </button>
+          </div>
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div 
+            ref={scrollRef}
+            className="flex overflow-x-auto gap-6 pb-6 select-none scrollbar-hide scroll-smooth snap-x snap-mandatory"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             {services.map((svc, i) => (
-              <ServiceCard key={svc.id || i} service={svc} index={i} />
+              <div key={svc.id || i} className="w-[280px] sm:w-[320px] md:w-[360px] shrink-0 snap-start">
+                <ServiceCard service={svc} index={i} />
+              </div>
             ))}
           </div>
         )}
@@ -177,7 +216,7 @@ export default function Home() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          className="text-center mt-8"
         >
           <Link to="/services" className="btn-outline border-slate-300 text-slate-700 hover:border-primary hover:text-primary hover:-translate-y-0.5 transition-all">
             View All Services

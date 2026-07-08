@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getJobs, seedJobs } from '../services/serviceAPI';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { toast, ToastContainer } from 'react-toastify';
-import { FaSearch, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEnvelope, FaLocationArrow } from 'react-icons/fa';
+import { FaSearch, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEnvelope, FaLocationArrow, FaFileUpload, FaTimes } from 'react-icons/fa';
 
 export default function Careers() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,6 +23,7 @@ export default function Careers() {
   const [applicantName, setApplicantName] = useState('');
   const [applicantEmail, setApplicantEmail] = useState('');
   const [applicantResume, setApplicantResume] = useState('');
+  const [applicantResumeName, setApplicantResumeName] = useState('');
   const [applicantCover, setApplicantCover] = useState('');
   const [submittingApp, setSubmittingApp] = useState(false);
 
@@ -47,10 +48,27 @@ export default function Careers() {
     loadJobsData();
   }, []);
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("File size must be under 2MB.");
+        e.target.value = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setApplicantResume(event.target.result);
+        setApplicantResumeName(file.name);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleApplySubmit = async (e) => {
     e.preventDefault();
     if (!applicantName || !applicantEmail || !applicantResume) {
-      toast.error("Please fill in name, email, and CV link.");
+      toast.error("Please fill in name, email, and upload your CV.");
       return;
     }
     setSubmittingApp(true);
@@ -62,6 +80,7 @@ export default function Careers() {
         applicantName,
         applicantEmail,
         applicantResume,
+        applicantResumeName,
         applicantCover,
         createdAt: new Date().toISOString()
       });
@@ -70,6 +89,7 @@ export default function Careers() {
       setApplicantName('');
       setApplicantEmail('');
       setApplicantResume('');
+      setApplicantResumeName('');
       setApplicantCover('');
     } catch (err) {
       console.error(err);
@@ -106,14 +126,19 @@ export default function Careers() {
 
   return (
     <div className="pt-28 pb-12 min-h-screen bg-transparent">
-      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+      <ToastContainer position="top-right" autoClose={3000} theme="light" />
       
-      {/* Banner: partner for talent. */}
+      {/* Banner */}
       <div className="bg-primary text-white py-16 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-grid-pattern" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#001f42] via-[#002A54] to-[#003d7a] z-0" />
+        <div className="absolute inset-0 opacity-10 bg-grid-pattern z-0" />
         <div className="container max-w-7xl mx-auto px-6 relative z-10 text-left space-y-6">
-          <h1 className="text-4xl md:text-6xl font-light tracking-tight text-white mb-8">
-            partner for talent.
+          <span className="inline-flex items-center gap-2 text-[11px] font-bold text-blue-300 uppercase tracking-widest">
+            <span className="w-4 h-px bg-blue-400 inline-block" />
+            Careers & Work opportunities
+          </span>
+          <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">
+            Partner For <span className="text-sky-400">Talent</span>
           </h1>
 
           {/* Search Box Grid */}
@@ -128,7 +153,7 @@ export default function Careers() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="job title or keyword"
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 placeholder-slate-400 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 placeholder-slate-400 focus:outline-none"
               />
             </div>
 
@@ -142,7 +167,7 @@ export default function Careers() {
                 value={locationQuery}
                 onChange={(e) => setLocationQuery(e.target.value)}
                 placeholder="location or postcode"
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 placeholder-slate-400 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 placeholder-slate-400 focus:outline-none"
               />
             </div>
 
@@ -154,7 +179,7 @@ export default function Careers() {
               <select
                 value={rangeQuery}
                 onChange={(e) => setRangeQuery(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 cursor-pointer focus:outline-none"
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 cursor-pointer focus:outline-none"
               >
                 <option value="10 km">10 km</option>
                 <option value="25 km">25 km</option>
@@ -167,30 +192,10 @@ export default function Careers() {
             <div className="md:col-span-2">
               <button
                 type="button"
-                className="w-full py-3 bg-[#1e7be6] hover:bg-[#1560b8] text-white text-xs font-bold rounded-xl transition shadow flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow flex items-center justify-center gap-1.5"
               >
                 <span>search {filteredJobs.length} jobs</span>
               </button>
-            </div>
-          </div>
-
-          {/* Under-grid Meta Options */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-[11px] font-semibold text-slate-400 gap-4 pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                setLocationQuery('Maharashtra, India');
-                toast.success("Location autofilled using current geodata!");
-              }}
-              className="flex items-center gap-1.5 text-[#38bdf8] hover:underline hover:text-white transition focus:outline-none text-left"
-            >
-              <FaLocationArrow className="text-[10px]" />
-              <span>use current location</span>
-            </button>
-
-            <div className="text-left sm:text-right">
-              <span>last search: </span>
-              <span className="text-[#38bdf8]">developer + mahabal colony n. d + maharashtra + 100 km + 3 filters</span>
             </div>
           </div>
         </div>
@@ -207,7 +212,7 @@ export default function Careers() {
 
             {/* Category Filter */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-wider">
                 Category
               </label>
               <select
@@ -220,7 +225,7 @@ export default function Careers() {
                     return prev;
                   });
                 }}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 cursor-pointer focus:border-primary focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 cursor-pointer focus:border-blue-500 focus:outline-none"
               >
                 <option value="">All Categories</option>
                 {categories.map((cat) => (
@@ -231,7 +236,7 @@ export default function Careers() {
 
             {/* Type Filter */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <label className="block text-[10px] font-bold text-slate-455 uppercase tracking-wider">
                 Employment Type
               </label>
               <select
@@ -244,7 +249,7 @@ export default function Careers() {
                     return prev;
                   });
                 }}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 cursor-pointer focus:border-primary focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 cursor-pointer focus:border-blue-500 focus:outline-none"
               >
                 <option value="">All Types</option>
                 <option value="Permanent">Permanent</option>
@@ -271,7 +276,6 @@ export default function Careers() {
 
         {/* Jobs List Grid */}
         <main className="lg:col-span-9 space-y-6 text-left">
-          
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Showing {filteredJobs.length} Active Positions
@@ -280,7 +284,7 @@ export default function Careers() {
 
           {loading ? (
             <div className="flex justify-center py-20">
-              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : filteredJobs.length === 0 ? (
             <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 space-y-4">
@@ -299,10 +303,10 @@ export default function Careers() {
                 >
                   <div className="space-y-3 flex-grow">
                     <div className="flex flex-wrap gap-2 items-center">
-                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary">
+                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100 text-blue-600">
                         {job.category}
                       </span>
-                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-accent/10 border border-accent/20 text-accent">
+                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-sky-50 border border-sky-100 text-sky-600">
                         {job.type}
                       </span>
                     </div>
@@ -323,7 +327,7 @@ export default function Careers() {
                   <div className="flex-shrink-0">
                     <button
                       onClick={() => setSelectedJob(job)}
-                      className="py-2.5 px-5 bg-accent hover:bg-accent-dark text-white text-xs font-bold rounded-xl transition shadow"
+                      className="py-2.5 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow"
                     >
                       Apply Now
                     </button>
@@ -338,7 +342,7 @@ export default function Careers() {
       {/* Application Dialog Modal */}
       {selectedJob && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 animate-scaleUp text-left">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 text-left">
             <div>
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 className="font-extrabold text-slate-900 text-base">Apply for Position</h3>
@@ -349,14 +353,14 @@ export default function Careers() {
                   ✕
                 </button>
               </div>
-              <p className="text-primary font-bold text-xs mt-2">
+              <p className="text-blue-600 font-bold text-xs mt-2">
                 {selectedJob.title} &middot; <span className="text-slate-500 font-normal">{selectedJob.category}</span>
               </p>
             </div>
 
             <form onSubmit={handleApplySubmit} className="space-y-4">
               <div className="space-y-1">
-                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
                   Your Full Name
                 </label>
                 <input
@@ -364,13 +368,13 @@ export default function Careers() {
                   value={applicantName}
                   onChange={(e) => setApplicantName(e.target.value)}
                   placeholder="e.g. John Doe"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-primary focus:outline-none"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-slate-800 transition"
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
                   Email Address
                 </label>
                 <input
@@ -378,27 +382,32 @@ export default function Careers() {
                   value={applicantEmail}
                   onChange={(e) => setApplicantEmail(e.target.value)}
                   placeholder="e.g. john@example.com"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-primary focus:outline-none"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-slate-800 transition"
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  Link to Resume (Google Drive, Dropbox, etc.)
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                  Upload CV/Resume * (PDF, Doc, Images under 2MB)
                 </label>
-                <input
-                  type="url"
-                  value={applicantResume}
-                  onChange={(e) => setApplicantResume(e.target.value)}
-                  placeholder="e.g. https://drive.google.com/your-cv..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-primary focus:outline-none"
-                  required
-                />
+                <div className="relative">
+                  <input 
+                    type="file" 
+                    onChange={handleFileChange}
+                    accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    required
+                  />
+                  <div className="w-full px-4 py-2.5 rounded-xl border border-dashed border-slate-300 bg-slate-50 hover:bg-white transition flex items-center justify-center gap-2 text-xs text-slate-500 font-medium">
+                    <FaFileUpload className="text-blue-500 text-base" />
+                    <span>{applicantResumeName || "Choose resume file..."}</span>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
                   Brief Cover Letter (Optional)
                 </label>
                 <textarea
@@ -406,7 +415,7 @@ export default function Careers() {
                   onChange={(e) => setApplicantCover(e.target.value)}
                   rows="3"
                   placeholder="Why do you want to join our engineering and deployment team?"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-primary focus:outline-none resize-none"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-slate-800 transition resize-none"
                 ></textarea>
               </div>
 
@@ -414,14 +423,14 @@ export default function Careers() {
                 <button
                   type="button"
                   onClick={() => setSelectedJob(null)}
-                  className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition"
+                  className="py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submittingApp}
-                  className="py-2.5 px-5 bg-accent hover:bg-accent-dark text-white font-bold rounded-xl text-xs transition shadow"
+                  className="py-2 px-5 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-bold rounded-xl text-xs transition shadow-md shadow-blue-500/20"
                 >
                   {submittingApp ? "Submitting..." : "Submit Application"}
                 </button>

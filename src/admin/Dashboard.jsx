@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
+import { db } from '../firebase/firebase';
+import { collection, getDocs, deleteDoc, doc, query, orderBy } from 'firebase/firestore';
 import { 
   FaBriefcase, 
   FaInfoCircle, 
@@ -15,7 +17,11 @@ import {
   FaCommentAlt,
   FaUserTie,
   FaBars,
-  FaTimes
+  FaTimes,
+  FaUserGraduate,
+  FaDownload,
+  FaEye,
+  FaTrash
 } from 'react-icons/fa';
 
 import AboutSetting from './AboutSetting';
@@ -36,7 +42,7 @@ export default function Dashboard() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   
-  // Tab states: 'services' | 'add-service' | 'edit-service' | 'about' | 'contact' | 'footer' | 'brands'
+  // Tab states: 'services' | 'add-service' | 'edit-service' | 'about' | 'contact' | 'footer' | 'brands' | 'applications'
   const [activeTab, setActiveTab] = useState('services');
   const [selectedServiceId, setSelectedServiceId] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -75,6 +81,11 @@ export default function Dashboard() {
   const [newJobDescription, setNewJobDescription] = useState('');
   const [addingJob, setAddingJob] = useState(false);
   const [editJobId, setEditJobId] = useState(null);
+
+  // Job Applications list state
+  const [applications, setApplications] = useState([]);
+  const [loadingApps, setLoadingApps] = useState(false);
+  const [selectedAppCover, setSelectedAppCover] = useState(null); // Modal for Cover Letter
 
   // Fetch services helper
   const fetchServicesData = async () => {
@@ -132,6 +143,23 @@ export default function Dashboard() {
     }
   };
 
+  // Fetch job applications helper
+  const fetchApplicationsData = async () => {
+    setLoadingApps(true);
+    try {
+      const appRef = collection(db, 'jobApplications');
+      const q = query(appRef, orderBy('createdAt', 'desc'));
+      const snapshot = await getDocs(q);
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setApplications(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load applications list.");
+    } finally {
+      setLoadingApps(false);
+    }
+  };
+
   // Run initial fetch if tab switches
   React.useEffect(() => {
     setMobileMenuOpen(false);
@@ -143,8 +171,38 @@ export default function Dashboard() {
       fetchTestimonialsData();
     } else if (activeTab === 'careers') {
       fetchJobsData();
+    } else if (activeTab === 'applications') {
+      fetchApplicationsData();
     }
   }, [activeTab]);
+
+  const handleDeleteApplication = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this application record?")) return;
+    try {
+      const docRef = doc(db, 'jobApplications', id);
+      await deleteDoc(docRef);
+      toast.success("Application record deleted successfully.");
+      fetchApplicationsData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete application record.");
+    }
+  };
+
+  const handleDownloadCV = (base64Data, filename) => {
+    try {
+      const link = document.createElement('a');
+      link.href = base64Data;
+      link.download = filename || 'resume_attachment.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("CV download initiated.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not download CV attachment.");
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -360,6 +418,7 @@ export default function Dashboard() {
               { id: 'brands', icon: FaBuilding, label: 'Manage Brands', match: ['brands'] },
               { id: 'testimonials', icon: FaCommentAlt, label: 'Testimonials', match: ['testimonials'] },
               { id: 'careers', icon: FaUserTie, label: 'Manage Careers', match: ['careers'] },
+              { id: 'applications', icon: FaUserGraduate, label: 'Job Applications', match: ['applications'] },
             ].map(({ id, icon: Icon, label, match }) => {
               const isActive = match.includes(activeTab);
               return (
@@ -427,6 +486,7 @@ export default function Dashboard() {
                 {activeTab === 'brands' && 'Brand Logos'}
                 {activeTab === 'testimonials' && 'Testimonials'}
                 {activeTab === 'careers' && 'Careers & Jobs'}
+                {activeTab === 'applications' && 'Job Applications'}
               </h1>
               <p className="text-[10px] text-slate-400 mt-0.5 hidden sm:block">UF Global Solutions Admin Panel</p>
             </div>
@@ -761,10 +821,136 @@ export default function Dashboard() {
               />
             </div>
           )}
+
+          {activeTab === 'applications' && (
+            <div className="space-y-6 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm text-left animate-fadeIn">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 className="font-extrabold text-lg text-slate-800">Received Job Applications</h3>
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-blue-100 text-blue-700">
+                  {applications.length} submissions
+                </span>
+              </div>
+
+              <DataTable
+                loading={loadingApps}
+                data={applications}
+                columns={[
+                  {
+                    key: 'applicantName',
+                    label: 'Applicant info',
+                    render: (a) => (
+                      <div className="space-y-0.5">
+                        <span className="font-bold text-slate-800 block text-xs">{a.applicantName}</span>
+                        <span className="text-[10px] text-slate-400 block">{a.applicantEmail}</span>
+                        {a.applicantPhone && <span className="text-[9px] text-slate-400 block font-medium">{a.applicantPhone}</span>}
+                      </div>
+                    )
+                  },
+                  {
+                    key: 'jobTitle',
+                    label: 'Applied Position',
+                    render: (a) => (
+                      <div className="space-y-0.5">
+                        <span className="font-bold text-blue-600 block text-xs">{a.jobTitle}</span>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide block">{a.jobCategory || "General"}</span>
+                      </div>
+                    )
+                  },
+                  {
+                    key: 'createdAt',
+                    label: 'Submitted Date',
+                    render: (a) => (
+                      <span className="text-slate-450 font-medium text-[10px]">
+                        {a.createdAt ? new Date(a.createdAt).toLocaleString() : 'N/A'}
+                      </span>
+                    )
+                  },
+                  {
+                    key: 'resume',
+                    label: 'CV / Resume Attachment',
+                    render: (a) => (
+                      <button
+                        onClick={() => handleDownloadCV(a.applicantResume, a.applicantResumeName)}
+                        className="py-1.5 px-3 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 text-[10px] font-bold transition flex items-center gap-1"
+                      >
+                        <FaDownload className="text-[9px]" /> Download CV
+                      </button>
+                    )
+                  },
+                  {
+                    key: 'coverLetter',
+                    label: 'Cover Letter',
+                    render: (a) => (
+                      a.applicantCover ? (
+                        <button
+                          onClick={() => setSelectedAppCover(a)}
+                          className="py-1.5 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1"
+                        >
+                          <FaEye className="text-[9px]" /> View Letter
+                        </button>
+                      ) : (
+                        <span className="text-[10px] text-slate-400 italic">None Provided</span>
+                      )
+                    )
+                  }
+                ]}
+                onDelete={(a) => handleDeleteApplication(a.id)}
+                onBulkDelete={async (ids) => {
+                  try {
+                    for (const id of ids) {
+                      const docRef = doc(db, 'jobApplications', id);
+                      await deleteDoc(docRef);
+                    }
+                    toast.success(`${ids.length} applications deleted.`);
+                    fetchApplicationsData();
+                  } catch (e) {
+                    toast.error("Failed to delete selected applications.");
+                  }
+                }}
+              />
+            </div>
+          )}
           </section>
 
         </main>
       </div>
+
+      {/* Cover Letter Modal Dialog */}
+      {selectedAppCover && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 text-left animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider">Applicant Cover Letter</h3>
+              <button 
+                onClick={() => setSelectedAppCover(null)} 
+                className="text-slate-400 hover:text-slate-600 font-bold text-sm"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-[11px] text-slate-400">
+                <span className="font-bold text-slate-700">From: {selectedAppCover.applicantName}</span>
+                <span>For: {selectedAppCover.jobTitle}</span>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-4 border border-slate-100 rounded-xl whitespace-pre-wrap font-medium">
+                {selectedAppCover.applicantCover}
+              </p>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={() => setSelectedAppCover(null)}
+                className="py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

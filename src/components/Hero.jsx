@@ -64,6 +64,7 @@ export default function Hero() {
               <span className="text-[11px] font-extrabold text-accent uppercase tracking-widest">
                 UF Global Solutions Pvt Ltd
               </span>
+              <span className="h-px w-8 bg-accent" />
             </motion.div>
 
             {/* Title Heading */}
@@ -106,39 +107,6 @@ export default function Hero() {
                 <FaWrench className="text-sm text-slate-505" />
                 <span>VIEW OUR SERVICES</span>
               </Link>
-            </motion.div>
-
-            {/* Statistics counters at the bottom */}
-            <motion.div
-              variants={itemVariants}
-              className="grid grid-cols-3 gap-4 pt-8 border-t border-slate-100 max-w-md"
-            >
-              <div>
-                <div className="text-3xl font-black text-slate-900 tracking-tight">
-                  <CountUp end={185} duration={2.5} suffix="+" />
-                </div>
-                <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                  Projects Delivered
-                </div>
-              </div>
-
-              <div>
-                <div className="text-3xl font-black text-slate-900 tracking-tight">
-                  <CountUp end={103} duration={2.5} suffix="+" />
-                </div>
-                <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                  Happy Clients
-                </div>
-              </div>
-
-              <div>
-                <div className="text-3xl font-black text-slate-900 tracking-tight">
-                  <CountUp end={7} duration={2.5} suffix="+" />
-                </div>
-                <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                  Global Cities
-                </div>
-              </div>
             </motion.div>
           </motion.div>
 
@@ -223,32 +191,9 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Floating Corner Actions */}
-      {/* Bottom Left Purple Bot */}
-      <div className="fixed bottom-6 left-6 z-40 select-none">
-        <motion.div
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="relative w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white cursor-pointer shadow-lg shadow-indigo-600/30 hover:scale-105 transition-transform"
-        >
-          <FaRobot className="text-lg" />
-          <span className="absolute top-0 right-0 w-3 h-3 bg-rose-500 border-2 border-white rounded-full animate-ping" />
-          <span className="absolute top-0 right-0 w-3 h-3 bg-rose-500 border-2 border-white rounded-full" />
-        </motion.div>
-      </div>
-
       {/* Bottom Right Floating Links */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col items-center gap-3 select-none">
-        {/* Blue Bolt */}
-        <motion.div
-          animate={{ scale: [1, 1.08, 1] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-10 h-10 bg-primary flex items-center justify-center rounded-full text-white cursor-pointer shadow-md shadow-primary/20 hover:scale-105 transition-transform"
-        >
-          <FaBolt className="text-sm text-accent-light" />
-        </motion.div>
-
-        {/* WhatsApp Chat */}
+         {/* WhatsApp Chat */}
         <a
           href={`https://wa.me/${COMPANY.whatsapp}`}
           target="_blank"

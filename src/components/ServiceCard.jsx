@@ -74,7 +74,7 @@ export default function ServiceCard({ service, index }) {
         {/* Bottom link: LEARN MORE → */}
         <div className="pt-2 border-t border-slate-100/50">
           <Link
-            to="/services"
+            to={`/services?id=${service.id}`}
             className="inline-flex items-center gap-1.5 text-primary group-hover:text-accent text-[10px] font-black uppercase tracking-wider transition-all duration-200"
           >
             <span>LEARN MORE</span>
