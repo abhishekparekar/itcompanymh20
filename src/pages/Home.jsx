@@ -56,6 +56,37 @@ export default function Home() {
     loadHomeData();
   }, []);
 
+  // Auto-scroll effect for Services Showcase
+  useEffect(() => {
+    if (loading || services.length === 0) return;
+    const interval = setInterval(() => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          scrollRef.current.scrollBy({ left: 340, behavior: 'smooth' });
+        }
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [loading, services]);
+
+  // Auto-scroll effect for Industries We Power & Scale
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (industryScrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = industryScrollRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          industryScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          industryScrollRef.current.scrollBy({ left: 360, behavior: 'smooth' });
+        }
+      }
+    }, 4500);
+    return () => clearInterval(interval);
+  }, []);
+
   const scrollLeft = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: -340, behavior: 'smooth' });
