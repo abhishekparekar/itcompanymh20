@@ -62,6 +62,7 @@ export default function Dashboard() {
   const [newBrandUrl, setNewBrandUrl] = useState('');
   const [addingBrand, setAddingBrand] = useState(false);
   const [editBrandId, setEditBrandId] = useState(null);
+  const [brandInputMode, setBrandInputMode] = useState('url');
 
   // Testimonials local state
   const [testimonialsList, setTestimonialsList] = useState([]);
@@ -285,6 +286,21 @@ export default function Dashboard() {
   const handleEditSelect = (id) => {
     setSelectedServiceId(id);
     setActiveTab('edit-service');
+  };
+
+  const handleBrandFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Logo file size must be under 2MB.");
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setNewBrandUrl(reader.result);
+    };
   };
 
   const handleAddBrand = async (e) => {
@@ -725,42 +741,113 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'brands' && (
-            <div className="space-y-6 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <div className="space-y-6 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm text-left">
               <h3 className="font-extrabold text-lg text-slate-800 border-b border-slate-100 pb-3">
-                Brand Logos Manager
+                {editBrandId ? '✍️ Edit Brand Details' : '🏷️ Add Brand Logo'}
               </h3>
               
-              {/* Form to add brand */}
-              <form onSubmit={handleAddBrand} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <div className="space-y-1 text-left">
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Brand Name</label>
-                  <input
-                    type="text"
-                    value={newBrandName}
-                    onChange={(e) => setNewBrandName(e.target.value)}
-                    placeholder="e.g. SONY"
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
-                    required
-                  />
+              {/* Form to add/edit brand */}
+              <form onSubmit={handleAddBrand} className="space-y-4 bg-slate-50 p-4 md:p-6 rounded-xl border border-slate-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1 text-left">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Brand Name</label>
+                    <input
+                      type="text"
+                      value={newBrandName}
+                      onChange={(e) => setNewBrandName(e.target.value)}
+                      placeholder="e.g. SONY"
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-1 text-left">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Logo Input Mode</label>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => { setBrandInputMode('url'); setNewBrandUrl(''); }}
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition ${
+                          brandInputMode === 'url' 
+                            ? 'bg-blue-600 text-white shadow-sm' 
+                            : 'bg-white border border-slate-250 text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        Paste URL
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setBrandInputMode('upload'); setNewBrandUrl(''); }}
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition ${
+                          brandInputMode === 'upload' 
+                            ? 'bg-blue-600 text-white shadow-sm' 
+                            : 'bg-white border border-slate-250 text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        Upload File
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-1 text-left">
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Logo Image URL</label>
-                  <input
-                    type="url"
-                    value={newBrandUrl}
-                    onChange={(e) => setNewBrandUrl(e.target.value)}
-                    placeholder="https://logo.clearbit.com/sony.com"
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
-                    required
-                  />
+
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                  {brandInputMode === 'url' ? (
+                    <div className="space-y-1 text-left">
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Logo Image URL</label>
+                      <input
+                        type="url"
+                        value={newBrandUrl}
+                        onChange={(e) => setNewBrandUrl(e.target.value)}
+                        placeholder="https://logo.clearbit.com/sony.com"
+                        className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                        required
+                      />
+                    </div>
+                  ) : (
+                    <div className="space-y-1 text-left">
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Upload Logo File (under 2MB)</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleBrandFileChange}
+                        className="w-full px-3 py-1.5 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:outline-none text-xs text-slate-800 transition cursor-pointer"
+                        required={!newBrandUrl}
+                      />
+                    </div>
+                  )}
                 </div>
-                <button
-                  type="submit"
-                  disabled={addingBrand}
-                  className="py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-md shadow-blue-500/20"
-                >
-                  {addingBrand ? 'Uploading...' : 'Add Brand'}
-                </button>
+
+                {newBrandUrl && (
+                  <div className="space-y-1 text-left">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Logo Preview</label>
+                    <div className="inline-block bg-slate-200/50 p-3 rounded-xl border border-slate-300/40">
+                      <img src={newBrandUrl} alt="Preview" className="h-10 w-auto object-contain max-w-[200px]" />
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-2 pt-2">
+                  {editBrandId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditBrandId(null);
+                        setNewBrandName('');
+                        setNewBrandUrl('');
+                      }}
+                      className="py-2 px-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={addingBrand}
+                    className="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-md shadow-blue-500/20"
+                  >
+                    {addingBrand ? 'Saving...' : editBrandId ? 'Update Brand' : 'Add Brand'}
+                  </button>
+                </div>
               </form>
 
               {/* List of brand logos using DataTable */}

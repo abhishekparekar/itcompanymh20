@@ -18,7 +18,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const industryScrollRef = useRef(null);
-  const brandsScrollRef = useRef(null);
   const testimonialsScrollRef = useRef(null);
 
   // Industry inquiry state
@@ -95,21 +94,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-scroll effect for Brands We Work With
-  useEffect(() => {
-    if (loading || logos.length === 0) return;
-    const interval = setInterval(() => {
-      if (brandsScrollRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = brandsScrollRef.current;
-        if (scrollLeft + clientWidth >= scrollWidth - 10) {
-          brandsScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          brandsScrollRef.current.scrollBy({ left: 240, behavior: 'smooth' });
-        }
-      }
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [loading, logos]);
+
 
   // Auto-scroll effect for Testimonials
   useEffect(() => {
@@ -480,24 +465,26 @@ export default function Home() {
           {logos.length === 0 ? (
             <p className="text-center text-xs text-slate-400">No brand logos uploaded yet.</p>
           ) : (
-            <div 
-              ref={brandsScrollRef}
-              className="flex overflow-x-auto gap-6 pb-4 select-none scrollbar-hide scroll-smooth snap-x snap-mandatory"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {logos.map((logo, idx) => (
-                <div 
-                  key={logo.id || idx} 
-                  className="w-[180px] sm:w-[220px] shrink-0 snap-start flex items-center justify-center p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-accent/30 transition group h-20"
-                >
-                  <img
-                    src={logo.url}
-                    alt={logo.name || 'Brand Logo'}
-                    className="max-h-10 max-w-[80%] object-contain filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition duration-300"
-                    loading="lazy"
-                  />
-                </div>
-              ))}
+            <div className="overflow-hidden w-full relative">
+              {/* Fade masks on the edges for premium look */}
+              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
+
+              <div className="flex w-max animate-ticker hover:[animation-play-state:paused] gap-6 py-2">
+                {logos.concat(logos).concat(logos).concat(logos).concat(logos).map((logo, idx) => (
+                  <div 
+                    key={idx} 
+                    className="w-[180px] sm:w-[220px] shrink-0 flex items-center justify-center p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-accent/30 transition group h-20"
+                  >
+                    <img
+                      src={logo.url}
+                      alt={logo.name || 'Brand Logo'}
+                      className="max-h-10 max-w-[80%] object-contain filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition duration-300"
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
