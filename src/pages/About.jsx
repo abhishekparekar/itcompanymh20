@@ -222,7 +222,7 @@ export default function About() {
             >
               <h2 className="text-xl font-black text-primary mb-2">Who We Are</h2>
               <div className="w-12 h-1 bg-accent mb-4" />
-              <p className="text-slate-650 text-sm leading-relaxed whitespace-pre-line">
+              <p className="text-slate-950 font-semibold text-sm leading-relaxed whitespace-pre-line">
                 {description || "UF Global Solutions Pvt Ltd builds robust business automation pipelines, custom web products, mobile applications, and enterprise system architectures that empower digital scaling."}
               </p>
             </motion.div>
@@ -241,7 +241,7 @@ export default function About() {
                 <h3 className="text-lg font-bold text-primary mb-1.5 flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-accent" /> Our Mission
                 </h3>
-                <p className="text-slate-500 text-xs leading-relaxed">
+                <p className="text-slate-950 font-semibold text-xs leading-relaxed">
                   {mission || "To streamline complex workflows through cutting-edge IT infrastructure development and customer-centric software tools."}
                 </p>
               </motion.div>
@@ -257,7 +257,7 @@ export default function About() {
                 <h3 className="text-lg font-bold text-primary mb-1.5 flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-accent" /> Our Vision
                 </h3>
-                <p className="text-slate-500 text-xs leading-relaxed">
+                <p className="text-slate-950 font-semibold text-xs leading-relaxed">
                   {vision || "To be the leading system design and business automation partner for enterprises seeking secure, zero-friction scaling frameworks."}
                 </p>
               </motion.div>
@@ -266,13 +266,13 @@ export default function About() {
 
             {/* Stats Row */}
             {stats && stats.length > 0 && (
-              <div className="bg-slate-50 border border-slate-200/60 rounded-3xl p-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+              <div className="bg-slate-50 border border-slate-200/60 rounded-3xl p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-center">
                 {stats.map((item, idx) => (
-                  <div key={idx} className="space-y-1">
-                    <div className="text-3xl font-black text-primary">
+                  <div key={idx} className="bg-white/70 backdrop-blur-sm border border-slate-200/65 rounded-2xl p-4 flex flex-col justify-center space-y-1 hover:shadow-sm hover:border-blue-400/30 transition-all duration-300">
+                    <div className="text-2xl sm:text-3xl font-black text-primary">
                       {item.value || "0"}
                     </div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    <div className="text-[9px] sm:text-[10px] text-slate-700 font-black uppercase tracking-wider leading-snug">
                       {item.label || "Metric"}
                     </div>
                   </div>

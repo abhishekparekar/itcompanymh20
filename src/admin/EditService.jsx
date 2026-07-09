@@ -3,7 +3,7 @@ import { db } from '../firebase/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { updateService } from '../services/serviceAPI';
 import { toast } from 'react-toastify';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlusCircle } from 'react-icons/fa';
 
 export default function EditService({ serviceId, onSuccess }) {
   const [title, setTitle] = useState('');
@@ -11,6 +11,32 @@ export default function EditService({ serviceId, onSuccess }) {
   const [details, setDetails] = useState('');
   const [icon, setIcon] = useState('FaLaptopCode');
   const [image, setImage] = useState('');
+  const [category, setCategory] = useState('ENTERPRISE SERVICES');
+  const [features, setFeatures] = useState(['']);
+  
+  const handleFeatureChange = (index, value) => {
+    const newFeatures = [...features];
+    newFeatures[index] = value;
+    setFeatures(newFeatures);
+  };
+
+  const addFeatureField = () => {
+    setFeatures([...features, '']);
+  };
+
+  const removeFeatureField = (index) => {
+    const newFeatures = features.filter((_, idx) => idx !== index);
+    setFeatures(newFeatures.length > 0 ? newFeatures : ['']);
+  };
+  const categoriesList = [
+    'WEB SYSTEMS',
+    'AI / ML SYSTEMS',
+    'CLOUD AI & ARCHITECTURE',
+    'MOBILE APPS',
+    'SOFTWARE ENGINEERING',
+    'DIGITAL GROWTH',
+    'ENTERPRISE SERVICES'
+  ];
   
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -43,6 +69,8 @@ export default function EditService({ serviceId, onSuccess }) {
           setDetails(data.details || '');
           setIcon(data.icon || 'FaLaptopCode');
           setImage(data.image || '');
+          setCategory(data.category || 'ENTERPRISE SERVICES');
+          setFeatures(data.features && data.features.length > 0 ? data.features : ['']);
         } else {
           toast.error("Service profile not found.");
           onSuccess();
@@ -66,11 +94,14 @@ export default function EditService({ serviceId, onSuccess }) {
 
     setSubmitting(true);
     try {
+      const featuresArray = features.map(f => f.trim()).filter(Boolean);
       await updateService(serviceId, {
         title,
         description,
         details,
         icon,
+        category,
+        features: featuresArray,
         image
       });
       toast.success("Service profile updated!");
@@ -93,7 +124,7 @@ export default function EditService({ serviceId, onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Service Title *</label>
           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
@@ -107,6 +138,15 @@ export default function EditService({ serviceId, onSuccess }) {
             className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition cursor-pointer">
             {iconsList.map((item) => (
               <option key={item.value} value={item.value}>{item.label}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Service Category *</label>
+          <select value={category} onChange={(e) => setCategory(e.target.value)}
+            className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 transition cursor-pointer">
+            {categoriesList.map((cat) => (
+              <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
         </div>
@@ -125,6 +165,40 @@ export default function EditService({ serviceId, onSuccess }) {
           placeholder="Short summary shown on service cards..."
           className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
           required />
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Key Features & Core Promises</label>
+        <div className="space-y-2">
+          {features.map((feature, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <input
+                type="text"
+                value={feature}
+                onChange={(e) => handleFeatureChange(index, e.target.value)}
+                placeholder={`Feature/Promise #${index + 1} (e.g. 24/7 dedicated support SLA)`}
+                className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+              />
+              {features.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeFeatureField(index)}
+                  className="p-3 bg-red-50 hover:bg-red-150 text-red-650 hover:text-red-700 border border-red-200/50 rounded-xl transition flex-shrink-0"
+                >
+                  <FaTrash className="text-xs" />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={addFeatureField}
+          className="mt-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 transition flex items-center gap-1.5 w-max"
+        >
+          <FaPlusCircle className="text-[10px]" />
+          <span>Add Feature / Promise</span>
+        </button>
       </div>
 
       <div>

@@ -642,7 +642,7 @@ body {
 .admin-console-wrapper form {
   background-color: #ffffff !important;
   border-color: #e2e8f0 !important;
-  color: #334155 !important;
+  color: #1e293b !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
   border-radius: 24px !important;
 }
@@ -652,7 +652,9 @@ body {
 .admin-console-wrapper select {
   background-color: #f8fafc !important;
   border-color: #cbd5e1 !important;
-  color: #1e293b !important;
+  color: #0f172a !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
 }
 
 .admin-console-wrapper textarea::placeholder,
@@ -661,15 +663,17 @@ body {
 }
 
 .admin-console-wrapper label {
-  color: #64748b !important;
+  color: #475569 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
 }
 
-.admin-console-wrapper h3,
-.admin-console-wrapper h2,
-.admin-console-wrapper h4,
-.admin-console-wrapper span,
-.admin-console-wrapper p {
-  color: #1e293b !important;
+.admin-console-wrapper .content-panel h1,
+.admin-console-wrapper .content-panel h2,
+.admin-console-wrapper .content-panel h3,
+.admin-console-wrapper .content-panel h4 {
+  color: #0f172a !important;
 }
 
 .admin-console-wrapper div.p-4.bg-gray-950.border,
@@ -680,7 +684,7 @@ body {
 }
 
 .admin-console-wrapper button[type="submit"] {
-  background-color: #000000 !important;
+  background-color: #002A54 !important;
   color: #ffffff !important;
   border-radius: 9999px !important;
   font-weight: bold !important;
@@ -688,7 +692,7 @@ body {
 }
 
 .admin-console-wrapper button[type="submit"]:hover {
-  background-color: #1a1a1a !important;
+  background-color: #001b38 !important;
 }
 
 /* ── Infinite Ticker Animation ───────────────────────────── */
@@ -711,13 +715,13 @@ body {
 }
 
 .animate-ticker {
-  animation: ticker 30s linear infinite;
+  animation: ticker 15s linear infinite;
   display: flex;
   width: max-content;
 }
 
 .animate-ticker-reverse {
-  animation: ticker-reverse 30s linear infinite;
+  animation: ticker-reverse 15s linear infinite;
   display: flex;
   width: max-content;
 }

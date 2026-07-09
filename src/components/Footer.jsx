@@ -56,7 +56,6 @@ export default function Footer() {
     { label: 'About', path: '/about' },
     { label: 'Products', path: '/products' },
     { label: 'Services', path: '/services' },
-    { label: 'Blog', path: '/blog' },
     { label: 'Career', path: '/careers' },
     { label: 'Contact', path: '/contact' }
   ];
@@ -70,27 +69,6 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#0b132a] text-slate-400 border-t border-slate-800 relative z-10">
-
-      {/* ── CTA Banner ── */}
-      <div className="bg-gradient-to-r from-blue-700 to-blue-500">
-        <div className="max-w-7xl mx-auto px-5 py-8 flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
-          <div>
-            <h3 className="text-base sm:text-xl font-black text-white leading-snug">
-              Ready to Accelerate Your Operations?
-            </h3>
-            <p className="text-xs text-blue-100 mt-1 opacity-80">
-              IT services, software deployments, or custom automation.
-            </p>
-          </div>
-          <Link
-            to="/contact"
-            className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-blue-700 text-xs font-black uppercase tracking-wider transition-all duration-200 hover:bg-blue-50 hover:scale-105 shadow-lg"
-          >
-            Start A Conversation <FaArrowRight className="text-[10px]" />
-          </Link>
-        </div>
-      </div>
-
       {/* ── Main Content ── */}
       <div className="max-w-7xl mx-auto px-5 py-10">
 

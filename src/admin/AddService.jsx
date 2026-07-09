@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { addService } from '../services/serviceAPI';
 import { toast } from 'react-toastify';
-import { FaPlusCircle } from 'react-icons/fa';
+import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 
 export default function AddService({ onSuccess }) {
   const [title, setTitle] = useState('');
@@ -9,7 +9,34 @@ export default function AddService({ onSuccess }) {
   const [details, setDetails] = useState('');
   const [icon, setIcon] = useState('FaLaptopCode');
   const [image, setImage] = useState('');
+  const [category, setCategory] = useState('ENTERPRISE SERVICES');
+  const [features, setFeatures] = useState(['']);
   const [submitting, setSubmitting] = useState(false);
+
+  const handleFeatureChange = (index, value) => {
+    const newFeatures = [...features];
+    newFeatures[index] = value;
+    setFeatures(newFeatures);
+  };
+
+  const addFeatureField = () => {
+    setFeatures([...features, '']);
+  };
+
+  const removeFeatureField = (index) => {
+    const newFeatures = features.filter((_, idx) => idx !== index);
+    setFeatures(newFeatures.length > 0 ? newFeatures : ['']);
+  };
+
+  const categoriesList = [
+    'WEB SYSTEMS',
+    'AI / ML SYSTEMS',
+    'CLOUD AI & ARCHITECTURE',
+    'MOBILE APPS',
+    'SOFTWARE ENGINEERING',
+    'DIGITAL GROWTH',
+    'ENTERPRISE SERVICES'
+  ];
 
   const iconsList = [
     { label: 'Code / Laptop (FaLaptopCode)', value: 'FaLaptopCode' },
@@ -35,7 +62,8 @@ export default function AddService({ onSuccess }) {
     setSubmitting(true);
     try {
       const defaultImage = image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop';
-      await addService({ title, description, details, icon, image: defaultImage });
+      const featuresArray = features.map(f => f.trim()).filter(Boolean);
+      await addService({ title, description, details, icon, category, features: featuresArray, image: defaultImage });
       toast.success('Service added successfully!');
       onSuccess();
     } catch (err) {
@@ -51,7 +79,7 @@ export default function AddService({ onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label className={labelClass}>Service Title *</label>
           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
@@ -62,6 +90,14 @@ export default function AddService({ onSuccess }) {
           <select value={icon} onChange={(e) => setIcon(e.target.value)} className={inputClass + ' cursor-pointer'}>
             {iconsList.map((item) => (
               <option key={item.value} value={item.value}>{item.label}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}>Service Category *</label>
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className={inputClass + ' cursor-pointer'}>
+            {categoriesList.map((cat) => (
+              <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
         </div>
@@ -77,6 +113,40 @@ export default function AddService({ onSuccess }) {
         <label className={labelClass}>Brief Description *</label>
         <input type="text" value={description} onChange={(e) => setDescription(e.target.value)}
           placeholder="Short summary shown on the service card..." className={inputClass} required />
+      </div>
+
+      <div className="space-y-2">
+        <label className={labelClass}>Key Features & Core Promises</label>
+        <div className="space-y-2">
+          {features.map((feature, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <input
+                type="text"
+                value={feature}
+                onChange={(e) => handleFeatureChange(index, e.target.value)}
+                placeholder={`Feature/Promise #${index + 1} (e.g. 24/7 dedicated support SLA)`}
+                className={inputClass}
+              />
+              {features.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeFeatureField(index)}
+                  className="p-3 bg-red-50 hover:bg-red-150 text-red-650 hover:text-red-700 border border-red-200/50 rounded-xl transition flex-shrink-0"
+                >
+                  <FaTrash className="text-xs" />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={addFeatureField}
+          className="mt-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 transition flex items-center gap-1.5 w-max"
+        >
+          <FaPlusCircle className="text-[10px]" />
+          <span>Add Feature / Promise</span>
+        </button>
       </div>
 
       <div>

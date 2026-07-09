@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getBlogs, seedBlogs, submitContactForm } from '../services/serviceAPI';
+import { getBlogs, seedDatabase, submitContactForm } from '../services/serviceAPI';
 import { toast, ToastContainer } from 'react-toastify';
 import videoBg from '../assets/video/animation3.mp4';
 
@@ -29,7 +29,7 @@ export default function Blog() {
   useEffect(() => {
     async function loadBlogsData() {
       try {
-        await seedBlogs();
+        await seedDatabase();
         const data = await getBlogs();
         setBlogsList(data);
       } catch (err) {

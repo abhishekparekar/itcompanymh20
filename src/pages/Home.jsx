@@ -2,10 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import Hero from '../components/Hero';
 import ServiceCard from '../components/ServiceCard';
 import ContactForm from '../components/ContactForm';
-import { getServices, getSiteSettings, getClientLogos, seedBrandLogos, getTestimonials, seedTestimonials, seedDatabase } from '../services/serviceAPI';
+import { getServices, getSiteSettings, getClientLogos, seedBrandLogos, getTestimonials, seedTestimonials, seedDatabase, getTeamMembers } from '../services/serviceAPI';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
+import { COMPANY } from '../constants';
 
 import { FaBriefcase, FaThumbsUp, FaUsers, FaBuilding, FaUserGraduate, FaQuoteLeft, FaStar, FaCreditCard, FaMicrochip, FaShoppingBag, FaHospital, FaRocket, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -13,12 +14,14 @@ export default function Home() {
   const [services, setServices] = useState([]);
   const [logos, setLogos] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
+  const [team, setTeam] = useState([]);
   const [aboutDesc, setAboutDesc] = useState('');
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const industryScrollRef = useRef(null);
   const testimonialsScrollRef = useRef(null);
+  const teamScrollRef = useRef(null);
 
   // Industry inquiry state
   const [selectedIndustry, setSelectedIndustry] = useState(null);
@@ -54,6 +57,10 @@ export default function Home() {
         await seedTestimonials();
         const testList = await getTestimonials();
         setTestimonials(testList);
+
+        // Fetch team members dynamically
+        const teamData = await getTeamMembers();
+        setTeam(teamData);
       } catch (err) {
         console.error('Error loading Home page data:', err);
       } finally {
@@ -111,6 +118,34 @@ export default function Home() {
     }, 5000);
     return () => clearInterval(interval);
   }, [loading, testimonials]);
+
+  // Auto-scroll effect for Team members
+  useEffect(() => {
+    if (loading || team.length === 0) return;
+    const interval = setInterval(() => {
+      if (teamScrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = teamScrollRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          teamScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          teamScrollRef.current.scrollBy({ left: 340, behavior: 'smooth' });
+        }
+      }
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [loading, team]);
+
+  const scrollTeamLeft = () => {
+    if (teamScrollRef.current) {
+      teamScrollRef.current.scrollBy({ left: -340, behavior: 'smooth' });
+    }
+  };
+
+  const scrollTeamRight = () => {
+    if (teamScrollRef.current) {
+      teamScrollRef.current.scrollBy({ left: 340, behavior: 'smooth' });
+    }
+  };
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -276,7 +311,7 @@ export default function Home() {
               Managed IT Service Portfolios
             </h2>
             <div className="w-12 h-1 bg-accent mb-3" />
-            <p className="text-slate-500 text-xs leading-relaxed max-w-md">
+            <p className="text-slate-950 font-semibold text-xs leading-relaxed max-w-md">
               We provide bespoke development and engineering workflows designed around your business needs.
             </p>
           </motion.div>
@@ -329,7 +364,7 @@ export default function Home() {
               Industries We <span className="gradient-text-red font-black">Power & Scale</span>
             </h2>
             <div className="w-12 h-1 bg-accent mb-3" />
-            <p className="text-slate-500 text-xs leading-relaxed max-w-md">
+            <p className="text-slate-950 font-semibold text-xs leading-relaxed max-w-md">
               We adapt our custom-coded microservices to target exact operational constraints across high-value business fields.
             </p>
           </motion.div>
@@ -406,14 +441,14 @@ export default function Home() {
                 <div className={`w-12 h-12 rounded-2xl bg-${item.color}-50 border border-${item.color}-100 flex items-center justify-center text-${item.color}-600 shadow-sm`}>
                   {item.icon}
                 </div>
-                <h3 className="font-extrabold text-slate-800 text-base">{item.title}</h3>
-                <p className="text-xs text-slate-500 leading-relaxed min-h-[48px]">
+                <h3 className="font-black text-slate-950 text-base">{item.title}</h3>
+                <p className="text-xs text-slate-950 font-semibold leading-relaxed min-h-[48px]">
                   {item.desc}
                 </p>
               </div>
               <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Explore Configuration</span>
-                <span className="text-xs text-slate-400 group-hover:translate-x-1 transition-transform">&rarr;</span>
+                <span className="text-[10px] font-black text-slate-950 uppercase tracking-widest">Explore Configuration</span>
+                <span className="text-xs text-slate-950 font-bold group-hover:translate-x-1 transition-transform">&rarr;</span>
               </div>
             </motion.div>
           ))}
@@ -448,16 +483,16 @@ export default function Home() {
               <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
               <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
 
-              <div className="flex w-max animate-ticker-reverse hover:[animation-play-state:paused] gap-2 md:gap-4 py-3">
+              <div className="flex w-max animate-ticker-reverse hover:[animation-play-state:paused] gap-4 md:gap-6 py-6">
                 {logos.concat(logos).concat(logos).concat(logos).concat(logos).map((logo, idx) => (
                   <div 
                     key={idx} 
-                    className="w-[110px] sm:w-[140px] md:w-[170px] shrink-0 flex items-center justify-center h-16 sm:h-20 md:h-24 px-1 select-none"
+                    className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 shrink-0 flex items-center justify-center bg-white border border-slate-200/50 rounded-full shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300 select-none"
                   >
                     <img
                       src={logo.url}
                       alt={logo.name || 'Brand Logo'}
-                      className="max-h-10 sm:max-h-14 md:max-h-16 max-w-full object-contain transition-transform duration-300 hover:scale-110"
+                      className="max-h-12 sm:max-h-16 md:max-h-20 max-w-[70%] object-contain transition-transform duration-300 hover:scale-105"
                       loading="lazy"
                     />
                   </div>
@@ -511,7 +546,7 @@ export default function Home() {
                         ))}
                       </div>
                     </div>
-                    <p className="text-slate-600 text-xs leading-relaxed italic">
+                    <p className="text-slate-950 font-semibold text-xs sm:text-sm leading-relaxed italic">
                       "{t.content}"
                     </p>
                   </div>
@@ -522,13 +557,132 @@ export default function Home() {
                       {t.name?.slice(0, 2) || "CL"}
                     </div>
                     <div>
-                      <h4 className="font-extrabold text-slate-800 text-xs leading-tight">{t.name}</h4>
-                      <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">{t.role}</p>
+                      <h4 className="font-black text-slate-950 text-xs sm:text-sm leading-tight">{t.name}</h4>
+                      <p className="text-[9px] text-slate-700 font-extrabold uppercase tracking-wider mt-0.5">{t.role}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+        )}
+      </section>
+
+      {/* Our Expert Team Section */}
+      <section className="container max-w-7xl mx-auto px-6 py-16 border-t border-slate-100/50">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+          }}
+          className="text-center max-w-xl mx-auto mb-16"
+        >
+          {/* Header Badge flanked by dots and oval shapes */}
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <span className="w-1 h-1 rounded-full bg-blue-600 opacity-60" />
+            <span className="w-2 h-1 rounded-full bg-blue-400 opacity-60" />
+            <span className="px-5 py-1.5 rounded-full bg-blue-50 text-blue-600 font-black text-[10px] uppercase tracking-widest border border-blue-100/80 shadow-sm">
+              OUR EXPERTS
+            </span>
+            <span className="w-2 h-1 rounded-full bg-blue-400 opacity-60" />
+            <span className="w-1 h-1 rounded-full bg-blue-600 opacity-60" />
+          </div>
+
+          <h2 className="text-3xl font-black text-slate-900 mb-1 tracking-tight">
+            Meet Our <span className="text-blue-600">Professional</span> Team
+          </h2>
+          {/* Underline Bar */}
+          <div className="w-10 h-[3px] bg-red-500 mx-auto rounded-full" />
+
+          <p className="text-slate-500 text-xs sm:text-sm mt-4 leading-relaxed">
+            Our talented team of experts is dedicated to delivering innovative solutions and exceptional results for our clients.
+          </p>
+        </motion.div>
+
+        {team.length === 0 ? (
+          <p className="text-center text-xs text-slate-400">No team members added yet.</p>
+        ) : (
+          <div className="relative max-w-5xl mx-auto">
+            {/* Scroll Navigation Chevrons */}
+            <div className="absolute top-1/2 -left-4 -translate-y-1/2 z-20 hidden md:block">
+              <button 
+                onClick={scrollTeamLeft}
+                className="w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-800 hover:text-blue-600 transition shadow-lg cursor-pointer"
+              >
+                <FaChevronLeft className="text-xs" />
+              </button>
+            </div>
+            <div className="absolute top-1/2 -right-4 -translate-y-1/2 z-20 hidden md:block">
+              <button 
+                onClick={scrollTeamRight}
+                className="w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-800 hover:text-blue-600 transition shadow-lg cursor-pointer"
+              >
+                <FaChevronRight className="text-xs" />
+              </button>
+            </div>
+
+            <div 
+              ref={teamScrollRef}
+              className="flex overflow-x-auto gap-6 pb-6 select-none scrollbar-hide scroll-smooth snap-x snap-mandatory"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {team.map((m, idx) => (
+                <div key={m.id || idx} className="w-[280px] sm:w-[320px] shrink-0 snap-start">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                    className="group relative bg-white border border-slate-100 shadow-xl shadow-slate-100/50 hover:shadow-2xl hover:border-slate-200/80 rounded-[32px] p-8 text-center transition-all duration-300 transform hover:-translate-y-1 overflow-hidden h-full flex flex-col justify-between"
+                  >
+                    {/* Soft gradient wave behind photo */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-slate-50/50 via-transparent to-white pointer-events-none" />
+
+                    {/* Photo with dynamic rotating accent ring and dot layout */}
+                    <div className="relative w-36 h-36 mx-auto mb-6 flex items-center justify-center z-10">
+                      {/* Decorative dashed/accent rings */}
+                      <div className="absolute inset-0 rounded-full border-2 border-dashed border-red-500/80 animate-[spin_60s_linear_infinite]" />
+                      <div className="absolute inset-1.5 rounded-full border border-blue-500/30" />
+                      
+                      {/* Decorative accent dots */}
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm" />
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2.5 h-2.5 rounded-full bg-blue-500 shadow-sm" />
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-blue-600" />
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-2 h-2 rounded-full bg-red-600" />
+                      
+                      {/* Avatar Frame */}
+                      <div className="w-[116px] h-[116px] rounded-full overflow-hidden border-4 border-white bg-slate-50 shadow-md">
+                        <img 
+                          src={m.photo || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop"} 
+                          alt={m.name} 
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
+                    </div>
+
+                    {/* Name & Dynamic Alternating Designation */}
+                    <div className="relative z-10 space-y-1 flex-1 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-black text-slate-950 text-base md:text-lg mb-0.5 leading-tight tracking-tight">
+                          {m.name}
+                        </h3>
+                        <span className={`text-[10px] font-black uppercase tracking-wider block mb-4 ${idx % 2 === 0 ? 'text-red-600' : 'text-blue-600'}`}>
+                          {m.designation}
+                        </span>
+                      </div>
+                      
+                      {/* Short Bio Description */}
+                      <p className="text-slate-950 text-xs leading-relaxed max-w-[240px] mx-auto font-semibold">
+                        {m.description || "Dedicated professional specializing in engineering scalable digital solutions."}
+                      </p>
+                    </div>
+                  </motion.div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </section>
 
@@ -591,55 +745,64 @@ export default function Home() {
               </Link>
             </div>
           </motion.div>
-
         </div>
       </section>
-
       {/* About Teaser Section */}
-      <section className="container max-w-7xl mx-auto px-6 py-4">
-        <div className="grid md:grid-cols-12 gap-12 items-center">
+      <section className="container max-w-7xl mx-auto px-6 py-10">
+        <div className="bg-white/80 border border-slate-200/50 rounded-[32px] p-6 sm:p-10 shadow-xl shadow-slate-100/30 backdrop-blur-md relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-[80px] pointer-events-none" />
           
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="md:col-span-5 text-left space-y-4"
-          >
-            <span className="text-xs font-bold text-primary uppercase tracking-widest block">
-              About Our Operations
-            </span>
-            <h2 className="text-3xl font-black text-slate-900 leading-tight">
-              Transforming Ideas Into <br />
-              Digital Assets
-            </h2>
-            <div className="w-12 h-1 bg-accent mb-4" />
-            <p className="text-slate-600 text-xs leading-relaxed">
-              {aboutDesc || "UF Global Solutions Pvt Ltd is a dedicated IT solution agency specializing in software integration, website designs, workflow automation, and custom product architectures."}
-            </p>
-            <div className="pt-2">
-              <Link to="/about" className="btn-primary hover:-translate-y-0.5">
-                Read Our Story
-              </Link>
-            </div>
-          </motion.div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Left Text Column */}
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="lg:col-span-6 text-left space-y-4 sm:space-y-5"
+            >
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-extrabold uppercase tracking-wider">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                ABOUT US
+              </span>
+              
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight tracking-tight">
+                Transforming Ideas Into <br className="hidden sm:inline" />
+                <span className="gradient-text-red font-black">Digital Assets</span>
+              </h2>
+              
+              <p className="text-slate-950 font-semibold text-xs sm:text-sm leading-relaxed max-w-xl">
+                {aboutDesc || "UF Global Solutions Pvt Ltd is a dedicated IT solution agency specializing in software integration, website designs, workflow automation, and custom product architectures."}
+              </p>
+              
+              <div className="pt-2">
+                <Link 
+                  to="/about" 
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+                >
+                  Read Our Story &rarr;
+                </Link>
+              </div>
+            </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="md:col-span-7"
-          >
-            <div className="rounded-3xl overflow-hidden shadow-lg aspect-[16/9] border border-slate-200 group">
-              <img 
-                src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=600&auto=format&fit=crop" 
-                alt="UFGS enterprise dashboard development and collaboration" 
-                className="w-full h-full object-cover group-hover:scale-102 transition duration-500"
-              />
-            </div>
-          </motion.div>
-
+            {/* Right Image Column */}
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="lg:col-span-6 relative"
+            >
+              <div className="rounded-2xl overflow-hidden shadow-lg aspect-[16/10] border border-slate-100 group relative">
+                <img 
+                  src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=800&auto=format&fit=crop" 
+                  alt="UFGS enterprise dashboard development and collaboration" 
+                  className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent" />
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -682,9 +845,9 @@ export default function Home() {
               {/* Contact Info Cards */}
               <div className="space-y-3">
                 {[
-                  { icon: '📧', label: 'Email Us', value: 'info@ufglobalsolutions.com' },
-                  { icon: '📞', label: 'Call Us', value: '+91 98765 43210' },
-                  { icon: '📍', label: 'Office', value: 'Pune, Maharashtra, India' },
+                  { icon: '📧', label: 'Email Us', value: COMPANY.email },
+                  { icon: '📞', label: 'Call Us', value: COMPANY.phone },
+                  { icon: '📍', label: 'Office', value: COMPANY.address },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-4 bg-white/5 hover:bg-white/10 transition rounded-2xl px-5 py-3.5 border border-white/10">
                     <span className="text-xl">{item.icon}</span>
@@ -770,8 +933,8 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Architecture Details</h4>
-                  <p className="text-slate-600 text-xs leading-relaxed font-medium">
+                  <h4 className="text-[10px] sm:text-[11px] font-black text-slate-500 uppercase tracking-wider mb-1">Architecture Details</h4>
+                  <p className="text-slate-800 text-xs sm:text-sm leading-relaxed font-semibold">
                     {selectedIndustry.details}
                   </p>
                 </div>
@@ -781,7 +944,7 @@ export default function Home() {
               <div className="space-y-4">
                 <div>
                   <h4 className="text-xs font-bold text-slate-800">Submit Specs Inquiry</h4>
-                  <p className="text-[10px] text-slate-450 mt-0.5">Let's configure solutions for your business operations.</p>
+                  <p className="text-[10px] text-slate-600 mt-0.5 font-semibold">Let's configure solutions for your business operations.</p>
                 </div>
 
                 <form onSubmit={handleIndustrySubmit} className="space-y-3.5">

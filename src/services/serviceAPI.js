@@ -156,8 +156,121 @@ export async function deleteContactSubmission(id) {
 
 // ---------------- DATABASE SEEDING ----------------
 
+let databaseHasBeenSeeded = null;
+
+// Helper to check if seeding was already performed
+export async function isSeeded() {
+  if (databaseHasBeenSeeded !== null) {
+    return databaseHasBeenSeeded;
+  }
+  try {
+    const docRef = doc(db, 'siteSettings', 'seedingStatus');
+    const snapshot = await getDoc(docRef);
+    if (snapshot.exists()) {
+      databaseHasBeenSeeded = snapshot.data().seeded === true;
+      return databaseHasBeenSeeded;
+    }
+    return false;
+  } catch (error) {
+    console.error("Error checking seeding status:", error);
+    return false;
+  }
+}
+
+// Helper to set seeding status
+export async function setSeededStatus(status = true) {
+  try {
+    const docRef = doc(db, 'siteSettings', 'seedingStatus');
+    await setDoc(docRef, { seeded: status }, { merge: true });
+    databaseHasBeenSeeded = status;
+    return true;
+  } catch (error) {
+    console.error("Error setting seeding status:", error);
+    return false;
+  }
+}
+
 // Seed database with default data if empty
 export async function seedDatabase(force = false) {
+  // Check if we need to migrate/update old contact/footer settings even if already seeded
+  try {
+    const contactSettings = await getSiteSettings('contact');
+    const isOldContact = contactSettings && (contactSettings.address && contactSettings.address.includes("Silicon Forest"));
+    if (isOldContact) {
+      console.log("Migrating old contact settings to UF Global Solutions...");
+      await updateSiteSettings('contact', {
+        email: "hello@ufglobalsolutions.com",
+        phone: "+91 95952 06797",
+        address: "2nd Floor, H202, Near Paremama Hotel, Chishtiya Police Chowki Signal, MGM College Road, Chhatrapati Sambhajinagar (Aurangabad) - 431001",
+        workingHours: "Monday - Saturday: 9:30 AM - 6:30 PM"
+      });
+    }
+
+    const footerSettings = await getSiteSettings('footer');
+    const isOldFooter = footerSettings && (footerSettings.copyright && footerSettings.copyright.includes("IT Solution Inc."));
+    if (isOldFooter) {
+      console.log("Migrating old footer settings to UF Global Solutions...");
+      await updateSiteSettings('footer', {
+        copyright: "© 2026 UF Global Solutions Pvt Ltd. All rights reserved.",
+        tagline: "Innovative digital systems engineered for security, reliability, and scale.",
+        socials: {
+          facebook: "https://facebook.com/ufglobalsolutions",
+          twitter: "https://twitter.com/ufglobalsolutions",
+          linkedin: "https://linkedin.com/company/ufglobalsolutions",
+          github: "https://github.com/ufglobalsolutions"
+        }
+      });
+    }
+
+    // Automatically migrate existing services to have a category if missing
+    const servicesCol = collection(db, 'services');
+    const servicesSnapshot = await getDocs(servicesCol);
+    if (!servicesSnapshot.empty) {
+      for (const docSnap of servicesSnapshot.docs) {
+        const data = docSnap.data();
+        if (!data.category) {
+          const t = (data.title || '').toLowerCase();
+          let cat = 'ENTERPRISE SERVICES';
+          if (t.includes('web') || t.includes('website')) cat = 'WEB SYSTEMS';
+          else if (t.includes('ai') || t.includes('ml') || t.includes('machine') || t.includes('intelligence')) cat = 'AI / ML SYSTEMS';
+          else if (t.includes('cloud')) cat = 'CLOUD AI & ARCHITECTURE';
+          else if (t.includes('app') || t.includes('android') || t.includes('ios') || t.includes('mobile')) cat = 'MOBILE APPS';
+          else if (t.includes('software') || t.includes('erp') || t.includes('crm')) cat = 'SOFTWARE ENGINEERING';
+          else if (t.includes('marketing') || t.includes('seo') || t.includes('branding')) cat = 'DIGITAL GROWTH';
+          
+          console.log(`Migrating service "${data.title}" to category "${cat}"...`);
+          await updateDoc(docSnap.ref, { category: cat });
+        }
+      }
+    }
+
+    // Automatically migrate existing team members to have a sequence number if missing
+    const teamCol = collection(db, 'team');
+    const teamSnapshot = await getDocs(teamCol);
+    if (!teamSnapshot.empty) {
+      for (const docSnap of teamSnapshot.docs) {
+        const data = docSnap.data();
+        const updates = {};
+        if (data.sequence === undefined) {
+          console.log(`Migrating team member "${data.name}" to have sequence 99...`);
+          updates.sequence = 99;
+        }
+        if (data.description === undefined) {
+          console.log(`Migrating team member "${data.name}" to have a default description...`);
+          updates.description = "Dedicated professional specializing in engineering scalable digital solutions.";
+        }
+        if (Object.keys(updates).length > 0) {
+          await updateDoc(docSnap.ref, updates);
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Migration check failed:", err);
+  }
+
+  if (!force && await isSeeded()) {
+    return true;
+  }
   try {
     // Check if services are empty
     const servicesCol = collection(db, 'services');
@@ -183,44 +296,86 @@ export async function seedDatabase(force = false) {
       const defaultServices = [
         {
           title: "Website Development",
+          category: "WEB SYSTEMS",
           description: "Build modern, fast, and SEO-friendly corporate websites and e-commerce platforms.",
           details: "We specialize in developing premium web applications using React, Next.js, and modern CSS frameworks. Our sites are designed for fast page speeds, custom micro-interactions, responsive mobile layouts, and high search engine rankings.",
           icon: "FaLaptopCode",
+          features: [
+            "Responsive for all screen sizes",
+            "SEO optimized code structure",
+            "Secure database integration",
+            "24/7 dedicated support SLA"
+          ],
           image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop"
         },
         {
           title: "Android Application Development",
+          category: "MOBILE APPS",
           description: "High-performance native and cross-platform Android mobile applications.",
           details: "Our mobile team engineers feature-rich Android apps using Kotlin and Flutter. We configure background sync services, real-time push notifications, custom user onboarding screens, secure storage solutions, and optimal battery management protocols.",
           icon: "FaAndroid",
+          features: [
+            "Kotlin & Flutter codebases",
+            "Background synchronization",
+            "Secure local database storage",
+            "Optimal battery & RAM usage"
+          ],
           image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop"
         },
         {
           title: "iOS Application",
+          category: "MOBILE APPS",
           description: "Premium iOS apps optimized for the Apple ecosystem and App Store compliance.",
           details: "We design and develop premium iOS mobile apps using Swift and Flutter. We focus on strict adherence to the Apple Human Interface guidelines, butter-smooth animations, local face/touch ID authentication, and optimal memory management.",
           icon: "FaApple",
+          features: [
+            "Swift & Flutter development",
+            "App Store deployment compliance",
+            "Butter-smooth animations",
+            "Biometric Authentication support"
+          ],
           image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&auto=format&fit=crop"
         },
         {
           title: "Custom Software",
+          category: "SOFTWARE ENGINEERING",
           description: "Enterprise ERP systems, custom CRM pipelines, and bespoke workflow automation engines.",
           details: "We design and build bespoke software solutions to automate complex business workflows. From multi-branch ERP software to custom CRM integrations, database migrations, security audits, and dedicated dashboard consoles, we deliver scalable products tailored to your operational structure.",
           icon: "FaTools",
+          features: [
+            "Bespoke workflow automation",
+            "Multi-branch ERP database sync",
+            "Ironclad security & encryption",
+            "Dedicated dashboard reports"
+          ],
           image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=600&auto=format&fit=crop"
         },
         {
           title: "AI/ML",
+          category: "AI / ML SYSTEMS",
           description: "Custom neural networks, natural language processing, predictive intelligence, and computer vision.",
           details: "Unlock actionable insights with custom PyTorch/TensorFlow models, predictive customer behavior algorithms, NLP engines, OCR automation, and automated recommendation engines tailored to your database models.",
           icon: "FaBrain",
+          features: [
+            "Custom PyTorch & TensorFlow models",
+            "Predictive customer intelligence",
+            "Natural Language Processing (NLP)",
+            "Automated vision APIs & OCR"
+          ],
           image: "https://images.unsplash.com/photo-1527474305487-b87b222841cc?q=80&w=600&auto=format&fit=crop"
         },
         {
           title: "Cloud AI",
+          category: "CLOUD AI & ARCHITECTURE",
           description: "Deploy scalable cloud-native AI infrastructures, cognitive microservices, and serverless pipelines.",
           details: "We help integrate scalable AI/ML pipelines on AWS, Google Cloud, and Azure. We configure automated vision APIs, speech-to-text gateways, elastic container deployments (Kubernetes), and serverless machine learning APIs for real-time inference.",
           icon: "FaCloud",
+          features: [
+            "Scalable AWS/GCP/Azure configs",
+            "Containerized deployments (K8s)",
+            "Serverless ML pipelines",
+            "Real-time performance monitors"
+          ],
           image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop"
         }
       ];
@@ -242,11 +397,11 @@ export async function seedDatabase(force = false) {
         mission: "To engineer scalable, resilient, and cutting-edge digital experiences that empower companies to lead their industries with absolute operational confidence.",
         vision: "To be the ultimate technology transformation partner globally, recognized for high-performance software engineering, security compliance, and robust technical architectures.",
         stats: [
-          { value: "25+", label: "Years of Expertise" },
-          { value: "300+", label: "Corporate Clientele" },
-          { value: "5,000+", label: "Onboardings" },
-          { value: "2,500+", label: "SMEs" },
-          { value: "450K+", label: "Professionals Trained" }
+          { value: "5+", label: "Years of Expertise" },
+          { value: "100+", label: "Corporate Clientele" },
+          { value: "1,000+", label: "Onboardings" },
+          { value: "500+", label: "SMEs" },
+          { value: "50K+", label: "Professionals Trained" }
         ]
       });
     }
@@ -255,10 +410,10 @@ export async function seedDatabase(force = false) {
     if (!contactSettings || force) {
       console.log("Seeding contact settings...");
       await updateSiteSettings('contact', {
-        email: "contact@itsolutions.com",
-        phone: "+1 (888) 293-9481",
-        address: "500 Innovation Parkway, Suite 100, Silicon Forest, CA 94016",
-        workingHours: "Monday - Friday: 8:00 AM - 7:00 PM PST"
+        email: "hello@ufglobalsolutions.com",
+        phone: "+91 95952 06797",
+        address: "2nd Floor, H202, Near Paremama Hotel, Chishtiya Police Chowki Signal, MGM College Road, Chhatrapati Sambhajinagar (Aurangabad) - 431001",
+        workingHours: "Monday - Saturday: 9:30 AM - 6:30 PM"
       });
     }
 
@@ -266,20 +421,27 @@ export async function seedDatabase(force = false) {
     if (!footerSettings || force) {
       console.log("Seeding footer settings...");
       await updateSiteSettings('footer', {
-        copyright: "© 2026 IT Solution Inc. All rights reserved.",
+        copyright: "© 2026 UF Global Solutions Pvt Ltd. All rights reserved.",
         tagline: "Innovative digital systems engineered for security, reliability, and scale.",
         socials: {
-          facebook: "https://facebook.com/itsolutions",
-          twitter: "https://twitter.com/itsolutions",
-          linkedin: "https://linkedin.com/company/itsolutions",
-          github: "https://github.com/itsolutions"
+          facebook: "https://facebook.com/ufglobalsolutions",
+          twitter: "https://twitter.com/ufglobalsolutions",
+          linkedin: "https://linkedin.com/company/ufglobalsolutions",
+          github: "https://github.com/ufglobalsolutions"
         }
       });
     }
 
-    // Seed products and blogs
+    // Seed products, blogs, brand logos, testimonials, and jobs
     await seedProducts(force);
     await seedBlogs(force);
+    await seedBrandLogos(force);
+    await seedTestimonials(force);
+    await seedJobs(force);
+    await seedTeamMembers(force);
+
+    // Mark database as seeded
+    await setSeededStatus(true);
 
     console.log("Database seeded successfully!");
     return true;
@@ -336,11 +498,19 @@ export async function deleteClientLogo(id) {
 }
 
 // Seed brand logos if empty helper
-export async function seedBrandLogos() {
+export async function seedBrandLogos(force = false) {
+  if (!force && await isSeeded()) {
+    return;
+  }
   try {
     const logosCol = collection(db, 'clientLogos');
     const snapshot = await getDocs(logosCol);
-    if (snapshot.empty) {
+    if (snapshot.empty || force) {
+      if (force && !snapshot.empty) {
+        for (const d of snapshot.docs) {
+          await deleteDoc(doc(db, 'clientLogos', d.id));
+        }
+      }
       const defaultLogos = [
         { name: 'EY', url: 'https://logo.clearbit.com/ey.com' },
         { name: 'Deloitte', url: 'https://logo.clearbit.com/deloitte.com' },
@@ -410,11 +580,19 @@ export async function deleteTestimonial(id) {
 }
 
 // Seed testimonials if empty
-export async function seedTestimonials() {
+export async function seedTestimonials(force = false) {
+  if (!force && await isSeeded()) {
+    return;
+  }
   try {
     const testimonialsCol = collection(db, 'testimonials');
     const snapshot = await getDocs(testimonialsCol);
-    if (snapshot.empty) {
+    if (snapshot.empty || force) {
+      if (force && !snapshot.empty) {
+        for (const d of snapshot.docs) {
+          await deleteDoc(doc(db, 'testimonials', d.id));
+        }
+      }
       const defaultTestimonials = [
         {
           name: 'Rajesh Kumar',
@@ -492,11 +670,19 @@ export async function deleteJob(id) {
 }
 
 // Seed default job listings if empty
-export async function seedJobs() {
+export async function seedJobs(force = false) {
+  if (!force && await isSeeded()) {
+    return;
+  }
   try {
     const jobsCol = collection(db, 'jobs');
     const snapshot = await getDocs(jobsCol);
-    if (snapshot.empty) {
+    if (snapshot.empty || force) {
+      if (force && !snapshot.empty) {
+        for (const d of snapshot.docs) {
+          await deleteDoc(doc(db, 'jobs', d.id));
+        }
+      }
       const defaultJobs = [
         {
           title: 'Senior React Developer',
@@ -654,6 +840,9 @@ export async function deleteProduct(id) {
 }
 
 export async function seedProducts(force = false) {
+  if (!force && await isSeeded()) {
+    return;
+  }
   try {
     const colRef = collection(db, 'products');
     const snapshot = await getDocs(colRef);
@@ -752,6 +941,9 @@ export async function deleteBlog(id) {
 }
 
 export async function seedBlogs(force = false) {
+  if (!force && await isSeeded()) {
+    return;
+  }
   try {
     const colRef = collection(db, 'blogs');
     const snapshot = await getDocs(colRef);
@@ -790,3 +982,118 @@ export async function seedBlogs(force = false) {
     console.error("Failed to seed blogs:", err);
   }
 }
+
+// ---------------- TEAM MEMBERS CRUD ----------------
+export async function getTeamMembers() {
+  try {
+    const colRef = collection(db, 'team');
+    const snapshot = await getDocs(colRef);
+    const list = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        sequence: data.sequence !== undefined ? Number(data.sequence) : 99,
+        ...data
+      };
+    });
+    // Sort in-memory by sequence ascending, then by createdAt descending
+    list.sort((a, b) => {
+      if (a.sequence !== b.sequence) {
+        return a.sequence - b.sequence;
+      }
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateB - dateA;
+    });
+    return list;
+  } catch (error) {
+    console.error("Error fetching team members:", error);
+    throw error;
+  }
+}
+
+export async function addTeamMember(memberData) {
+  try {
+    const colRef = collection(db, 'team');
+    const docRef = await addDoc(colRef, {
+      ...memberData,
+      createdAt: new Date().toISOString()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding team member:", error);
+    throw error;
+  }
+}
+
+export async function updateTeamMember(id, memberData) {
+  try {
+    const docRef = doc(db, 'team', id);
+    await updateDoc(docRef, {
+      ...memberData,
+      updatedAt: new Date().toISOString()
+    });
+    return true;
+  } catch (error) {
+    console.error("Error updating team member:", error);
+    throw error;
+  }
+}
+
+export async function deleteTeamMember(id) {
+  try {
+    const docRef = doc(db, 'team', id);
+    await deleteDoc(docRef);
+    return true;
+  } catch (error) {
+    console.error("Error deleting team member:", error);
+    throw error;
+  }
+}
+
+export async function seedTeamMembers(force = false) {
+  if (!force && await isSeeded()) {
+    return;
+  }
+  try {
+    const colRef = collection(db, 'team');
+    const snapshot = await getDocs(colRef);
+    if (snapshot.empty || force) {
+      if (force && !snapshot.empty) {
+        for (const d of snapshot.docs) {
+          await deleteDoc(doc(db, 'team', d.id));
+        }
+      }
+      const defaultTeam = [
+        {
+          name: 'Abhishek Parekar',
+          designation: 'Founder & CEO',
+          photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop',
+          sequence: 1,
+          description: 'Technology strategist with expertise in managing complex IT solutions and operations.'
+        },
+        {
+          name: 'Neha Patil',
+          designation: 'Co-Founder & COO',
+          photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop',
+          sequence: 2,
+          description: 'Expert in operations management, client communication, and digital scale strategies.'
+        },
+        {
+          name: 'Rohan Joshi',
+          designation: 'Senior Software Engineer',
+          photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop',
+          sequence: 3,
+          description: 'Building strong client applications, database layers, and automation systems.'
+        }
+      ];
+      for (const m of defaultTeam) {
+        await addTeamMember(m);
+      }
+      console.log("Team members seeded successfully!");
+    }
+  } catch (err) {
+    console.error("Failed to seed team members:", err);
+  }
+}
+

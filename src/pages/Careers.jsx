@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getJobs, seedJobs } from '../services/serviceAPI';
+import { getJobs, seedDatabase } from '../services/serviceAPI';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { toast, ToastContainer } from 'react-toastify';
 import { FaSearch, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEnvelope, FaLocationArrow, FaFileUpload, FaTimes, FaThLarge, FaList } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-import videoBg from '../assets/video/animation1.mp4';
+import videoBg from '../assets/video/animation3.mp4';
 
 export default function Careers() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,7 +39,7 @@ export default function Careers() {
   useEffect(() => {
     async function loadJobsData() {
       try {
-        await seedJobs();
+        await seedDatabase();
         const data = await getJobs();
         setJobs(data);
       } catch (err) {
@@ -426,7 +426,7 @@ export default function Careers() {
                         </div>
 
                         <h3 className="font-black text-slate-900 text-lg group-hover:text-blue-600 transition-colors duration-300 leading-snug">{job.title}</h3>
-                        <p className={`text-slate-500 text-xs leading-relaxed max-w-2xl font-medium ${viewMode === 'grid' ? 'line-clamp-3' : ''}`}>{job.description}</p>
+                        <p className={`text-slate-950 text-xs leading-relaxed max-w-2xl font-semibold ${viewMode === 'grid' ? 'line-clamp-3' : ''}`}>{job.description}</p>
                       </div>
                       
                       <div className="flex flex-wrap gap-3 text-[11px] text-slate-400 font-bold pt-2">

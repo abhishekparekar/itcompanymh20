@@ -8,16 +8,9 @@ export default function ServiceCard({ service, index }) {
   // Get matching FontAwesome icon
   const IconComp = FaIcons[service.icon] || FaIcons.FaLaptopCode;
   
-  // Tag selector based on service title
-  const getServiceTag = (title = '') => {
-    const t = title.toLowerCase();
-    if (t.includes('web') || t.includes('website')) return 'WEB SYSTEMS';
-    if (t.includes('ai') || t.includes('ml') || t.includes('machine') || t.includes('intelligence')) return 'AI / ML SYSTEMS';
-    if (t.includes('cloud')) return 'CLOUD AI & ARCHITECTURE';
-    if (t.includes('app') || t.includes('android') || t.includes('ios') || t.includes('mobile')) return 'MOBILE APPS';
-    if (t.includes('software') || t.includes('erp') || t.includes('crm')) return 'SOFTWARE ENGINEERING';
-    if (t.includes('marketing') || t.includes('seo') || t.includes('branding')) return 'DIGITAL GROWTH';
-    return 'ENTERPRISE SERVICES';
+  // Tag selector based on service category
+  const getServiceTag = (svc) => {
+    return svc.category || 'ENTERPRISE SERVICES';
   };
 
   // Mockup/Unsplash images corresponding to the layout in Screenshot 4
@@ -61,14 +54,14 @@ export default function ServiceCard({ service, index }) {
           
           {/* Accent color category badge */}
           <span className="inline-block text-[9px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary">
-            {getServiceTag(service.title)}
+            {getServiceTag(service)}
           </span>
 
           <h3 className="font-extrabold text-slate-900 text-sm sm:text-base leading-tight group-hover:text-primary transition-colors">
             {service.title}
           </h3>
           
-          <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
+          <p className="text-xs text-slate-950 font-semibold leading-relaxed line-clamp-3">
             {service.description || service.desc}
           </p>
         </div>

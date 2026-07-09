@@ -18,6 +18,7 @@ import {
   FaUserTie,
   FaBars,
   FaTimes,
+  FaUsers,
   FaUserGraduate,
   FaDownload,
   FaEye,
@@ -39,6 +40,7 @@ import {
   getJobs, addJob, deleteJob, updateJob,
   getProducts, addProduct, updateProduct, deleteProduct,
   getBlogs, addBlog, updateBlog, deleteBlog,
+  getTeamMembers, addTeamMember, updateTeamMember, deleteTeamMember,
   bulkDeleteDocuments
 } from '../services/serviceAPI';
 
@@ -111,6 +113,32 @@ export default function Dashboard() {
   const [applications, setApplications] = useState([]);
   const [loadingApps, setLoadingApps] = useState(false);
   const [selectedAppCover, setSelectedAppCover] = useState(null); // Modal for Cover Letter
+
+  // Team local states
+  const [teamList, setTeamList] = useState([]);
+  const [loadingTeam, setLoadingTeam] = useState(false);
+  const [newMemberName, setNewMemberName] = useState('');
+  const [newMemberDesignation, setNewMemberDesignation] = useState('');
+  const [newMemberPhoto, setNewMemberPhoto] = useState('');
+  const [newMemberSequence, setNewMemberSequence] = useState('1');
+  const [newMemberDescription, setNewMemberDescription] = useState('');
+  const [addingMember, setAddingMember] = useState(false);
+  const [editMemberId, setEditMemberId] = useState(null);
+  const [uploadedPhotoName, setUploadedPhotoName] = useState('');
+
+  // Fetch team helper
+  const fetchTeamData = async () => {
+    setLoadingTeam(true);
+    try {
+      const data = await getTeamMembers();
+      setTeamList(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load team data.");
+    } finally {
+      setLoadingTeam(false);
+    }
+  };
 
   // Fetch services helper
   const fetchServicesData = async () => {
@@ -230,6 +258,8 @@ export default function Dashboard() {
       fetchProductsData();
     } else if (activeTab === 'blogs') {
       fetchBlogsData();
+    } else if (activeTab === 'team') {
+      fetchTeamData();
     }
   }, [activeTab]);
 
@@ -542,8 +572,86 @@ export default function Dashboard() {
     }
   };
 
+  // ---------------- TEAM HANDLERS ----------------
+  const handlePhotoFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("File is too large. Please select an image under 2MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setNewMemberPhoto(event.target.result);
+        setUploadedPhotoName(file.name);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAddTeamMember = async (e) => {
+    e.preventDefault();
+    if (!newMemberName || !newMemberDesignation || !newMemberPhoto) {
+      toast.error("Please fill in Name, Designation, and Photo URL/Upload.");
+      return;
+    }
+    setAddingMember(true);
+    try {
+      const data = {
+        name: newMemberName,
+        designation: newMemberDesignation,
+        photo: newMemberPhoto,
+        sequence: Number(newMemberSequence) || 99,
+        description: newMemberDescription
+      };
+
+      if (editMemberId) {
+        await updateTeamMember(editMemberId, data);
+        toast.success("Team member updated successfully.");
+        setEditMemberId(null);
+      } else {
+        await addTeamMember(data);
+        toast.success("Team member added successfully.");
+      }
+      setNewMemberName('');
+      setNewMemberDesignation('');
+      setNewMemberPhoto('');
+      setNewMemberSequence('1');
+      setNewMemberDescription('');
+      setUploadedPhotoName('');
+      fetchTeamData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save team member.");
+    } finally {
+      setAddingMember(false);
+    }
+  };
+
+  const handleEditMemberSelect = (member) => {
+    setEditMemberId(member.id);
+    setNewMemberName(member.name);
+    setNewMemberDesignation(member.designation);
+    setNewMemberPhoto(member.photo);
+    setNewMemberSequence(String(member.sequence !== undefined ? member.sequence : 99));
+    setNewMemberDescription(member.description || '');
+    setUploadedPhotoName(member.photo.startsWith('data:') ? 'Uploaded Profile Image' : '');
+  };
+
+  const handleDeleteMember = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this team member?")) return;
+    try {
+      await deleteTeamMember(id);
+      toast.success("Team member deleted successfully.");
+      fetchTeamData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete team member.");
+    }
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-100">
+    <div className="flex h-screen overflow-hidden bg-slate-100 admin-console-wrapper">
       <ToastContainer position="top-right" autoClose={3000} theme="light" />
 
       {/* Mobile overlay backdrop */}
@@ -587,12 +695,13 @@ export default function Dashboard() {
             {[
               { id: 'services', icon: FaBriefcase, label: 'Manage Services', match: ['services','add-service','edit-service'] },
               { id: 'products', icon: FaBoxOpen, label: 'Manage Products', match: ['products'] },
-              { id: 'blogs', icon: FaBookOpen, label: 'Manage Blogs', match: ['blogs'] },
+              // { id: 'blogs', icon: FaBookOpen, label: 'Manage Blogs', match: ['blogs'] },
               { id: 'about', icon: FaInfoCircle, label: 'About Us Settings', match: ['about'] },
               { id: 'contact', icon: FaEnvelopeOpenText, label: 'Contact & Inbox', match: ['contact'] },
               { id: 'footer', icon: FaGlobe, label: 'Footer Config', match: ['footer'] },
               { id: 'brands', icon: FaBuilding, label: 'Manage Brands', match: ['brands'] },
               { id: 'testimonials', icon: FaCommentAlt, label: 'Testimonials', match: ['testimonials'] },
+              { id: 'team', icon: FaUsers, label: 'Manage Team', match: ['team'] },
               { id: 'careers', icon: FaUserTie, label: 'Manage Careers', match: ['careers'] },
               { id: 'applications', icon: FaUserGraduate, label: 'Job Applications', match: ['applications'] },
             ].map(({ id, icon: Icon, label, match }) => {
@@ -661,6 +770,7 @@ export default function Dashboard() {
                 {activeTab === 'footer' && 'Footer Config'}
                 {activeTab === 'brands' && 'Brand Logos'}
                 {activeTab === 'testimonials' && 'Testimonials'}
+                {activeTab === 'team' && 'Manage Team'}
                 {activeTab === 'careers' && 'Careers & Jobs'}
                 {activeTab === 'applications' && 'Job Applications'}
               </h1>
@@ -690,7 +800,7 @@ export default function Dashboard() {
         </header>
 
         {/* Scrollable main content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 content-panel">
 
           {/* Tab Render Switchboard */}
           <section className="animate-fadeIn">
@@ -702,6 +812,7 @@ export default function Dashboard() {
                 columns={[
                   { key: 'icon', label: 'Icon', render: (s) => <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#82b443]/10 border border-[#82b443]/20 text-[#82b443]">{s.icon || "FaLaptop"}</span> },
                   { key: 'title', label: 'Service Title', render: (s) => <span className="font-extrabold text-slate-800">{s.title}</span> },
+                  { key: 'category', label: 'Category', render: (s) => <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-600">{s.category || 'ENTERPRISE SERVICES'}</span> },
                   { key: 'description', label: 'Description', render: (s) => <span className="text-slate-500 line-clamp-1">{s.description}</span> },
                   { key: 'createdAt', label: 'Created', render: (s) => new Date(s.createdAt).toLocaleDateString() }
                 ]}
@@ -952,6 +1063,152 @@ export default function Dashboard() {
                     fetchTestimonialsData();
                   } catch (e) {
                     toast.error("Failed to delete selected testimonials.");
+                  }
+                }}
+              />
+            </div>
+          )}
+
+          {activeTab === 'team' && (
+            <div className="space-y-6 bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm text-left animate-fadeIn">
+              <h3 className="font-extrabold text-lg text-slate-800 border-b border-slate-100 pb-3">
+                {editMemberId ? '✍️ Edit Team Member' : '👥 Add Team Member'}
+              </h3>
+              
+              <form onSubmit={handleAddTeamMember} className="space-y-4 bg-slate-50 p-4 md:p-6 rounded-xl border border-slate-200">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Full Name</label>
+                    <input 
+                      type="text" 
+                      value={newMemberName} 
+                      onChange={(e) => setNewMemberName(e.target.value)}
+                      placeholder="e.g. Abhishek Parekar" 
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Designation / Role</label>
+                    <input 
+                      type="text" 
+                      value={newMemberDesignation} 
+                      onChange={(e) => setNewMemberDesignation(e.target.value)}
+                      placeholder="e.g. Founder & CEO" 
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Sequence Order (e.g. 1, 2, 3)</label>
+                    <input 
+                      type="number" 
+                      value={newMemberSequence} 
+                      onChange={(e) => setNewMemberSequence(e.target.value)}
+                      placeholder="e.g. 1" 
+                      min="1"
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                      required 
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Profile Photo URL</label>
+                    <input 
+                      type="text" 
+                      value={newMemberPhoto} 
+                      onChange={(e) => setNewMemberPhoto(e.target.value)}
+                      placeholder="e.g. https://images.unsplash.com/photo-..." 
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Or Upload Image File</label>
+                    <div className="relative">
+                      <input 
+                        type="file" 
+                        onChange={handlePhotoFileChange}
+                        accept="image/*"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      />
+                      <div className="w-full px-3 py-2 rounded-lg border border-dashed border-slate-300 bg-white hover:bg-slate-50 transition-all duration-300 flex items-center justify-center gap-2 text-xs text-slate-505 font-bold cursor-pointer h-[34px]">
+                        <span>{uploadedPhotoName || "Choose Image..."}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Short Bio / Description</label>
+                  <textarea 
+                    value={newMemberDescription} 
+                    onChange={(e) => setNewMemberDescription(e.target.value)}
+                    placeholder="e.g. Technology strategist with expertise in managing complex IT solutions..." 
+                    rows="2"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none text-xs text-slate-800 placeholder-slate-400 transition resize-none"
+                    required 
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2">
+                  {editMemberId && (
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setEditMemberId(null);
+                        setNewMemberName('');
+                        setNewMemberDesignation('');
+                        setNewMemberPhoto('');
+                        setNewMemberSequence('1');
+                        setNewMemberDescription('');
+                        setUploadedPhotoName('');
+                      }}
+                      className="py-2 px-5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg transition"
+                    >
+                      Cancel Edit
+                    </button>
+                  )}
+                  <button 
+                    type="submit" 
+                    disabled={addingMember}
+                    className="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-md shadow-blue-500/20"
+                  >
+                    {addingMember ? 'Saving...' : editMemberId ? 'Update Member' : 'Add Member'}
+                  </button>
+                </div>
+              </form>
+
+              {/* List of team members using DataTable */}
+              <DataTable 
+                loading={loadingTeam}
+                data={teamList}
+                columns={[
+                  { 
+                    key: 'photo', 
+                    label: 'Photo', 
+                    render: (m) => (
+                      <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 bg-slate-100 flex-shrink-0">
+                        <img src={m.photo} alt={m.name} className="w-full h-full object-cover" />
+                      </div>
+                    ) 
+                  },
+                  { key: 'name', label: 'Name', render: (m) => <span className="font-extrabold text-slate-800">{m.name}</span> },
+                  { key: 'designation', label: 'Designation', render: (m) => <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{m.designation}</span> },
+                  { key: 'description', label: 'Short Bio', render: (m) => <span className="text-slate-500 text-xs truncate max-w-[200px] block">{m.description || '-'}</span> },
+                  { key: 'sequence', label: 'Order Sequence', render: (m) => <span className="font-bold text-slate-700 text-xs">#{m.sequence !== undefined ? m.sequence : '99'}</span> },
+                  { key: 'createdAt', label: 'Created', render: (m) => m.createdAt ? new Date(m.createdAt).toLocaleDateString() : 'N/A' }
+                ]}
+                onEdit={handleEditMemberSelect}
+                onDelete={handleDeleteMember}
+                onBulkDelete={async (ids) => {
+                  try {
+                    await bulkDeleteDocuments('team', ids);
+                    toast.success(`${ids.length} members deleted.`);
+                    fetchTeamData();
+                  } catch (e) {
+                    toast.error("Failed to delete selected members.");
                   }
                 }}
               />

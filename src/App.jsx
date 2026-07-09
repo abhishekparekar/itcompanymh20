@@ -45,7 +45,7 @@ function App() {
           <Route path="/services" element={<MainLayout><Services /></MainLayout>} />
           <Route path="/contact" element={<MainLayout><Contact /></MainLayout>} />
           <Route path="/careers" element={<MainLayout><Careers /></MainLayout>} />
-          <Route path="/blog" element={<MainLayout><Blog /></MainLayout>} />
+          {/* <Route path="/blog" element={<MainLayout><Blog /></MainLayout>} /> */}
           <Route path="/portfolio" element={<MainLayout><Portfolio /></MainLayout>} />
 
           {/* ── Admin Portal (preserved) ── */}

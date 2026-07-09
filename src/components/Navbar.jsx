@@ -39,10 +39,10 @@ export default function Navbar() {
   };
 
   const navLinkClass = ({ isActive }) =>
-    `text-[11px] font-bold uppercase tracking-wide transition-all duration-200 px-3.5 py-1.5 rounded-full whitespace-nowrap ${
+    `text-[11px] font-black uppercase tracking-wide transition-all duration-200 px-3.5 py-1.5 rounded-full whitespace-nowrap ${
       isActive
         ? 'bg-accent text-white shadow-sm shadow-accent/25'
-        : 'text-slate-700 hover:text-white hover:bg-accent'
+        : 'text-slate-950 hover:text-white hover:bg-accent'
     }`;
 
   return (
@@ -91,10 +91,10 @@ export default function Navbar() {
           <NavLink
             to="/services"
             className={({ isActive }) =>
-              `text-[11px] font-bold uppercase tracking-wide transition-all duration-200 flex items-center gap-1 px-3.5 py-1.5 rounded-full whitespace-nowrap ${
+              `text-[11px] font-black uppercase tracking-wide transition-all duration-200 flex items-center gap-1 px-3.5 py-1.5 rounded-full whitespace-nowrap ${
                 isActive || showServicesMenu
                   ? 'bg-accent text-white shadow-sm shadow-accent/25'
-                  : 'text-slate-700 hover:text-white hover:bg-accent'
+                  : 'text-slate-950 hover:text-white hover:bg-accent'
               }`
             }
           >
@@ -120,8 +120,8 @@ export default function Navbar() {
                         <IconComp />
                       </div>
                       <div>
-                        <h5 className="font-extrabold text-slate-800 text-[11px] leading-tight group-hover:text-accent">{item.title}</h5>
-                        <p className="text-[9px] text-slate-400 mt-0.5 font-medium line-clamp-1">{item.description}</p>
+                        <h5 className="font-black text-slate-955 text-[11px] leading-tight group-hover:text-accent">{item.title}</h5>
+                        <p className="text-[9px] text-slate-900 mt-0.5 font-semibold line-clamp-1">{item.description}</p>
                       </div>
                     </Link>
                   );
@@ -131,7 +131,7 @@ export default function Navbar() {
           )}
         </div>
 
-        <NavLink to="/blog" className={navLinkClass}>Blog</NavLink>
+        {/* <NavLink to="/blog" className={navLinkClass}>Blog</NavLink> */}
         <NavLink to="/careers" className={navLinkClass}>Career</NavLink>
         <NavLink to="/contact" className={navLinkClass}>Contact</NavLink>
       </div>
@@ -159,7 +159,7 @@ export default function Navbar() {
             { to: '/about', label: 'About' },
             { to: '/products', label: 'Products' },
             { to: '/services', label: 'Services' },
-            { to: '/blog', label: 'Blog' },
+            // { to: '/blog', label: 'Blog' },
             { to: '/careers', label: 'Career' },
             { to: '/contact', label: 'Contact' },
           ].map((item) => (
@@ -168,8 +168,8 @@ export default function Navbar() {
               to={item.to}
               onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
-                `block px-4 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wide transition ${
-                  isActive ? 'bg-accent text-white' : 'text-slate-700 hover:bg-accent hover:text-white'
+                `block px-4 py-2.5 rounded-xl text-sm font-black uppercase tracking-wide transition ${
+                  isActive ? 'bg-accent text-white' : 'text-slate-950 hover:bg-accent hover:text-white'
                 }`
               }
             >

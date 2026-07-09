@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaRocket, FaWrench, FaStar, FaCheck, FaCheckCircle, FaTools } from 'react-icons/fa';
-import { getProducts, submitContactForm, seedProducts } from '../services/serviceAPI';
+import { getProducts, submitContactForm, seedDatabase } from '../services/serviceAPI';
 import girlImg from '../assets/images/products_hero_girl.png';
 import { toast, ToastContainer } from 'react-toastify';
 
@@ -21,7 +21,7 @@ export default function Products() {
   useEffect(() => {
     async function loadProductsData() {
       try {
-        await seedProducts();
+        await seedDatabase();
         const data = await getProducts();
         setProductsList(data);
       } catch (err) {
@@ -287,7 +287,7 @@ export default function Products() {
                         <h3 className="font-extrabold text-slate-900 text-lg leading-tight">
                           {prod.name}
                         </h3>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">
                           {prod.tagline}
                         </p>
                       </div>
@@ -295,10 +295,10 @@ export default function Products() {
 
                     {/* Features List checklist */}
                     <div className="pt-4 border-t border-slate-100 flex-1">
-                      <h4 className="text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-3">Key Features</h4>
+                      <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Key Features</h4>
                       <ul className="space-y-2">
                         {featuresArray.map((feat, fIdx) => (
-                          <li key={fIdx} className="flex items-start gap-2.5 text-xs text-slate-650 font-medium">
+                          <li key={fIdx} className="flex items-start gap-2.5 text-xs text-slate-700 font-semibold">
                             <FaCheck className="text-emerald-500 text-[10px] mt-0.5 flex-shrink-0" />
                             <span>{feat}</span>
                           </li>
@@ -331,7 +331,7 @@ export default function Products() {
             {/* Close button */}
             <button 
               onClick={() => setSelectedProduct(null)} 
-              className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 font-black text-sm"
+              className="absolute top-6 right-6 text-slate-400 hover:text-slate-650 font-black text-sm"
             >
               ✕
             </button>
@@ -340,15 +340,15 @@ export default function Products() {
               <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest block mb-1">
                 Configure Product License
               </span>
-              <h3 className="font-black text-slate-800 text-xl leading-tight">
+              <h3 className="font-black text-slate-900 text-xl leading-tight">
                 {selectedProduct.name}
               </h3>
-              <p className="text-xs text-slate-400 mt-1">{selectedProduct.tagline}</p>
+              <p className="text-xs text-slate-600 mt-1 font-semibold">{selectedProduct.tagline}</p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <h4 className="text-[10px] font-bold text-slate-450 uppercase tracking-wider mb-2">Capabilities Checklist</h4>
+                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-wider mb-2">Capabilities Checklist</h4>
                 <div className="flex flex-wrap gap-2">
                   {(Array.isArray(selectedProduct.features) ? selectedProduct.features : (typeof selectedProduct.features === 'string' ? selectedProduct.features.split(',').map(f => f.trim()) : [])).map((feat, fIdx) => (
                     <span key={fIdx} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-700 text-[10px] font-semibold">
@@ -361,7 +361,7 @@ export default function Products() {
               <div className="border-t border-slate-100 pt-4 space-y-3.5">
                 <div>
                   <h4 className="text-xs font-bold text-slate-800">Request Demo / Pricing Spec</h4>
-                  <p className="text-[10px] text-slate-400 mt-0.5">Submit your details to request custom integrations or licensing terms.</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Submit your details to request custom integrations or licensing terms.</p>
                 </div>
 
                 <form onSubmit={handleInquirySubmit} className="space-y-3">

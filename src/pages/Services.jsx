@@ -247,8 +247,8 @@ export default function Services() {
 
                     {/* Overview */}
                     <div className="space-y-2">
-                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Overview</h4>
-                      <p className="text-slate-600 text-xs sm:text-sm leading-relaxed font-medium">
+                      <h4 className="text-[10px] sm:text-[11px] font-black text-slate-500 uppercase tracking-widest">Overview</h4>
+                      <p className="text-slate-900 text-sm sm:text-base leading-relaxed font-extrabold">
                         {selectedService.description || selectedService.desc}
                       </p>
                     </div>
@@ -256,31 +256,29 @@ export default function Services() {
                     {/* Specifications */}
                     {selectedService.details && (
                       <div className="space-y-2 pt-4 border-t border-slate-100">
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Core Features & Architecture</h4>
-                        <p className="text-slate-600 text-xs leading-relaxed whitespace-pre-line font-normal">
+                        <h4 className="text-[10px] sm:text-[11px] font-black text-slate-500 uppercase tracking-widest">Core Features & Architecture</h4>
+                        <p className="text-slate-800 text-xs sm:text-sm leading-relaxed whitespace-pre-line font-medium">
                           {selectedService.details}
                         </p>
                       </div>
                     )}
 
                     {/* Core Promises List */}
-                    <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 text-xs">
-                      <div className="flex items-center gap-2">
-                        <FaCheckCircle className="text-emerald-500 text-sm flex-shrink-0" />
-                        <span>Responsive for all screen sizes</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FaCheckCircle className="text-emerald-500 text-sm flex-shrink-0" />
-                        <span>SEO optimized code structure</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FaCheckCircle className="text-emerald-500 text-sm flex-shrink-0" />
-                        <span>Secure database integration</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FaCheckCircle className="text-emerald-500 text-sm flex-shrink-0" />
-                        <span>24/7 dedicated support SLA</span>
-                      </div>
+                    <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-800 text-xs sm:text-sm">
+                      {(selectedService.features && selectedService.features.length > 0
+                        ? selectedService.features
+                        : [
+                            "Responsive for all screen sizes",
+                            "SEO optimized code structure",
+                            "Secure database integration",
+                            "24/7 dedicated support SLA"
+                          ]
+                      ).map((feature, fIdx) => (
+                        <div key={fIdx} className="flex items-center gap-2.5 font-semibold text-slate-800">
+                          <FaCheckCircle className="text-emerald-500 text-sm sm:text-base flex-shrink-0" />
+                          <span>{feature}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
