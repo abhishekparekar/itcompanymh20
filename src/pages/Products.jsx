@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaRocket, FaWrench, FaStar, FaCheck, FaCheckCircle, FaTools } from 'react-icons/fa';
-import { getProducts, submitContactForm, seedDatabase } from '../services/serviceAPI';
+import { getProducts, submitContactForm } from '../services/serviceAPI';
 import girlImg from '../assets/images/products_hero_girl.png';
 import { toast, ToastContainer } from 'react-toastify';
 
@@ -21,7 +21,6 @@ export default function Products() {
   useEffect(() => {
     async function loadProductsData() {
       try {
-        await seedDatabase();
         const data = await getProducts();
         setProductsList(data);
       } catch (err) {

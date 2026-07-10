@@ -5,9 +5,9 @@
 export const COMPANY = {
   name: 'UF Global Solutions Pvt Ltd',
   shortName: 'UFGS',
-  tagline: 'Building Smart Digital Solutions for Modern Businesses.',
+  tagline: 'UF Global Solutions is a professional software company providing website development, mobile app development, CRM, ERP, business automation, managed staffing solutions, corporate training, and digital solutions for growing businesses.',
   website: 'https://ufglobalsolutions.com',
-  email: 'hello@ufglobalsolutions.com',
+  email: 'Info@ufglobalsolutions.com',
   phone: '+91 95952 06797',
   whatsapp: '919595206797',
   address: '2nd Floor, H202, Near Paremama Hotel, Chishtiya Police Chowki Signal, MGM College Road, Chhatrapati Sambhajinagar (Aurangabad) - 431001',

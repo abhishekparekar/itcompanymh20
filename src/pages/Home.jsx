@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Hero from '../components/Hero';
 import ServiceCard from '../components/ServiceCard';
 import ContactForm from '../components/ContactForm';
-import { getServices, getSiteSettings, getClientLogos, seedBrandLogos, getTestimonials, seedTestimonials, seedDatabase, getTeamMembers } from '../services/serviceAPI';
+import { getServices, getSiteSettings, getClientLogos, getTestimonials, getTeamMembers } from '../services/serviceAPI';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
@@ -34,7 +34,6 @@ export default function Home() {
   useEffect(() => {
     async function loadHomeData() {
       try {
-        await seedDatabase();
         const servicesData = await getServices();
         setServices(servicesData); // Show all services in the scrolling carousel
         
@@ -48,13 +47,11 @@ export default function Home() {
           }
         }
 
-        // Seed and fetch client logos dynamically
-        await seedBrandLogos();
+        // Fetch client logos dynamically
         const brandLogos = await getClientLogos();
         setLogos(brandLogos);
 
-        // Seed and fetch testimonials dynamically
-        await seedTestimonials();
+        // Fetch testimonials dynamically
         const testList = await getTestimonials();
         setTestimonials(testList);
 
@@ -224,7 +221,8 @@ export default function Home() {
       {/* Hero Header */}
       <Hero />
 
-      {/* Statistics Section — Infinite Ticker */}
+      {/* Statistics Section — Infinite Ticker (only shown when admin has configured stats) */}
+      {stats && stats.length > 0 && stats.every(s => s.value && s.label) && (
       <section className="bg-dark py-5 sm:py-8 relative overflow-hidden border-y border-slate-800">
         <div className="absolute inset-0 opacity-5 bg-grid-pattern" />
 
@@ -235,35 +233,7 @@ export default function Home() {
         {/* Ticker track */}
         <div className="overflow-hidden relative z-0">
           <div className="flex w-max animate-ticker hover:[animation-play-state:paused] gap-0">
-            {[
-              ...(stats && stats.length === 5 && stats.every(s => s.value && s.label)
-                ? stats
-                : [
-                    { value: '25+', label: 'Years of Expertise' },
-                    { value: '300+', label: 'Corporate Clientele' },
-                    { value: '5,000+', label: 'Onboardings' },
-                    { value: '2,500+', label: 'SMEs' },
-                    { value: '450K+', label: 'Professionals Trained' }
-                  ]),
-              ...(stats && stats.length === 5 && stats.every(s => s.value && s.label)
-                ? stats
-                : [
-                    { value: '25+', label: 'Years of Expertise' },
-                    { value: '300+', label: 'Corporate Clientele' },
-                    { value: '5,000+', label: 'Onboardings' },
-                    { value: '2,500+', label: 'SMEs' },
-                    { value: '450K+', label: 'Professionals Trained' }
-                  ]),
-              ...(stats && stats.length === 5 && stats.every(s => s.value && s.label)
-                ? stats
-                : [
-                    { value: '25+', label: 'Years of Expertise' },
-                    { value: '300+', label: 'Corporate Clientele' },
-                    { value: '5,000+', label: 'Onboardings' },
-                    { value: '2,500+', label: 'SMEs' },
-                    { value: '450K+', label: 'Professionals Trained' }
-                  ])
-            ].map((item, idx) => {
+            {[...stats, ...stats, ...stats].map((item, idx) => {
               const icons = [
                 <FaBriefcase />, <FaThumbsUp />, <FaUsers />, <FaBuilding />, <FaUserGraduate />
               ];
@@ -293,6 +263,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Services Showcase */}
       <section className="container max-w-7xl mx-auto px-6 py-12">
@@ -320,6 +291,10 @@ export default function Home() {
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : services.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center space-y-2">
+            <p className="text-slate-400 text-sm font-semibold">No services added yet. Add services from the admin dashboard.</p>
           </div>
         ) : (
           <div 

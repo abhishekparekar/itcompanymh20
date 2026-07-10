@@ -41,12 +41,25 @@ import {
   getProducts, addProduct, updateProduct, deleteProduct,
   getBlogs, addBlog, updateBlog, deleteBlog,
   getTeamMembers, addTeamMember, updateTeamMember, deleteTeamMember,
-  bulkDeleteDocuments
+  bulkDeleteDocuments,
+  seedDatabase
 } from '../services/serviceAPI';
 
 export default function Dashboard() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+
+  // Run seeding on mount if database is empty/unseeded
+  React.useEffect(() => {
+    async function initSeeding() {
+      try {
+        await seedDatabase();
+      } catch (err) {
+        console.error("Failed to seed database from dashboard:", err);
+      }
+    }
+    initSeeding();
+  }, []);
   
   // Tab states: 'services' | 'add-service' | 'edit-service' | 'about' | 'contact' | 'footer' | 'brands' | 'applications'
   const [activeTab, setActiveTab] = useState('services');

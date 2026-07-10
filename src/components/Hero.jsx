@@ -60,9 +60,8 @@ export default function Hero() {
               <span className="gradient-text-red">for Modern Businesses</span>
             </motion.h1>
 
-            {/* Description */}
             <motion.p variants={item} className="text-slate-500 text-xs leading-relaxed">
-              Professional software company providing website development, mobile apps, CRM, ERP, business automation, and digital solutions.
+              Professional software company providing <span className="font-extrabold text-slate-800">website development</span>, <span className="font-extrabold text-slate-800">mobile apps</span>, <span className="font-extrabold text-slate-800">CRM</span>, <span className="font-extrabold text-slate-800">ERP</span>, <span className="font-extrabold text-slate-800">business automation</span>, <span className="font-extrabold text-slate-800">managed staffing solutions</span>, <span className="font-extrabold text-slate-800">corporate training</span>, and <span className="font-extrabold text-slate-800">digital solutions</span>.
             </motion.p>
 
             {/* Buttons */}
@@ -130,8 +129,7 @@ export default function Hero() {
             </motion.h1>
 
             <motion.p variants={item} className="text-slate-500 text-sm leading-relaxed max-w-lg">
-              UF Global Solutions is a professional software company providing website development,
-              mobile app development, CRM, ERP, business automation, and digital solutions for growing businesses.
+              UF Global Solutions is a professional software company providing <span className="font-extrabold text-slate-800">website development</span>, <span className="font-extrabold text-slate-800">mobile app development</span>, <span className="font-extrabold text-slate-800">CRM</span>, <span className="font-extrabold text-slate-800">ERP</span>, <span className="font-extrabold text-slate-800">business automation</span>, <span className="font-extrabold text-slate-800">managed staffing solutions</span>, <span className="font-extrabold text-slate-800">corporate training</span>, and <span className="font-extrabold text-slate-800">digital solutions</span> for growing businesses.
             </motion.p>
 
             <motion.div variants={item} className="flex flex-wrap items-center gap-3">

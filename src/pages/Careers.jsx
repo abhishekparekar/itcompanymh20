@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getJobs, seedDatabase } from '../services/serviceAPI';
+import { getJobs } from '../services/serviceAPI';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { toast, ToastContainer } from 'react-toastify';
@@ -39,7 +39,6 @@ export default function Careers() {
   useEffect(() => {
     async function loadJobsData() {
       try {
-        await seedDatabase();
         const data = await getJobs();
         setJobs(data);
       } catch (err) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getServices, seedDatabase, submitContactForm } from "../services/serviceAPI";
+import { getServices, submitContactForm } from "../services/serviceAPI";
 import ServiceCard from "../components/ServiceCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
@@ -25,37 +25,17 @@ export default function Services() {
   useEffect(() => {
     async function fetchAllServices() {
       try {
-        await seedDatabase();
+        // Fetch admin-added services from Firestore only
         const data = await getServices();
-        
-        // Custom sort to match exactly: Website, Android, iOS, Custom Software, AI/ML, Cloud AI
-        const orderedTitles = [
-          "Website Development",
-          "Android Application Development",
-          "iOS Application",
-          "Custom Software",
-          "AI/ML",
-          "Cloud AI"
-        ];
-        
-        const sortedData = [...data].sort((a, b) => {
-          const indexA = orderedTitles.indexOf(a.title);
-          const indexB = orderedTitles.indexOf(b.title);
-          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-          if (indexA !== -1) return -1;
-          if (indexB !== -1) return 1;
-          return 0;
-        });
+        setServices(data);
 
-        setServices(sortedData);
-        
-        // Auto select by query param id
+        // Auto-select by URL query param
         const serviceId = searchParams.get("id");
-        const matching = sortedData.find((s) => s.id === serviceId);
+        const matching = data.find((s) => s.id === serviceId);
         if (matching) {
           setSelectedService(matching);
-        } else if (sortedData.length > 0) {
-          setSelectedService(sortedData[0]); // Default fallback
+        } else if (data.length > 0) {
+          setSelectedService(data[0]);
         }
       } catch (err) {
         console.error("Failed to load services:", err);
@@ -188,6 +168,14 @@ export default function Services() {
           <div className="flex justify-center items-center py-12">
             <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
           </div>
+        ) : services.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center space-y-3">
+            <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-2">
+              <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+            </div>
+            <h3 className="text-base font-bold text-slate-700">No Services Added Yet</h3>
+            <p className="text-xs text-slate-400 max-w-xs">Services will appear here once the admin adds them from the dashboard.</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {services.map((service, idx) => (
@@ -263,23 +251,17 @@ export default function Services() {
                       </div>
                     )}
 
-                    {/* Core Promises List */}
-                    <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-800 text-xs sm:text-sm">
-                      {(selectedService.features && selectedService.features.length > 0
-                        ? selectedService.features
-                        : [
-                            "Responsive for all screen sizes",
-                            "SEO optimized code structure",
-                            "Secure database integration",
-                            "24/7 dedicated support SLA"
-                          ]
-                      ).map((feature, fIdx) => (
-                        <div key={fIdx} className="flex items-center gap-2.5 font-semibold text-slate-800">
-                          <FaCheckCircle className="text-emerald-500 text-sm sm:text-base flex-shrink-0" />
-                          <span>{feature}</span>
-                        </div>
-                      ))}
-                    </div>
+                    {/* Core Promises List — only shown if admin added features */}
+                    {selectedService.features && selectedService.features.length > 0 && (
+                      <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-800 text-xs sm:text-sm">
+                        {selectedService.features.map((feature, fIdx) => (
+                          <div key={fIdx} className="flex items-center gap-2.5 font-semibold text-slate-800">
+                            <FaCheckCircle className="text-emerald-500 text-sm sm:text-base flex-shrink-0" />
+                            <span>{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* RIGHT: Direct Inquiry Form */}

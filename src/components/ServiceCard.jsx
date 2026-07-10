@@ -13,15 +13,8 @@ export default function ServiceCard({ service, index }) {
     return svc.category || 'ENTERPRISE SERVICES';
   };
 
-  // Mockup/Unsplash images corresponding to the layout in Screenshot 4
-  const defaultImages = [
-    'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=450&q=80', // software mockup
-    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=450&q=80', // web dev mockup
-    'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=450&q=80', // mobile app mockup
-    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=450&q=80', // crm dashboard mockup
-  ];
-
-  const coverImage = service.image || defaultImages[index % defaultImages.length];
+  // Only use image set by admin — no hardcoded fallbacks
+  const coverImage = service.image || null;
 
   return (
     <motion.div 
@@ -33,14 +26,20 @@ export default function ServiceCard({ service, index }) {
       className="group bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-md hover:shadow-2xl shadow-slate-100/50 hover:border-primary/20 transition-all duration-300 flex flex-col h-full text-left"
     >
       
-      {/* Top portion mockup illustration */}
-      <div className="h-44 overflow-hidden relative bg-slate-50 flex-shrink-0 border-b border-slate-100">
-        <img
-          src={coverImage}
-          alt={service.title}
-          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
-          loading="lazy"
-        />
+      {/* Top portion — admin image or gradient placeholder with icon */}
+      <div className="h-44 overflow-hidden relative flex-shrink-0 border-b border-slate-100">
+        {coverImage ? (
+          <img
+            src={coverImage}
+            alt={service.title}
+            className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-primary/10 via-slate-100 to-accent/10 flex items-center justify-center">
+            <IconComp className="text-primary/40 text-5xl" />
+          </div>
+        )}
         
         {/* Rounded float badge (white circle with icon) */}
         <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-md z-10 border border-slate-100">

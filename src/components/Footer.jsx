@@ -45,10 +45,10 @@ export default function Footer() {
   }, []);
 
   const capabilities = [
-    { label: 'Software Engineering', path: '/services' },
-    { label: 'Mobile Applications', path: '/services' },
-    { label: 'Business Automation', path: '/services' },
-    { label: 'Cloud Infrastructure', path: '/services' }
+    { label: 'Cloud Infra Management', path: '/services' },
+    { label: 'Managed SaaS Solutions', path: '/services' },
+    { label: 'Managed Staffing Solutions', path: '/services' },
+    { label: 'Corporate Training', path: '/services' }
   ];
 
   const quickLinks = [
@@ -66,6 +66,31 @@ export default function Footer() {
     { key: 'twitter', icon: FaTwitter, label: 'Twitter' },
     { key: 'github', icon: FaGithub, label: 'GitHub' }
   ];
+
+  const renderFormattedTagline = (text) => {
+    if (!text) return null;
+    const serviceNames = [
+      'website development',
+      'mobile app development',
+      'mobile apps',
+      'CRM',
+      'ERP',
+      'business automation',
+      'managed staffing solutions',
+      'corporate training',
+      'digital solutions'
+    ];
+    const pattern = new RegExp(`(${serviceNames.join('|')})`, 'gi');
+    const parts = text.split(pattern);
+    return parts.map((part, idx) => {
+      const isMatch = serviceNames.some(svc => svc.toLowerCase() === part.toLowerCase());
+      return isMatch ? (
+        <span key={idx} className="font-extrabold text-slate-200">{part}</span>
+      ) : (
+        part
+      );
+    });
+  };
 
   return (
     <footer className="bg-[#0b132a] text-slate-400 border-t border-slate-800 relative z-10">
@@ -89,7 +114,7 @@ export default function Footer() {
               <p className="text-white font-black text-base sm:text-lg tracking-tight">UF Global Solutions</p>
               <p className="text-[10px] text-accent uppercase tracking-widest font-black">PVT. LTD.</p>
               <p className="text-[11px] text-slate-400 mt-1.5 max-w-[220px] sm:max-w-xs leading-relaxed">
-                {tagline || 'Smart digital solutions for modern businesses.'}
+                {renderFormattedTagline(tagline || 'Smart digital solutions for modern businesses.')}
               </p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ContactForm from "../components/ContactForm";
-import { getSiteSettings, seedDatabase } from "../services/serviceAPI";
+import { getSiteSettings } from "../services/serviceAPI";
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp } from "react-icons/fa";
 import { COMPANY } from "../constants";
 import { ToastContainer } from "react-toastify";
@@ -17,7 +17,6 @@ export default function Contact() {
   useEffect(() => {
     async function loadContactSettings() {
       try {
-        await seedDatabase();
         const fetched = await getSiteSettings("contact");
         if (fetched) {
           if (fetched.email) setEmail(fetched.email);

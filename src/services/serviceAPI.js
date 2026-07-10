@@ -199,7 +199,7 @@ export async function seedDatabase(force = false) {
     if (isOldContact) {
       console.log("Migrating old contact settings to UF Global Solutions...");
       await updateSiteSettings('contact', {
-        email: "hello@ufglobalsolutions.com",
+        email: "Info@ufglobalsolutions.com",
         phone: "+91 95952 06797",
         address: "2nd Floor, H202, Near Paremama Hotel, Chishtiya Police Chowki Signal, MGM College Road, Chhatrapati Sambhajinagar (Aurangabad) - 431001",
         workingHours: "Monday - Saturday: 9:30 AM - 6:30 PM"
@@ -212,7 +212,7 @@ export async function seedDatabase(force = false) {
       console.log("Migrating old footer settings to UF Global Solutions...");
       await updateSiteSettings('footer', {
         copyright: "© 2026 UF Global Solutions Pvt Ltd. All rights reserved.",
-        tagline: "Innovative digital systems engineered for security, reliability, and scale.",
+        tagline: "UF Global Solutions is a professional software company providing website development, mobile app development, CRM, ERP, business automation, managed staffing solutions, corporate training, and digital solutions for growing businesses.",
         socials: {
           facebook: "https://facebook.com/ufglobalsolutions",
           twitter: "https://twitter.com/ufglobalsolutions",
@@ -272,121 +272,8 @@ export async function seedDatabase(force = false) {
     return true;
   }
   try {
-    // Check if services are empty
-    const servicesCol = collection(db, 'services');
-    const servicesSnapshot = await getDocs(servicesCol);
-    
-    let hasOldDefaults = false;
-    if (!servicesSnapshot.empty) {
-      const hasCustomSoftware = servicesSnapshot.docs.some(docSnap => docSnap.data().title === "Custom Software");
-      hasOldDefaults = !hasCustomSoftware || servicesSnapshot.docs.some(docSnap => 
-        ["Managed IT Solutions", "Corporate Training", "Staffing Solutions", "Cloud Migration & Infrastructure", "Enterprise Web Solutions", "Cybersecurity & Pentesting"].includes(docSnap.data().title)
-      );
-    }
-
-    if (servicesSnapshot.empty || force || hasOldDefaults) {
-      console.log("Seeding new services...");
-      
-      if (!servicesSnapshot.empty) {
-        for (const docSnap of servicesSnapshot.docs) {
-          await deleteDoc(doc(db, 'services', docSnap.id));
-        }
-      }
-      
-      const defaultServices = [
-        {
-          title: "Website Development",
-          category: "WEB SYSTEMS",
-          description: "Build modern, fast, and SEO-friendly corporate websites and e-commerce platforms.",
-          details: "We specialize in developing premium web applications using React, Next.js, and modern CSS frameworks. Our sites are designed for fast page speeds, custom micro-interactions, responsive mobile layouts, and high search engine rankings.",
-          icon: "FaLaptopCode",
-          features: [
-            "Responsive for all screen sizes",
-            "SEO optimized code structure",
-            "Secure database integration",
-            "24/7 dedicated support SLA"
-          ],
-          image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop"
-        },
-        {
-          title: "Android Application Development",
-          category: "MOBILE APPS",
-          description: "High-performance native and cross-platform Android mobile applications.",
-          details: "Our mobile team engineers feature-rich Android apps using Kotlin and Flutter. We configure background sync services, real-time push notifications, custom user onboarding screens, secure storage solutions, and optimal battery management protocols.",
-          icon: "FaAndroid",
-          features: [
-            "Kotlin & Flutter codebases",
-            "Background synchronization",
-            "Secure local database storage",
-            "Optimal battery & RAM usage"
-          ],
-          image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop"
-        },
-        {
-          title: "iOS Application",
-          category: "MOBILE APPS",
-          description: "Premium iOS apps optimized for the Apple ecosystem and App Store compliance.",
-          details: "We design and develop premium iOS mobile apps using Swift and Flutter. We focus on strict adherence to the Apple Human Interface guidelines, butter-smooth animations, local face/touch ID authentication, and optimal memory management.",
-          icon: "FaApple",
-          features: [
-            "Swift & Flutter development",
-            "App Store deployment compliance",
-            "Butter-smooth animations",
-            "Biometric Authentication support"
-          ],
-          image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&auto=format&fit=crop"
-        },
-        {
-          title: "Custom Software",
-          category: "SOFTWARE ENGINEERING",
-          description: "Enterprise ERP systems, custom CRM pipelines, and bespoke workflow automation engines.",
-          details: "We design and build bespoke software solutions to automate complex business workflows. From multi-branch ERP software to custom CRM integrations, database migrations, security audits, and dedicated dashboard consoles, we deliver scalable products tailored to your operational structure.",
-          icon: "FaTools",
-          features: [
-            "Bespoke workflow automation",
-            "Multi-branch ERP database sync",
-            "Ironclad security & encryption",
-            "Dedicated dashboard reports"
-          ],
-          image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=600&auto=format&fit=crop"
-        },
-        {
-          title: "AI/ML",
-          category: "AI / ML SYSTEMS",
-          description: "Custom neural networks, natural language processing, predictive intelligence, and computer vision.",
-          details: "Unlock actionable insights with custom PyTorch/TensorFlow models, predictive customer behavior algorithms, NLP engines, OCR automation, and automated recommendation engines tailored to your database models.",
-          icon: "FaBrain",
-          features: [
-            "Custom PyTorch & TensorFlow models",
-            "Predictive customer intelligence",
-            "Natural Language Processing (NLP)",
-            "Automated vision APIs & OCR"
-          ],
-          image: "https://images.unsplash.com/photo-1527474305487-b87b222841cc?q=80&w=600&auto=format&fit=crop"
-        },
-        {
-          title: "Cloud AI",
-          category: "CLOUD AI & ARCHITECTURE",
-          description: "Deploy scalable cloud-native AI infrastructures, cognitive microservices, and serverless pipelines.",
-          details: "We help integrate scalable AI/ML pipelines on AWS, Google Cloud, and Azure. We configure automated vision APIs, speech-to-text gateways, elastic container deployments (Kubernetes), and serverless machine learning APIs for real-time inference.",
-          icon: "FaCloud",
-          features: [
-            "Scalable AWS/GCP/Azure configs",
-            "Containerized deployments (K8s)",
-            "Serverless ML pipelines",
-            "Real-time performance monitors"
-          ],
-          image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop"
-        }
-      ];
-
-      for (const service of defaultServices) {
-        await addDoc(servicesCol, {
-          ...service,
-          createdAt: new Date().toISOString()
-        });
-      }
-    }
+    // NOTE: Services are NOT auto-seeded. Only admin-added services from the dashboard are shown.
+    // If you need to clear old seeded services, delete them from the Firebase console or Admin Dashboard.
 
     // Check if site settings are empty
     const aboutSettings = await getSiteSettings('about');
@@ -410,7 +297,7 @@ export async function seedDatabase(force = false) {
     if (!contactSettings || force) {
       console.log("Seeding contact settings...");
       await updateSiteSettings('contact', {
-        email: "hello@ufglobalsolutions.com",
+        email: "Info@ufglobalsolutions.com",
         phone: "+91 95952 06797",
         address: "2nd Floor, H202, Near Paremama Hotel, Chishtiya Police Chowki Signal, MGM College Road, Chhatrapati Sambhajinagar (Aurangabad) - 431001",
         workingHours: "Monday - Saturday: 9:30 AM - 6:30 PM"
@@ -422,7 +309,7 @@ export async function seedDatabase(force = false) {
       console.log("Seeding footer settings...");
       await updateSiteSettings('footer', {
         copyright: "© 2026 UF Global Solutions Pvt Ltd. All rights reserved.",
-        tagline: "Innovative digital systems engineered for security, reliability, and scale.",
+        tagline: "UF Global Solutions is a professional software company providing website development, mobile app development, CRM, ERP, business automation, managed staffing solutions, corporate training, and digital solutions for growing businesses.",
         socials: {
           facebook: "https://facebook.com/ufglobalsolutions",
           twitter: "https://twitter.com/ufglobalsolutions",
