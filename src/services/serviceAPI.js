@@ -984,3 +984,68 @@ export async function seedTeamMembers(force = false) {
   }
 }
 
+// ---------------- SERVICE CATEGORIES CRUD ----------------
+
+// Fetch all service categories, seeding if empty
+export async function getServiceCategories() {
+  try {
+    const colRef = collection(db, 'serviceCategories');
+    const snapshot = await getDocs(colRef);
+    if (snapshot.empty) {
+      // Seed default categories
+      const defaults = [
+        'WEB SYSTEMS',
+        'AI / ML SYSTEMS',
+        'CLOUD AI & ARCHITECTURE',
+        'MOBILE APPS',
+        'SOFTWARE ENGINEERING',
+        'DIGITAL GROWTH',
+        'ENTERPRISE SERVICES'
+      ];
+      const seededList = [];
+      for (const cat of defaults) {
+        const docRef = await addDoc(colRef, {
+          name: cat,
+          createdAt: new Date().toISOString()
+        });
+        seededList.push({ id: docRef.id, name: cat });
+      }
+      return seededList;
+    }
+    const list = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    // Sort alphabetically by name
+    list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    return list;
+  } catch (error) {
+    console.error("Error fetching service categories:", error);
+    throw error;
+  }
+}
+
+// Add a service category
+export async function addServiceCategory(name) {
+  try {
+    const colRef = collection(db, 'serviceCategories');
+    // Check if category already exists to avoid duplicates
+    const snapshot = await getDocs(colRef);
+    const trimmedUpper = name.trim().toUpperCase();
+    const existing = snapshot.docs.find(doc => (doc.data().name || '').trim().toUpperCase() === trimmedUpper);
+    if (existing) {
+      return { id: existing.id, name: existing.data().name };
+    }
+    
+    const docRef = await addDoc(colRef, {
+      name: trimmedUpper,
+      createdAt: new Date().toISOString()
+    });
+    return { id: docRef.id, name: trimmedUpper };
+  } catch (error) {
+    console.error("Error adding service category:", error);
+    throw error;
+  }
+}
+
+
